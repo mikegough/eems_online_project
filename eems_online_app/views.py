@@ -12,6 +12,8 @@ def index(request):
         eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
         eems_operator_changes_dict = json.loads(eems_operator_changes_string)
 
+        print (eems_operator_changes_dict)
+
         # ToDO Write changes to a new EEMS file
 
         # ToDO Run EEMS on new EEMS file

@@ -9,6 +9,11 @@
     <!-- ESRI Leaflet -->
     <script src="https://unpkg.com/esri-leaflet@2.0.3"></script>
 
+    <!-- leaflet.grouped-layer-control-->
+    <script src="https://rawgithub.com/ismyrnow/Leaflet.groupedlayercontrol/master/src/leaflet.groupedlayercontrol.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" /><![endif]-->
+
     <!-- CSS -->
     <link href="{% static 'css/base.css' %}" rel="stylesheet" />
 
@@ -56,85 +61,23 @@
         <div id="log"></div>
         <div id="infovis"></div>
         <div id="file_upload_controls">
-            <label for="files" class="alertify-button alertify-button-ok" id="files_label">Select an EEMS File...</label>
+            <div id="current_file"><b>Current Model:</b> Terrestrial Intactness</div>
+            <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>
+            <label for="files" class="alertify-button alertify-button-ok" id="files_label">
+            Browse <img id="open_file" src="{% static '/img/open.svg' %}">
+            </label>
             <input type="file" id="files" name="file" style="display:none"/>
-            <div id="filename"></div>
-            <span class="readBytesButtons">
-              <!--
-              <button data-startbyte="0" data-endbyte="4">1-5</button>
-              <button data-startbyte="5" data-endbyte="14">6-15</button>
-              <button data-startbyte="6" data-endbyte="7">7-8</button>
-              -->
-              <button class="alertify-button alertify-button-ok">Create EEMS Diagram</button>
-              <button id="run_eems_button" class="alertify-button alertify-button-ok">Run EEMS Model</button>
-            </span>
 
-            <div id="byte_range" style="display:none"></div>
-            <div id="byte_content" style="display:none"></div>
         </div>
 
-    <script>
-
-       $('input:file').change(
-                function(e){
-                    var filename=e.target.files[0].name
-                    $("#filename").html("Selected File: " + filename)
-      });
-
-      function readBlob(opt_startByte, opt_stopByte) {
-
-        var files = document.getElementById('files').files;
-        if (!files.length) {
-          alert('Please select a file!');
-          return;
-        }
-
-        var file = files[0];
-        var start = parseInt(opt_startByte) || 0;
-        var stop = parseInt(opt_stopByte) || file.size - 1;
-
-        var reader = new FileReader();
-
-        // If we use onloadend, we need to check the readyState.
-        reader.onloadend = function(evt) {
-          if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-            document.getElementById('byte_content').textContent = evt.target.result;
-            document.getElementById('byte_range').textContent =
-                ['Read bytes: ', start + 1, ' - ', stop + 1,
-                 ' of ', file.size, ' byte file'].join('');
-            json_string = JSON.stringify(eval("(" + evt.target.result + ")"));
-            json = JSON.parse(json_string);
-            $("#infovis").empty()
-            init()
-          }
-        };
-
-        var blob = file.slice(start, stop + 1);
-        reader.readAsBinaryString(blob);
-      }
-
-      document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
-        if (evt.target.tagName.toLowerCase() == 'button') {
-          var startByte = evt.target.getAttribute('data-startbyte');
-          var endByte = evt.target.getAttribute('data-endbyte');
-          readBlob(startByte, endByte);
-        }
-      }, false);
-
-    </script>
-
-    <script>
-
-        jQuery("input#files").change(function () {
-            //alert(jQuery(this).val())
-        });
-
-    </script>
 
     </div>
 
     <!-- Leaflet Map -->
     <script src="{% static 'leaflet/leaflet_map.js' %}"></script>
+
+    <!-- Upload Files -->
+    <script src="{% static 'js/file_upload.js' %}"></script>
 
     <!-- General Javascript -->
     <script src="{% static 'js/general_js.js' %}"></script>
