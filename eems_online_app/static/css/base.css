@@ -1,0 +1,330 @@
+body {
+    margin:0px;
+}
+
+#header {
+	background-color: #445272;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 70px;
+	border-bottom: 1px solid #B6BFD3;
+}
+
+#title {
+	height: 70px;
+	line-height: 65px;
+	padding-left: 20px;
+	font-variant: all-petite-caps;
+	font-size: 2.3em;
+	color: #FFF;
+	text-shadow: 0px 0px 1px black;
+	width: 250px;
+	Font-family: garamond;
+	font-weight: Bold;
+	letter-spacing: 1px;
+	padding-left: 150px;
+	text-indent: -13px;
+	z-index: 999;
+	position: absolute;
+}
+
+#logo_l {
+	float: left;
+	position: absolute;
+	height: 82px;
+	left: -130px;
+	top: -11px;
+	float: left;
+	opacity: .6;
+}
+
+#logo_r {
+    float: left;
+    position: absolute;
+    height: 82px;
+    left: 310px;
+    top: -11px;
+    float: left;
+}
+
+#MEEMSE_node_count_legend{
+    visibility:hidden;
+    position:relative;
+    top:0px;
+    left:15px;
+    height:10px;
+    width:150px;
+    float:left;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aaaaaa+0,aaaaaa+14,bbaaaa+14,bbaaaa+28,ccaaaa+28,ccaaaa+42,ddaaaa+42,ddaaaa+56,eeaaaa+56,eeaaaa+70,ffaaaa+70,ffaaaa+84,a6c8a6+84,a6c8a6+100 */
+}
+
+#MEEMSE_node_count_legend_table{
+    font-size:9px;
+    width:100%
+}
+
+#MEEMSE_node_count_legend_table td{
+    color:#606060;
+    text-align:center;
+    width:14%;
+    min-width:14%;
+    height:10px;
+    min-height:10px;
+    cursor:default;
+}
+
+#MEEMSE_node_count_legend_table th{
+    background-color:#EDEDED;
+}
+
+.EEMS_Tree_Value{
+   font-weight:bold;
+    color:#C44539;
+}
+
+.EEMS_Tree_Operation {
+    width:100%;
+    margin-left:0px;
+    margin-right:0px;
+    text-align:center;
+    position:absolute;
+    bottom: 1px;
+    padding-bottom:3px;
+    left:0px;
+    vertical-align:bottom;
+    font-size:.9em;
+    font-style:italic;
+    font-weight:normal;
+    cursor:help;
+    white-space:nowrap;
+    bottom:0px;
+    color: #4E4E4E;
+    background-color:#C6C2CC !important;
+    border-color:#5D5D5D;
+    border-width: 1px 0px 1px 0px;
+    border-style: solid;
+}
+
+input, select {
+    font-size:0.9em;
+}
+
+h4 {
+    font-size:1.1em;
+    text-decoration:none;
+    font-weight:normal;
+    color:#23A4FF;
+}
+
+a {
+    color:#23A4FF;
+}
+
+#map_container {
+	height: calc(100% - 106px);
+	width: 100%;
+	position: absolute;
+	top: 106px;
+}
+
+#map{
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    position: absolute;
+    cursor: move;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    right: 0px;
+    float: left;
+    z-index:1;
+}
+
+#meemse_container {
+	top: 106px;
+	width: 50%;
+	height: 80%;
+	margin: 0 auto;
+	margin-bottom: 50px;
+	position: absolute;
+	cursor: move;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	right: 0px;
+	float: right;
+	z-index: 2;
+    -webkit-transition: background 0.1s linear;
+    -moz-transition: background 0.1s linear;
+    -ms-transition: background 0.1s linear;
+    -o-transition: background 0.1s linear;
+    transition: background 0.1s linear;
+    border-bottom-left-radius:5px;
+    background-color: rgba(255,255,255,0);
+    box-shadow: 0px 0px 0px rgba(0,0,0,0);
+}
+
+#meemse_container:hover {
+    background-color: rgba(255,255,255,.5);
+    box-shadow: 0px 0px 20px rgba(0,0,0,.1);
+}
+
+#center-container {
+    height:100%;
+    position:absolute;
+    top:0;
+}
+
+#center-container {
+    width:100%;
+    left:200px;
+    background-color:#1a1a1a;
+    color:#ccc;
+}
+
+.text {
+    margin: 7px;
+}
+
+#inner-details {
+    font-size:0.9em;
+    list-style:none;
+    margin:20px;
+}
+
+#log {
+    position:relative;
+    text-align:center;
+    width:100%;
+    top:10px;
+    font-size:1.0em;
+    font-weight:bold;
+    color:#23A4FF;
+}
+
+
+#infovis {
+    position:relative;
+    margin:auto;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    top:20px;
+}
+
+/*TOOLTIPS*/
+.tip {
+    color: #111;
+    width: 159px;
+    background-color: white;
+    border:1px solid #ccc;
+    -moz-box-shadow:#555 2px 2px 8px;
+    -webkit-box-shadow:#555 2px 2px 8px;
+    -o-box-shadow:#555 2px 2px 8px;
+    box-shadow:#555 2px 2px 8px;
+    opacity:0.9;
+    filter:alpha(opacity=90);
+    font-size:10px;
+    font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    padding:7px;
+}
+
+
+.alertify {
+	top: 150px !important;
+	width: 400px !important;
+	right: 200px !important;
+	left: unset !important;
+}
+
+#change_operator_form {
+	padding: 10px 15px 20px 25px;
+}
+
+.eems_changed_node_style{
+    background-color:yellow !important;
+}
+
+#nav_bar {
+	top: 70px;
+	position: relative;
+	left: 0px;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border-width: 1px 0px 1px 0px;
+    border-color: #e7e7e7;
+	background-color: #444;
+}
+
+li {
+    float: left;
+}
+
+li a {
+	display: block;
+	/* color: #e0e0e0; */
+    color: #23A4FF;
+	text-align: center;
+	padding: 8px 16px;
+	text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+    color: black;
+}
+
+li a.active {
+    color: white;
+    background-color: #4CAF50;
+}
+
+#file_upload_controls {
+	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
+	position: absolute;
+	float: right;
+	bottom: -90px;
+	right: 0px;
+	background-color: rgba(255,255,255,.7);
+	padding: 25px;
+	border-radius: 5px 0px 0px 5px;
+	width: 750px;
+	z-index: 999;
+	text-align: center;
+}
+
+#files_label{
+    font-size:19px;
+}
+
+.alertify-button-ok{
+    margin:0px 30px;
+
+}
+
+#filename {
+	float: left;
+	position: absolute;
+	display: inline;
+	bottom: 0px;
+	left: 80px;
+	color: #7d7d7d;
+	font-size: .9em;
+	padding-bottom: 3px;
+}
+
