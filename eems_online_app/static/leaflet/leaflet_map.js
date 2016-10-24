@@ -13,8 +13,6 @@ shaded_relief=L.esri.basemapLayer("ShadedRelief")
 usa_topo=L.esri.basemapLayer("USATopo")
 
 //imagery_labels=L.esri.basemapLayer("ImageryLabels").addTo(map)
-//var OpenStreetMap=L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' }).addTo(map);
-
 
 var groupedOverlays = {
     "Base Maps": {
