@@ -165,8 +165,16 @@ function init(){
             });
             */
 
+            // Get a list of direct children for this node.
+            var children=[]
+
+            node.eachSubnode(function(child){
+               children.push(child.name);
+            });
+
+
             if (node.data.operation != "Read") {
-                label.innerHTML += "<span title='Click to change the EEMS operations' style='position:absolute; float:right; bottom:5px; right:2px'><img onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "')\" src='static/img/expand_arrow.png'></span>"
+                label.innerHTML += "<span title='Click to change the EEMS operations' style='position:absolute; float:right; bottom:5px; right:2px'><img onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + children + "')\" src='static/img/expand_arrow.png'></span>"
             }
 
             if (EEMSParams['hasSubNodeImageOverlays']){
@@ -187,6 +195,7 @@ function init(){
             }
 
             label.onclick = function(){
+
 
                 //Fix for nodes shooting off the screen after panning then clicking.
                 var m = {

@@ -30,7 +30,11 @@ function run_eems() {
     });
 }
 
-function changeEEMSOperator(node_id, alias, node_current_operator) {
+function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
+
+    var children_array = children_string.split(',');
+
+    // Convert to Fuzzy (available options)
     if (node_current_operator ==  "Convert to Fuzzy"){
 
         alertify.confirm(
@@ -48,14 +52,18 @@ function changeEEMSOperator(node_id, alias, node_current_operator) {
         )
 
     }
+
+    // Non-Fuzzy Operations
     else if (["Difference", "Weighted Sum"].includes(node_current_operator)){
         alertify.confirm(
             "<div id='change_operator_form'><b>Node: </b>" + alias +
-            "<p><b>Operator: </b><select id='new_operator_select'>" +
-            "<option name='new_operator' value='Difference'>Difference</option>" +
-            "<option name='new_operator' value='Weighted Sum'>Weighted Sum</option>" +
+            "<p><b>Operator: </b>" +
+            "<select id='new_operator_select'>" +
+                "<option name='new_operator' value='Difference'>Difference</option>" +
+                "<option name='new_operator' value='Weighted Sum'>Weighted Sum</option>" +
             "</select>" +
             "</div>"
+            // On Confirm
             , function (e, str) {
                 if (e) {
                     var new_operator = $("#new_operator_select option:selected").text();
@@ -64,37 +72,99 @@ function changeEEMSOperator(node_id, alias, node_current_operator) {
             }
         );
     }
+
+    // Fuzzy Operations
     else {
         alertify.confirm(
             "<div id='change_operator_form'><b>Node: </b>" + alias +
-            "<p><b>Operator: </b><select id='new_operator_select'>" +
-            "<option name='new_operator' value='And'>And</option>" +
-            "<option name='new_operator' value='Or'>Or</option>" +
-            "<option name='new_operator' value='Negative Or'>Negative Or</option>" +
-            "<option name='new_operator' value='Union'>Union</option>" +
-            "<option name='new_operator' value='Selected Union'>Selected Union</option>" +
-            "<option name='new_operator' value='Weighted Union'>Weighted Union</option>" +
-            "</select>" +
+            "<p><b>Operator: </b>" +
+                "<select id='new_operator_select'>" +
+                    "<option name='new_operator' value='And'>And</option>" +
+                    "<option name='new_operator' value='Or'>Or</option>" +
+                    "<option name='new_operator' value='Negative Or'>Negative Or</option>" +
+                    "<option name='new_operator' value='Union'>Union</option>" +
+                    "<option name='new_operator' value='Selected Union'>Selected Union</option>" +
+                    "<option name='new_operator' value='Weighted Union'>Weighted Union</option>" +
+                "</select>" +
+            "<div id='operator_options'></div>" +
             "</div>"
+            // On Confirm
             , function (e, str) {
                 if (e) {
                     var new_operator = $("#new_operator_select option:selected").text();
-                    updateEEMSOperator(node_id, alias, new_operator)
+                    var options={}
+
+                    $('#options *').filter(':selected').each(function(a,b){
+                        options["truest_or_falsest"]=b.value
+                    });
+
+                    $('#options *').filter(':input').each(function(a,b){
+                            options[b.name]=b.value
+                    });
+                    updateEEMSOperator(node_id, alias, new_operator, options)
                 }
             }
         );
     }
 
+    // Operator specific options
+    $("#new_operator_select").on("change", function(){
+
+        var new_operator=this.value
+
+        $("#operator_options").empty()
+
+        switch(new_operator) {
+
+            case "Weighted Union":
+
+                // Create the options form.
+                $("#operator_options").append("<form id='options'>")
+                $.each(children_array, function(index,child){
+
+                    $("#options").append(child + ": <input type='text' name='" + child + "' size=3><br>")
+
+                })
+                $("#operator_options").append("</form>")
+                break;
+
+            case "Selected Union":
+
+                // Create the options form.
+                $("#operator_options").append("<form id='options'>")
+
+                $("#options").append("<b>Select the: </b>")
+
+                $("#options").append(
+                    "<select>" +
+                    "<option name='truest_or_falsest' value='t'>Truest</option>" +
+                    "<option name='truest_or_falsest' value='f'>Falsest</option>" +
+                    "</select>"
+                )
+
+                $("#options").append(
+                    " <input name='truest_or_falsest_count' size='3'>"
+                )
+
+                $("#operator_options").append("</form>")
+                break;
+        }
+
+    })
+
     $("#new_operator_select option:contains(" + node_current_operator + ")").attr('selected', 'selected');
+
 }
 
 eems_operator_changes={}
-function updateEEMSOperator(node_id,alias, new_operator){
-    //alertify.success(alias  + " operator will be changed to " + new_operator);
-    $("#" + node_id + "_current_operator").html(new_operator)
-    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style")
+
+function updateEEMSOperator(node_id, alias, new_operator, options){
     eems_operator_changes[node_id]=[]
     eems_operator_changes[node_id].push(new_operator)
+    eems_operator_changes[node_id].push(options)
+
+    $("#" + node_id + "_current_operator").html(new_operator)
+    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style")
 }
 
 function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
@@ -103,5 +173,4 @@ function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
     eems_operator_changes[node_id]=[]
     eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold])
 }
-
 
