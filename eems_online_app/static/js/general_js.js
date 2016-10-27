@@ -88,10 +88,13 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
                 "</select>" +
             "<div id='operator_options'></div>" +
             "</div>"
+
             // On Confirm
             , function (e, str) {
                 if (e) {
                     var new_operator = $("#new_operator_select option:selected").text();
+
+                    // Get options
                     var options={}
 
                     $('#options *').filter(':selected').each(function(a,b){
@@ -101,6 +104,8 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
                     $('#options *').filter(':input').each(function(a,b){
                             options[b.name]=b.value
                     });
+
+                    // Call function to store new eems operator and options in a dictionary
                     updateEEMSOperator(node_id, alias, new_operator, options)
                 }
             }
@@ -120,11 +125,13 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
 
                 // Create the options form.
                 $("#operator_options").append("<form id='options'>")
+                $("#options").append("<table id='weighted_union_table'>")
                 $.each(children_array, function(index,child){
 
-                    $("#options").append(child + ": <input type='text' name='" + child + "' size=3><br>")
+                    $("#weighted_union_table").append("<tr><td>" +child + "</td><td><input type='text' name='" + child + "' size=3></td></tr>")
 
                 })
+                $("#options").append("</table>")
                 $("#operator_options").append("</form>")
                 break;
 

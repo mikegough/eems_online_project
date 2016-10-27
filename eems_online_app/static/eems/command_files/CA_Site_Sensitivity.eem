@@ -1,0 +1,189 @@
+# Metadata:
+#   Project: California 2015
+#   Model: High Site Sensitivity
+#   Version: 1.0
+#   Author: Tim Sheehan
+#   RunDate: 2015-12-22 17:07:04.677029
+#   InputInfo: Soil and Solar Radiation data provided by Barry Baker
+#   Comments: EEEMS model created from template in python script
+
+
+# Soils data
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/awc.nc,
+    InFieldName = awc, # available water capacity
+    NewFieldName = AvailableWaterCapacity,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+LowAvailableWaterCapacityFz = CVTTOFUZZY(
+    InFieldName = AvailableWaterCapacity,
+    TrueThreshold = 0,
+    FalseThreshold = 10,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/LSKf.nc,
+    InFieldName = lskf, # erodability factor,
+    NewFieldName = WaterErodibilityIndex,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighWaterErodibilityFz = CVTTOFUZZY(
+    InFieldName = WaterErodibilityIndex,
+    TrueThreshold = 0.15,
+    FalseThreshold = 0,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/weg.nc,
+    InFieldName = weg, #erodability factor,
+    NewFieldName = WindErodibilityGroup,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighWindErodibilityFz = CVTTOFUZZY(
+    InFieldName = WindErodibilityGroup,
+    TrueThreshold = 2,
+    FalseThreshold = 7,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/rd.nc,
+    InFieldName = rd, # depth to bedrock,
+    NewFieldName = DepthToBedrock,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+LowDepthToBedrockFz = CVTTOFUZZY(
+    InFieldName = DepthToBedrock,
+    TrueThreshold = 2,
+    FalseThreshold = 15,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/ph.nc,
+    InFieldName = pH, # soil reaction
+    NewFieldName = SoilpH,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+ExtremeSoilpHFz = CVTTOFUZZYCURVE(
+    InFieldName = SoilpH,
+    RawValues =   [
+        3.50,
+        4.00,
+        5.50,
+        7.30,
+        7.80,
+        8.30
+    ]
+    FuzzyValues =   [
+        1,   # 350,
+        0,   # 400,
+        -1,  # 550,
+        -1,  # 730,
+        0,   # 780,
+        1    # 830,
+    ]
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/sal.nc,
+    InFieldName = sal,
+    NewFieldName = Salinity,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighSalinityFz = CVTTOFUZZY(
+    InFieldName = Salinity,
+    TrueThreshold = 16,
+    FalseThreshold = 8,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/nlcd_west_1km_wgs84.nc,
+    InFieldName = nlcd,
+    NewFieldName = NLCDClass,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+IsNotBarrenFz = CVTTOFUZZYCAT(
+    InFieldName = NLCDClass,
+    RawValues = [
+        22, # Low intens dev
+        24, # Hi intens dev
+        31 # Barren land
+        ],
+    FuzzyValues = [
+        -1, # Low intens dev
+        -1, # Hi intens dev
+        -1  # Barren land
+        ],
+    DefaultFuzzyValue = 1,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+# PET
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Soils/pet_west.nc,
+    InFieldName = pet,
+    NewFieldName = PotentialEvapoTrans,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighPotentialEvapoTransFz = CVTTOFUZZY(
+    InFieldName = PotentialEvapoTrans,
+    TrueThreshold = 1400,
+    FalseThreshold = 1700,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighSoilErodibilityFz = OR(
+    InFieldNames = [
+        HighWindErodibilityFz,
+        HighWaterErodibilityFz
+    ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+)
+
+HighSoilSensitivityFz = OR(
+    InFieldNames = [
+        HighSoilErodibilityFz,
+        ExtremeSoilpHFz,
+        LowDepthToBedrockFz,
+        HighSalinityFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+LowSoilWaterFz = UNION(
+    InFieldNames = [
+        HighPotentialEvapoTransFz,
+        LowAvailableWaterCapacityFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighPotentialSiteSensitivityFz = UNION(
+    InFieldNames = [
+        LowSoilWaterFz,
+        HighSoilSensitivityFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+
+HighSiteSensitivityFz = AND(
+    InFieldNames = [
+        HighPotentialSiteSensitivityFz,
+        IsNotBarrenFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/SiteSensitivity/1.0/CASiteSensitivity.nc
+    )
+

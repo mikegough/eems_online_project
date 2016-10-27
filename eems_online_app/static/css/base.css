@@ -350,3 +350,7 @@ li a.active {
 #run_eems_button{
     float:right;
 }
+
+#weighted_union_table td{
+    padding-right:3px;
+}
