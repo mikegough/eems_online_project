@@ -30,6 +30,33 @@ function run_eems() {
     });
 }
 
+function load_eems(eems_filename, eems_file_contents) {
+
+    alert(eems_file_contents)
+
+    $.ajax({
+        url: "/load_eems", // the endpoint
+        type: "POST", // http method
+        data: {
+            'eems_filename': eems_filename,
+            'eems_file_contents': eems_file_contents
+        },
+
+        // handle a successful response
+        success: function (json) {
+            //results = JSON.parse(json)
+            results = json
+        },
+
+        // handle a non-successful response
+        error: function (xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>");
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+}
+
 function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
 
     var children_array = children_string.split(',');

@@ -4,11 +4,11 @@ $('input:file').change(
         $("#current_file").html("<b>Current Model:</b> " + filename.replace('.json','').replace('.JSON',''))
         var startByte = e.target.getAttribute('data-startbyte');
         var endByte = e.target.getAttribute('data-endbyte');
-        readBlob(startByte, endByte);
+        readBlob(startByte, endByte, filename);
     }
 );
 
-function readBlob(opt_startByte, opt_stopByte) {
+function readBlob(opt_startByte, opt_stopByte, filename) {
 
     var files = document.getElementById('files').files;
     if (!files.length) {
@@ -25,10 +25,19 @@ function readBlob(opt_startByte, opt_stopByte) {
     // If we use onloadend, we need to check the readyState.
     reader.onloadend = function(evt) {
       if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-        json_string = JSON.stringify(eval("(" + evt.target.result + ")"));
-        json = JSON.parse(json_string);
-        $("#infovis").empty()
-        init()
+        if  (filename.indexOf(".json") >= 0)
+          {
+              json_string = JSON.stringify(eval("(" + evt.target.result + ")"));
+              json = JSON.parse(json_string);
+              $("#infovis").empty()
+              init()
+          }
+       else if  (filename.indexOf(".eem") >= 0)
+          {
+              var eems_file_contents = evt.target.result;
+              $("#infovis").empty()
+              load_eems(filename, eems_file_contents)
+          }
       }
     };
 
