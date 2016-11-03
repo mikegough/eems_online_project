@@ -92,7 +92,7 @@ function init(){
         //nodes or edges
         Node: {
             height: 70,
-            width: 155,
+            width: 159,
             type: 'rectangle',
             color: '#B6BFD3',
             overridable: true,
@@ -174,7 +174,8 @@ function init(){
 
 
             if (node.data.operation != "Read") {
-                label.innerHTML += "<span title='Click to change the EEMS operations' style='position:absolute; float:right; bottom:5px; right:2px'><img onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + children + "')\" src='static/img/expand_arrow.png'></span>"
+                label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + children + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
             if (EEMSParams['hasSubNodeImageOverlays']){
@@ -275,7 +276,7 @@ function init(){
             style.textAlign = 'center';
             style.paddingTop = '5px';
             style.paddingLeft = '15px';
-            style.paddingRight = '14px';
+            style.paddingRight = '18px';
             style.fontFamily = 'Verdana';
             style.overflow= 'hidden';
             style.boxShadow= '0px 0px 3px rgba(0, 0, 0, 0.8)';
@@ -369,6 +370,24 @@ function init(){
     //end
 
 }
+
+function remove_node(label_id) {
+    alertify.confirm("<b>Notice</b>: This will remove the " +  label_id + " node and all of its children nodes. <br><br><b>This action cannot be undone.</b>", function (e, str) {
+        if (e) {
+            removing = true;
+            Log.write("removing subtree...");
+            //remove the subtree
+            st.removeSubtree(label_id, true, 'animate', {
+                hideLabels: false,
+                onComplete: function () {
+                    removing = false;
+                    Log.write("subtree removed");
+                }
+            });
+        }
+    });
+}
+
 
 
 

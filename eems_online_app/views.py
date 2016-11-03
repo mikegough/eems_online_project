@@ -18,48 +18,6 @@ except:
 @csrf_exempt
 def index(request):
 
-    if request.method == 'POST':
-
-        model_id = 'abc345'
-
-        #  User passes back a serialized EEMS command file.
-        eems_command_file = open(r'F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project\eems_online_app\static\eems\command_files\CA_Site_Sensitivity.eem')
-        eems_commands = eems_command_file.read()
-
-        # Get EEMS command changes
-        eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
-        eems_operator_changes_dict = json.loads(eems_operator_changes_string)
-        #print (eems_operator_changes_dict)
-
-        cursor = connection.cursor()
-
-        # Return the pickled representation of the object as a bytes object,
-        pdata = pickle.dumps(eems_commands, pickle.HIGHEST_PROTOCOL)
-
-        # Insert command !!!
-        #cursor.execute("insert into EEMS (ID, MODEL) values (%s,%s)", (model_id, sqlite3.Binary(pdata)))
-
-        query="SELECT MODEL FROM EEMS where ID = '" + model_id + "';"
-        cursor.execute(query)
-        for row in cursor:
-          data = pickle.loads(str(row[0]))
-        print (data)
-
-        #query="SELECT MODEL FROM EEMS where ID = '" + model_id + "';"
-        #cursor.execute(query);
-        #model_state=cursor.fetchone()
-        #print (model_state)
-
-        # ToDO Write changes to a new EEMS file
-
-        # ToDO Run EEMS on new EEMS file
-
-        # ToDO Create New PNG files from EEMS output
-
-        # Necessary to return anything?
-        return HttpResponse(json.dumps(eems_operator_changes_dict))
-
-    else:
         template = 'index.html'
         context = {
             'name': 'eems'
@@ -67,13 +25,18 @@ def index(request):
 
         return render(request, template, context)
 
-
 @csrf_exempt
 def load_eems(request):
+
+        #  User passes back a serialized EEMS command file.
+        # eems_command_file = open(r'F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project\eems_online_app\static\eems\command_files\CA_Site_Sensitivity.eem')
+        # eems_commands = eems_command_file.read()
 
         eems_model_id = get_random_string(length=32)
         eems_model_name = request.POST.get('eems_filename').split('.')[0]
         eems_file_contents = request.POST.get('eems_file_contents')
+
+        # ToDo: Create EEMS program from EEMS file + Pickle that.
 
         # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
         pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
@@ -94,8 +57,33 @@ def load_eems(request):
         print (eems_model_contents)
 
 
-        # ToDO: Convert EEMS file to JSON and return to MEEMSE
+        # ToDO: Convert EEMS file to JSON
 
-        return HttpResponse(eems_model_contents)
+        # ToDO: Get list of available EEMS commands from MPilot EEMS
 
+        # ToDO Create New PNG files from EEMS output
+
+        eems_available_actions = {}
+        eems_available_actions["Add a Node"] = {}
+        eems_available_actions["Delete a Node"] = {}
+
+        eems_available_commands = {}
+        eems_available_commands["read"] = {}
+        eems_available_commands["read"]["optional_args"] = {}
+        eems_available_commands["read"]["required_args"] = {}
+        eems_available_commands["read"]["required_args"]["input_field"] = ["Input Name", "Text"]
+        eems_available_commands["read"]["required_args"]["output_field"] = ["Output Name", "Text"]
+
+
+        context = {
+            "eems_model_id" : eems_model_id,
+            "eems_available_actions": eems_available_actions,
+            "eems_available_commands": eems_available_commands
+        }
+
+        return HttpResponse(json.dumps(context))
+
+def modify_eems(request):
+
+    return HttpResponse("1")
 

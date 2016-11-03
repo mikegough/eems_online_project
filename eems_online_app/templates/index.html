@@ -24,7 +24,7 @@
     <script src="{% static 'config/config_ca.js' %}"></script>
 
     <!-- JIT Model -->
-    <script src="{% static 'json_models/terrestrial_intactness.json' %}"></script>
+    <script src="{% static 'eems/json_models/terrestrial_intactness.json' %}"></script>
 
     <!-- JIT  -->
     <link type="text/css" href="{% static 'js/jit/my_jit/Spacetree.css' %}" rel="stylesheet" />
@@ -63,6 +63,7 @@
         <div id="file_upload_controls">
             <div id="current_file"><b>Current Model:</b> Terrestrial Intactness</div>
             <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>
+            <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
             <label for="files" class="alertify-button alertify-button-ok" id="files_label">
             Browse <img id="open_file" src="{% static '/img/open.svg' %}">
             </label>

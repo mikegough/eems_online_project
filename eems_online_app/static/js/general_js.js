@@ -3,7 +3,8 @@ $( document ).ready(function() {
     init();
 });
 
-$("#run_eems_button").click(function(){run_eems()})
+$("#run_eems_button").click(function(){run_eems()});
+$("#modify_eems_button").click(function(){modify_eems()});
 
 function run_eems() {
 
@@ -45,7 +46,7 @@ function load_eems(eems_filename, eems_file_contents) {
         // handle a successful response
         success: function (json) {
             //results = JSON.parse(json)
-            results = json
+            results = JSON.parse(json)
         },
 
         // handle a non-successful response
@@ -208,3 +209,24 @@ function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
     eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold])
 }
 
+
+function modify_eems(){
+
+    alertify.alert(
+        "<div id='eems_available_action_form'></div>"
+        , function (e, str) {
+            if (e) {
+                var true_threshold = $("#true_threshold").val();
+                var false_threshold = $("#false_threshold").val();
+                updateEEMSThresholds(node_id, alias, true_threshold,false_threshold)
+            }
+        }
+    ).set('labels', {OK:'Cancel'});
+
+    eems_available_actions = results["eems_available_actions"]
+    var count = 0
+    $("#eems_available_action_form").append("<ol id='eems_available_action_form_list'>")
+    $.each(eems_available_actions, function(action){
+        $("#eems_available_action_form_list").append("<li>" + action + "</li><br>")
+    });
+}

@@ -351,6 +351,33 @@ li a.active {
     float:right;
 }
 
+
+#modify_eems_button{
+    float:right;
+}
+
+#close_span {
+    position:absolute;
+    float:right;
+    top:2px;
+    right:3px;
+}
+
+#close_icon {
+    height:14px;
+}
+
+#modify_span {
+    position:absolute;
+    float:right;
+    top:20px;
+    right:2px;
+}
+
+#modify_icon {
+   height:16px;
+}
+
 #weighted_union_table td{
     padding-right:3px;
 }
