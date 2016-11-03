@@ -1,0 +1,318 @@
+# Metadata:
+#   Project: California 2015
+#   Model: High Climate Exposure
+#   Version: 1.0
+#   Author: Tim Sheehan
+#   RunDate: 2015-12-22 16:44:21.403595
+#   InputInfo: Anomaly data provided by Barry Baker
+#   Comments: EEEMS model created from template in python script
+
+
+# Annual climate variables
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_ppt1645_anom.nc,
+    InFieldName = anom,
+    NewFieldName = PrecipAnnAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmax1645_anom.nc,
+    InFieldName = anom,
+    NewFieldName = MaxTempAnnAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmin1645_anom.nc,
+    InFieldName = anom,
+    NewFieldName = MinTempAnnAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighPrecipAnnExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = PrecipAnnAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempAnnExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MaxTempAnnAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempAnnExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MinTempAnnAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# Combine annual exposures
+
+HighAnnualClimateExposureFz = OR (
+    InFieldNames = [
+        HighPrecipAnnExposureFz,
+        HighMaxTempAnnExposureFz,
+        HighMinTempAnnExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# JFM climate variables
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_ppt1645_anom_JFM.nc,
+    InFieldName = anom,
+    NewFieldName = PrecipJFMAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmax1645_anom_JFM.nc,
+    InFieldName = anom,
+    NewFieldName = MaxTempJFMAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmin1645_anom_JFM.nc,
+    InFieldName = anom,
+    NewFieldName = MinTempJFMAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighPrecipJFMExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = PrecipJFMAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempJFMExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MaxTempJFMAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempJFMExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MinTempJFMAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# AMJ climate variables
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_ppt1645_anom_AMJ.nc,
+    InFieldName = anom,
+    NewFieldName = PrecipAMJAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmax1645_anom_AMJ.nc,
+    InFieldName = anom,
+    NewFieldName = MaxTempAMJAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmin1645_anom_AMJ.nc,
+    InFieldName = anom,
+    NewFieldName = MinTempAMJAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighPrecipAMJExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = PrecipAMJAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempAMJExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MaxTempAMJAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempAMJExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MinTempAMJAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# JAS climate variables
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_ppt1645_anom_JAS.nc,
+    InFieldName = anom,
+    NewFieldName = PrecipJASAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmax1645_anom_JAS.nc,
+    InFieldName = anom,
+    NewFieldName = MaxTempJASAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmin1645_anom_JAS.nc,
+    InFieldName = anom,
+    NewFieldName = MinTempJASAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighPrecipJASExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = PrecipJASAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempJASExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MaxTempJASAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempJASExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MinTempJASAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# OND climate variables
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_ppt1645_anom_OND.nc,
+    InFieldName = anom,
+    NewFieldName = PrecipONDAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmax1645_anom_OND.nc,
+    InFieldName = anom,
+    NewFieldName = MaxTempONDAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+READ(
+    InFileName = /Users/timsheehan/Projects/California2015/EEMSModels/InputData/Climate/ensemble_tmin1645_anom_OND.nc,
+    InFieldName = anom,
+    NewFieldName = MinTempONDAnomaly,
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighPrecipONDExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = PrecipONDAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempONDExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MaxTempONDAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempONDExposureFz = CVTTOFUZZYCURVE(
+    InFieldName = MinTempONDAnomaly,
+    RawValues =   [-8, -4,   -2, -1,  -0.5, .5, 1,   2, 4,      8],
+    FuzzyValues = [1, 0.5, 0,  -0.5, -1,    -1,  -0.5, 0, 0.5, 1.0 ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# Combine seasonal exposures
+
+HighPrecipSeasonalExposureFz = OR (
+    InFieldNames = [
+        HighPrecipJFMExposureFz,
+        HighPrecipAMJExposureFz,
+        HighPrecipJASExposureFz,
+        HighPrecipONDExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMinTempSeasonalExposureFz = OR (
+    InFieldNames = [
+        HighMinTempJFMExposureFz,
+        HighMinTempAMJExposureFz,
+        HighMinTempJASExposureFz,
+        HighMinTempONDExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighMaxTempSeasonalExposureFz = OR (
+    InFieldNames = [
+        HighMaxTempJFMExposureFz,
+        HighMaxTempAMJExposureFz,
+        HighMaxTempJASExposureFz,
+        HighMaxTempONDExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+HighSeasonalClimateExposureFz = OR (
+    InFieldNames = [
+        HighPrecipSeasonalExposureFz,
+        HighMinTempSeasonalExposureFz,
+        HighMaxTempSeasonalExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+# Direct climate exposure
+
+HighDirectClimateExposureFz = OR(
+    InFieldNames = [
+        HighAnnualClimateExposureFz,
+        HighSeasonalClimateExposureFz
+        ],
+    OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+    )
+
+################
+
+# HighAridityExposureFz = CVTTOFUZZYCURVE(
+#     InFieldName = AridityPercentExposure,
+#     RawValues =   [-96, -48, -24,  -12, -6, 6,    12, 24,  48,  96],
+# #    RawValues =   [-64, -32, -16,   -8, -4, 4,     8, 16,  32,  64],
+#     FuzzyValues = [1,   0.5,   0, -0.5, -1, -1, -0.5,  0, 0.5, 1.0],
+#     OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+#     )
+
+# HighDirectClimateExposureFz = OR(
+#     InFieldNames = [
+#         HighTempAnnExposureFz,
+#         HighPrecipAnnExposureFz
+#         ],
+#     OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+#     )
+
+# HighClimateExposureFz = OR(
+#     InFieldNames = [
+#         HighDirectClimateExposureFz,
+#         HighAridityExposureFz
+#         ],
+#     OutFileName = /Users/timsheehan/Projects/California2015/EEMSModels/ClimateExposure/1.0/ensemble/1645/CAClimateExposure.nc
+#     )
+
