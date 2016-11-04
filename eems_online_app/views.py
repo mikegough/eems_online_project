@@ -118,7 +118,7 @@ def run_eems(request):
     for row in cursor:
         modified_eems_model = pickle.loads(str(row[0]))
 
-    # ToDo: Apply changes in the eems_operator_changes_string variable to the EEMS model in stored in eems_model
+    # ToDo: Apply changes in the eems_operator_changes_string variable to the EEMS model in stored in modified_eems_model
     # ToDo: Over-write the model in the EEMS_USER_MODELS Database.
     # ToDo: Run EEMS on the new model
     # ToDo: Create PNGs stored in folder that matches the user id.
