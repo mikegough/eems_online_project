@@ -1,5 +1,17 @@
-$('input:file').change(
-    function(e){
+// Model selection from dropdown
+$('#eems_model_dropdown').change(function(){
+        eems_model = this.value.split(".")[0]
+        eems_file_name = this.value
+        eems_file = 'static/eems/json_models/' + this.value
+        $.get(eems_file, function(results) {
+            json=JSON.parse(results)
+            init(json,eems_file_name)
+        });
+    }
+);
+
+// File upload
+$('input:file').change(function(e){
         var filename=e.target.files[0].name
         $("#current_file").html("<b>Current Model:</b> " + filename.replace('.json','').replace('.JSON',''))
         var startByte = e.target.getAttribute('data-startbyte');
@@ -7,6 +19,7 @@ $('input:file').change(
         readBlob(startByte, endByte, filename);
     }
 );
+
 
 function readBlob(opt_startByte, opt_stopByte, filename) {
 
@@ -27,10 +40,9 @@ function readBlob(opt_startByte, opt_stopByte, filename) {
       if (evt.target.readyState == FileReader.DONE) { // DONE == 2
         if  (filename.indexOf(".json") >= 0)
           {
-              json_string = JSON.stringify(eval("(" + evt.target.result + ")"));
-              json = JSON.parse(json_string);
-              $("#infovis").empty()
-              init()
+              var json_string = JSON.stringify(eval("(" + evt.target.result + ")"));
+              var json = JSON.parse(json_string);
+              init(json,filename)
           }
        else if  (filename.indexOf(".eem") >= 0)
           {

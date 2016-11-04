@@ -2,6 +2,15 @@
 <html>
 <head>
 
+    <script>
+        eems_available_commands = {{ eems_available_commands_dict | safe }}
+
+        //Default EEMS Model
+        eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
+        eems_file_name = eems_file.split("/").pop();
+        eems_model = eems_file_name.split(".")[0];
+    </script>
+
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.css" />
     <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
@@ -36,7 +45,6 @@
     <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.bootstrap.css' %}" rel="stylesheet" />
     <script src="{% static 'deps/alertify/alertify.js-0.3.11/lib/alertify.min.js' %}"></script>
 
-
 </head>
 <body>
 
@@ -61,9 +69,17 @@
         <div id="log"></div>
         <div id="infovis"></div>
         <div id="file_upload_controls">
-            <div id="current_file"><b>Current Model:</b> Terrestrial Intactness</div>
+            <div id="current_file"><b>Current Model:</b>
+                <select id="eems_model_dropdown">
+                    <option value="HighSiteSensitivityFz.json">Site Sensitivity</option>
+                    <option value="HighDirectClimateExposureFz.json">Climate Exposure</option>
+                    <option value="HiPotImpactFz.json">Potential Impacts</option>
+                </select>
+            </div>
             <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>
+            <!--
             <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
+            -->
             <label for="files" class="alertify-button alertify-button-ok" id="files_label">
             Browse <img id="open_file" src="{% static '/img/open.svg' %}">
             </label>
@@ -80,7 +96,6 @@
 
     <!-- General Javascript -->
     <script src="{% static 'js/general_js.js' %}"></script>
-
 
 </body>
 

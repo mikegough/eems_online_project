@@ -62,7 +62,8 @@ function setLabelScaling() {
 
 }
 
-function init(){
+function init(json, eems_file_name){
+   $("#infovis").empty()
    JitInitializationComplete=true
     //Create a new ST instance
     st = new $jit.ST({
@@ -153,7 +154,7 @@ function init(){
             layer_index=node.name.split(':')[1]
 
             if (typeof(node.data.short_desc) != 'undefined') {
-                label.innerHTML = alias + "<br>" + "<div id='" + node.id + "'class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
+                label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
             } else {
                 label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='This is the operation used to create this node'> " + node.data.operation + "</div>";
             }
@@ -206,7 +207,8 @@ function init(){
 
                 st.onClick(node.id, { Move: m });
 
-            	if(normal.checked) {
+                //if( normal.checked) {
+                if( 1==1) {
             	st.onClick(node.id);
 
                     if (EEMSParams['hasSubNodeImageOverlays'] == true) {
@@ -216,16 +218,16 @@ function init(){
 
                         eems_node_image_name = eems_file_name.replace(".eem", "") + "_" + node.id
                         //Note: have to do swapImageOverlay before swapLegend
-                        swapImageOverlay(eems_node_image_name, 'EEMSmodel')
+                        //swapImageOverlay(eems_node_image_name, 'EEMSmodel')
 
                         //For stretched
                         if (renderer == 'stretched') {
                             //swapLegend(node.id + "_legend", node.name, 'EEMSmodelTREE_Stretched')
-                            swapLegend(node.id, node.name, 'EEMSmodelTREE_Stretched')
+                            //swapLegend(node.id, node.name, 'EEMSmodelTREE_Stretched')
                         }
                         //For classified (original)
                         else {
-                            swapLegend(modelForTree, node.name, 'EEMSmodelTREE_Standard')
+                            //swapLegend(modelForTree, node.name, 'EEMSmodelTREE_Standard')
                         }
                     }
                     $('#legendHeader').html(alias)

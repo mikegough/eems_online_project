@@ -1,35 +1,21 @@
 $( document ).ready(function() {
+
     $("#files").prop('value', '');
-    init();
+
+    // Set the eems model dropdown menu to the first option on page load.
+    $("#eems_model_dropdown").val($("#eems_model_dropdown option:first").val());
 });
 
-$("#run_eems_button").click(function(){run_eems()});
+
+
+$.get(eems_file, function(results) {
+    json=JSON.parse(results)
+    $("#infovis").empty()
+    init(json)
+});
+
+$("#run_eems_button").click(function(){run_eems(eems_model)});
 $("#modify_eems_button").click(function(){modify_eems()});
-
-function run_eems() {
-
-    eems_operator_changes_string = JSON.stringify(eems_operator_changes)
-
-    $.ajax({
-        url: "", // the endpoint
-        type: "POST", // http method
-        data: {
-            'eems_operator_changes_string':eems_operator_changes_string
-        },
-
-        // handle a successful response
-        success: function (json) {
-            results = JSON.parse(json)
-        },
-
-        // handle a non-successful response
-        error: function (xhr, errmsg, err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                " <a href='#' class='close'>&times;</a></div>");
-            console.log(xhr.status + ": " + xhr.responseText);
-        }
-    });
-}
 
 function load_eems(eems_filename, eems_file_contents) {
 
@@ -58,11 +44,37 @@ function load_eems(eems_filename, eems_file_contents) {
     });
 }
 
+function run_eems() {
+
+    eems_operator_changes_string = JSON.stringify(eems_operator_changes)
+
+    $.ajax({
+        url: "/run_eems", // the endpoint
+        type: "POST", // http method
+        data: {
+            'eems_model': eems_model,
+            'eems_operator_changes_string': eems_operator_changes_string
+        },
+
+        // handle a successful response
+        success: function (json) {
+            results = JSON.parse(json)
+        },
+
+        // handle a non-successful response
+        error: function (xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>");
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+}
+
+
 function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
 
     var children_array = children_string.split(',');
 
-    // Convert to Fuzzy (available options)
     if (node_current_operator ==  "Convert to Fuzzy"){
 
         alertify.confirm(
@@ -74,7 +86,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
                 if (e) {
                     var true_threshold = $("#true_threshold").val();
                     var false_threshold = $("#false_threshold").val();
-                    updateEEMSThresholds(node_id, alias, true_threshold,false_threshold)
+                    updateEEMSThresholds(node_id, alias, true_threshold,false_threshold);
                 }
             }
         )
@@ -95,7 +107,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
             , function (e, str) {
                 if (e) {
                     var new_operator = $("#new_operator_select option:selected").text();
-                    updateEEMSOperator(node_id, alias, new_operator)
+                    updateEEMSOperator(node_id, alias, new_operator);
                 }
             }
         );
@@ -117,21 +129,29 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
             "<div id='operator_options'></div>" +
             "</div>"
 
-            // On Confirm
+            // On Confirm...
             , function (e, str) {
                 if (e) {
                     var new_operator = $("#new_operator_select option:selected").text();
 
                     // Get options
-                    var options={}
+                    var options={};
 
-                    $('#options *').filter(':selected').each(function(a,b){
-                        options["truest_or_falsest"]=b.value
-                    });
+                    var new_operator = $("#new_operator_select").val();
 
-                    $('#options *').filter(':input').each(function(a,b){
-                            options[b.name]=b.value
-                    });
+                    if (new_operator == "Weighted Union") {
+
+                        $('#options *').filter(':selected').each(function (a, b) {
+                            options["truest_or_falsest"] = b.value
+                        });
+                    }
+
+                    else if (new_operator == "Selected Union") {
+
+                        $('#options *').filter(':input').each(function (a, b) {
+                            options[b.name] = b.value
+                        });
+                    }
 
                     // Call function to store new eems operator and options in a dictionary
                     updateEEMSOperator(node_id, alias, new_operator, options)
@@ -143,90 +163,90 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     // Operator specific options
     $("#new_operator_select").on("change", function(){
 
-        var new_operator=this.value
+        var new_operator=this.value;
 
-        $("#operator_options").empty()
+        $("#operator_options").empty();
 
         switch(new_operator) {
 
             case "Weighted Union":
 
                 // Create the options form.
-                $("#operator_options").append("<form id='options'>")
-                $("#options").append("<table id='weighted_union_table'>")
+                $("#operator_options").append("<form id='options'>");
+                $("#options").append("<table id='weighted_union_table'>");
+
+                // Iterate over each child and create an input weighted union field.
                 $.each(children_array, function(index,child){
 
                     $("#weighted_union_table").append("<tr><td>" +child + "</td><td><input type='text' name='" + child + "' size=3></td></tr>")
 
-                })
-                $("#options").append("</table>")
-                $("#operator_options").append("</form>")
+                });
+                $("#options").append("</table>");
+                $("#operator_options").append("</form>");
                 break;
 
             case "Selected Union":
 
                 // Create the options form.
-                $("#operator_options").append("<form id='options'>")
+                $("#operator_options").append("<form id='options'>");
 
-                $("#options").append("<b>Select the: </b>")
+                $("#options").append("<b>Select the: </b>");
 
                 $("#options").append(
                     "<select>" +
                     "<option name='truest_or_falsest' value='t'>Truest</option>" +
                     "<option name='truest_or_falsest' value='f'>Falsest</option>" +
                     "</select>"
-                )
+                );
 
                 $("#options").append(
                     " <input name='truest_or_falsest_count' size='3'>"
-                )
+                );
 
-                $("#operator_options").append("</form>")
+                $("#operator_options").append("</form>");
                 break;
         }
 
-    })
+    });
 
     $("#new_operator_select option:contains(" + node_current_operator + ")").attr('selected', 'selected');
 
 }
 
-eems_operator_changes={}
+eems_operator_changes={};
 
 function updateEEMSOperator(node_id, alias, new_operator, options){
-    eems_operator_changes[node_id]=[]
-    eems_operator_changes[node_id].push(new_operator)
-    eems_operator_changes[node_id].push(options)
+    eems_operator_changes[node_id]=[];
+    eems_operator_changes[node_id].push(new_operator);
+    eems_operator_changes[node_id].push(options);
 
-    $("#" + node_id + "_current_operator").html(new_operator)
-    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style")
+    $("#" + node_id + "_current_operator").html(new_operator);
+    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
 }
 
 function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
-    //alertify.success(alias  + " operator will be changed to " + new_operator);
-    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style")
-    eems_operator_changes[node_id]=[]
-    eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold])
+    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
+    eems_operator_changes[node_id]=[];
+    eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold]);
 }
 
-
 function modify_eems(){
-
     alertify.alert(
         "<div id='eems_available_action_form'></div>"
         , function (e, str) {
             if (e) {
                 var true_threshold = $("#true_threshold").val();
                 var false_threshold = $("#false_threshold").val();
-                updateEEMSThresholds(node_id, alias, true_threshold,false_threshold)
+                updateEEMSThresholds(node_id, alias, true_threshold,false_threshold);
             }
         }
     ).set('labels', {OK:'Cancel'});
 
-    eems_available_actions = results["eems_available_actions"]
+    eems_available_actions = results["eems_available_actions"];
     var count = 0
-    $("#eems_available_action_form").append("<ol id='eems_available_action_form_list'>")
+    $("#eems_available_action_form").append("<ol id='eems_available_action_form_list'>");
     $.each(eems_available_actions, function(action){
         $("#eems_available_action_form_list").append("<li>" + action + "</li><br>")
     });
 }
+
