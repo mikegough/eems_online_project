@@ -4,25 +4,59 @@ $( document ).ready(function() {
 
     // Set the eems model dropdown menu to the first option on page load.
     $("#eems_model_dropdown").val($("#eems_model_dropdown option:first").val());
+
+    // Add the list of available eems_online_models to the dropdown menu
+    $.each(eems_online_models_json, function(key,value){
+        var eems_online_json_file =  value.toString().split(',')[1];
+        var eems_online_model_name =  value.toString().split(',')[0];
+        $("#eems_model_dropdown").append("<option value='" + eems_online_json_file + "'>" + eems_online_model_name + "</option>");
+    });
+
+    //Initialize MEEMSE
+    init_eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
+    init_eems_file_name = init_eems_file.split("/").pop();
+    init_eems_model = init_eems_file_name.split(".")[0];
+    $.get(init_eems_file, function(results) {
+        json = JSON.parse(results);
+        init(json,init_eems_file_name);
+    });
+
 });
 
+// Change model (drop-down)
+$('#eems_model_dropdown').change(function(){
 
+        // Get the JSON file and render the model
+        var json_file =  "static/eems/json_models/" + this.value;
+        var model_name =  "static/eems/json_models/" + this.text;
 
-$.get(eems_file, function(results) {
-    json=JSON.parse(results)
-    $("#infovis").empty()
-    init(json)
-});
+        $.get(json_file, function(results) {
+            json = JSON.parse(results);
+            init(json,model_name);
+        });
+    }
+);
 
-$("#run_eems_button").click(function(){run_eems(eems_model)});
-$("#modify_eems_button").click(function(){modify_eems()});
+// File upload button
+$('input:file').change(function(e){
+        var filename=e.target.files[0].name
+        $("#current_file").html("<b>Current Model:</b> " + filename.replace('.json','').replace('.JSON',''))
+        var startByte = e.target.getAttribute('data-startbyte');
+        var endByte = e.target.getAttribute('data-endbyte');
 
-function load_eems(eems_filename, eems_file_contents) {
+        // function defined in the file_upload.js script.
+        readBlob(startByte, endByte, filename);
+        // Calls function below
+    }
+);
 
-    alert(eems_file_contents)
+// Loads a user's EEMS command file into the database.
+function load_eems_user_model(eems_filename, eems_file_contents) {
+
+    alert(eems_file_contents);
 
     $.ajax({
-        url: "/load_eems", // the endpoint
+        url: "/load_eems_user_model", // the endpoint
         type: "POST", // http method
         data: {
             'eems_filename': eems_filename,
@@ -32,7 +66,7 @@ function load_eems(eems_filename, eems_file_contents) {
         // handle a successful response
         success: function (json) {
             //results = JSON.parse(json)
-            results = JSON.parse(json)
+            eems_user_model_id = JSON.parse(json["eems_model_id"])
         },
 
         // handle a non-successful response
@@ -44,6 +78,10 @@ function load_eems(eems_filename, eems_file_contents) {
     });
 }
 
+// Run EEMS Button
+$("#run_eems_button").click(function(){run_eems(eems_model)});
+
+// Send the user defined changes to the back end and run EEMS.
 function run_eems() {
 
     eems_operator_changes_string = JSON.stringify(eems_operator_changes)
@@ -70,13 +108,12 @@ function run_eems() {
     });
 }
 
-
+// On settings icon click, create a dialog box that allows the user to change the EEMS operator.
 function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
 
     var children_array = children_string.split(',');
 
-    if (node_current_operator ==  "Convert to Fuzzy"){
-
+    if (node_current_operator == "Convert To Fuzzy"){
         alertify.confirm(
             "<div id='change_operator_form'><b>Node: </b>" + alias +
             "<p><b>True Threshold: </b> <input id='true_threshold' type='text' size='6'>" +
@@ -89,7 +126,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
                     updateEEMSThresholds(node_id, alias, true_threshold,false_threshold);
                 }
             }
-        )
+        );
 
     }
 
@@ -228,25 +265,5 @@ function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
     $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
     eems_operator_changes[node_id]=[];
     eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold]);
-}
-
-function modify_eems(){
-    alertify.alert(
-        "<div id='eems_available_action_form'></div>"
-        , function (e, str) {
-            if (e) {
-                var true_threshold = $("#true_threshold").val();
-                var false_threshold = $("#false_threshold").val();
-                updateEEMSThresholds(node_id, alias, true_threshold,false_threshold);
-            }
-        }
-    ).set('labels', {OK:'Cancel'});
-
-    eems_available_actions = results["eems_available_actions"];
-    var count = 0
-    $("#eems_available_action_form").append("<ol id='eems_available_action_form_list'>");
-    $.each(eems_available_actions, function(action){
-        $("#eems_available_action_form_list").append("<li>" + action + "</li><br>")
-    });
 }
 

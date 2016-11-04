@@ -18,18 +18,20 @@ except:
 @csrf_exempt
 def index(request):
 
-        eems_online_models=[]
-        # Connect to the database
         cursor = connection.cursor()
-        # Retreive EEMS data from Database
-        #query="SELECT MODEL FROM EEMS_ONLINE_MODELS;"
-        #cursor.execute(query)
-        #for row in cursor:
-        #    eems_online_model.append = row[0]
-        #print (eems_model_models)
 
-        # ToDo: Get EEMS Commands from eems?
-        # Command: Form inputs
+        # GET EEMS Models
+        eems_online_models={}
+        query="SELECT ID, NAME, JSON_FILE_NAME FROM EEMS_ONLINE_MODELS"
+        cursor.execute(query)
+        for row in cursor:
+            eems_online_models[str(row[0])]=[]
+            eems_online_models[str(row[0])].append([row[1], row[2]])
+
+        eems_online_models_json=json.dumps(eems_online_models)
+
+        # GET EEMS Commands
+        # ToDo: Get EEMS Commands from eems? Something like this...
         eems_available_commands = {}
         eems_available_commands["Union"] = ''
         eems_available_commands["Weighted Union"] = "Each child <Input Text Field>"
@@ -37,25 +39,21 @@ def index(request):
 
         template = 'index.html'
         context = {
-            'eems_available_commands_dict': eems_available_commands
+            'eems_available_commands_dict': eems_available_commands,
+            'eems_online_models_json': eems_online_models_json
         }
 
         return render(request, template, context)
 
 @csrf_exempt
-def load_eems(request):
+def load_eems_user_model(request):
 
         #  For user uploaded EEMS file
 
         #  User passes back a serialized EEMS command file.
-        # eems_command_file = open(r'F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project\eems_online_app\static\eems\command_files\CA_Site_Sensitivity.eem')
-        # eems_commands = eems_command_file.read()
-
         eems_model_id = get_random_string(length=32)
         eems_model_name = request.POST.get('eems_filename').split('.')[0]
         eems_file_contents = request.POST.get('eems_file_contents')
-
-        # ToDo: Create EEMS program from EEMS file + Pickle that.
 
         # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
         pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)

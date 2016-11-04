@@ -3,12 +3,10 @@
 <head>
 
     <script>
-        eems_available_commands = {{ eems_available_commands_dict | safe }}
 
-        //Default EEMS Model
-        eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
-        eems_file_name = eems_file.split("/").pop();
-        eems_model = eems_file_name.split(".")[0];
+    eems_available_commands = {{ eems_available_commands_dict | safe }}
+    eems_online_models_json = {{ eems_online_models_json | safe}}
+
     </script>
 
     <!-- Leaflet -->
@@ -71,9 +69,6 @@
         <div id="file_upload_controls">
             <div id="current_file"><b>Current Model:</b>
                 <select id="eems_model_dropdown">
-                    <option value="HighSiteSensitivityFz.json">Site Sensitivity</option>
-                    <option value="HighDirectClimateExposureFz.json">Climate Exposure</option>
-                    <option value="HiPotImpactFz.json">Potential Impacts</option>
                 </select>
             </div>
             <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>

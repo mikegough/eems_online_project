@@ -1,24 +1,3 @@
-// Model selection from dropdown
-$('#eems_model_dropdown').change(function(){
-        eems_model = this.value.split(".")[0]
-        eems_file_name = this.value
-        eems_file = 'static/eems/json_models/' + this.value
-        $.get(eems_file, function(results) {
-            json=JSON.parse(results)
-            init(json,eems_file_name)
-        });
-    }
-);
-
-// File upload
-$('input:file').change(function(e){
-        var filename=e.target.files[0].name
-        $("#current_file").html("<b>Current Model:</b> " + filename.replace('.json','').replace('.JSON',''))
-        var startByte = e.target.getAttribute('data-startbyte');
-        var endByte = e.target.getAttribute('data-endbyte');
-        readBlob(startByte, endByte, filename);
-    }
-);
 
 
 function readBlob(opt_startByte, opt_stopByte, filename) {
@@ -48,7 +27,7 @@ function readBlob(opt_startByte, opt_stopByte, filename) {
           {
               var eems_file_contents = evt.target.result;
               $("#infovis").empty()
-              load_eems(filename, eems_file_contents)
+              load_eems_user_model(filename, eems_file_contents)
           }
       }
     };
