@@ -88,10 +88,41 @@ def load_eems_user_model(request):
 
 @csrf_exempt
 def run_eems(request):
-    eems_model = request.POST.get('eems_model')
+
+    eems_model_id = request.POST.get('eems_model_id')
+    eems_model_modified_id = request.POST.get('eems_model_modified_id')
     eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
 
-    print eems_model
-    print eems_operator_changes_string
+    print eems_model_modified_id
 
-    return HttpResponse("1")
+    cursor = connection.cursor()
+
+    # If this is the first run, make a copy of the model and store it in the user models database.
+    if eems_model_modified_id == '':
+        eems_model_modified_id = get_random_string(length=32)
+
+        query = "SELECT NAME, MODEL FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+        cursor.execute(query)
+        for row in cursor:
+            eems_model_name = row[0]
+            eems_model = row[1]
+
+        pdata = pickle.dumps(eems_model, pickle.HIGHEST_PROTOCOL)
+
+        cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_modified_id, eems_model_name, sqlite3.Binary(pdata)))
+
+    # Get the current state of the model  out of the database
+    query = "SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % eems_model_modified_id
+
+    cursor.execute(query)
+    for row in cursor:
+        modified_eems_model = pickle.loads(str(row[0]))
+
+    # ToDo: Apply changes in the eems_operator_changes_string variable to the EEMS model in stored in eems_model
+    # ToDo: Over-write the model in the EEMS_USER_MODELS Database.
+    # ToDo: Run EEMS on the new model
+    # ToDo: Create PNGs stored in folder that matches the user id.
+
+    print modified_eems_model
+
+    return HttpResponse(eems_model_modified_id)

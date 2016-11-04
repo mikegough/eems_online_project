@@ -7,32 +7,41 @@ $( document ).ready(function() {
 
     // Add the list of available eems_online_models to the dropdown menu
     $.each(eems_online_models_json, function(key,value){
-        var eems_online_json_file =  value.toString().split(',')[1];
+
         var eems_online_model_name =  value.toString().split(',')[0];
-        $("#eems_model_dropdown").append("<option value='" + eems_online_json_file + "'>" + eems_online_model_name + "</option>");
+        $("#eems_model_dropdown").append("<option value='" + key + "'>" + eems_online_model_name + "</option>");
     });
 
     //Initialize MEEMSE
     init_eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
     init_eems_file_name = init_eems_file.split("/").pop();
     init_eems_model = init_eems_file_name.split(".")[0];
+    eems_model_id = 1;
     $.get(init_eems_file, function(results) {
         json = JSON.parse(results);
         init(json,init_eems_file_name);
     });
+
+    eems_model_modified_id = '';
 
 });
 
 // Change model (drop-down)
 $('#eems_model_dropdown').change(function(){
 
-        // Get the JSON file and render the model
-        var json_file =  "static/eems/json_models/" + this.value;
-        var model_name =  "static/eems/json_models/" + this.text;
+        eems_model_modified_id = '';
 
-        $.get(json_file, function(results) {
-            json = JSON.parse(results);
-            init(json,model_name);
+        // Get the JSON file and render the model
+        var eems_online_json_file_name =  eems_online_models_json[this.value][0][1];
+        var path_to_json_file =  "static/eems/json_models/" + eems_online_json_file_name;
+
+        var eems_online_model_name = eems_online_models_json[this.value][0][0];
+
+        eems_model_id = this.value
+
+        $.get(path_to_json_file, function(results) {
+            var json_model = JSON.parse(results);
+            init(json_model,eems_online_model_name);
         });
     }
 );
@@ -79,7 +88,7 @@ function load_eems_user_model(eems_filename, eems_file_contents) {
 }
 
 // Run EEMS Button
-$("#run_eems_button").click(function(){run_eems(eems_model)});
+$("#run_eems_button").click(function(){run_eems(eems_model_id)});
 
 // Send the user defined changes to the back end and run EEMS.
 function run_eems() {
@@ -90,13 +99,14 @@ function run_eems() {
         url: "/run_eems", // the endpoint
         type: "POST", // http method
         data: {
-            'eems_model': eems_model,
+            'eems_model_id': eems_model_id,
+            'eems_model_modified_id': eems_model_modified_id,
             'eems_operator_changes_string': eems_operator_changes_string
         },
 
         // handle a successful response
-        success: function (json) {
-            results = JSON.parse(json)
+        success: function (response) {
+            eems_model_modified_id = response
         },
 
         // handle a non-successful response
