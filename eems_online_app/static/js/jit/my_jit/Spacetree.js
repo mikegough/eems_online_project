@@ -166,17 +166,18 @@ function init(json, eems_file_name){
             });
             */
 
-            // Get a list of direct children for this node.
-            var children=[]
+            // Get a list of direct children for this node for making the form.
+
+            eems_children_dict[node.id]=[]
 
             node.eachSubnode(function(child){
-               children.push(child.name);
+               //eems_children_dict[node.id].push(child)
+               eems_children_dict[node.id].push(child.name)
             });
-
 
             if (node.data.operation != "Read") {
                 label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"
-                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + children + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
             if (EEMSParams['hasSubNodeImageOverlays']){

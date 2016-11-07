@@ -8,8 +8,8 @@ $( document ).ready(function() {
     // Add the list of available eems_online_models to the dropdown menu
     $.each(eems_online_models_json, function(key,value){
 
-        var eems_online_model_name =  value.toString().split(',')[0];
-        $("#eems_model_dropdown").append("<option value='" + key + "'>" + eems_online_model_name + "</option>");
+        var available_eems_online_model_name =  value.toString().split(',')[0];
+        $("#eems_model_dropdown").append("<option value='" + key + "'>" + available_eems_online_model_name + "</option>");
     });
 
     //Initialize MEEMSE
@@ -22,7 +22,20 @@ $( document ).ready(function() {
         init(json,init_eems_file_name);
     });
 
+    eems_online_model_name = init_eems_model;
+
     eems_model_modified_id = '';
+
+    eems_bundled_commands = {}
+    eems_bundled_commands["action"] = "ProcessCmds"
+    eems_bundled_commands["cmds"] = []
+    eems_bundled_commands["cmds"].push({"action": "LoadProg", "progNm": eems_online_model_name})
+
+
+    eems_operator_changes_json = {}
+    eems_operator_changes_count = 1;
+
+    eems_children_dict = {}
 
 });
 
@@ -35,7 +48,7 @@ $('#eems_model_dropdown').change(function(){
         var eems_online_json_file_name =  eems_online_models_json[this.value][0][1];
         var path_to_json_file =  "static/eems/json_models/" + eems_online_json_file_name;
 
-        var eems_online_model_name = eems_online_models_json[this.value][0][0];
+        eems_online_model_name = eems_online_models_json[this.value][0][0];
 
         eems_model_id = this.value
 
@@ -43,6 +56,12 @@ $('#eems_model_dropdown').change(function(){
             var json_model = JSON.parse(results);
             init(json_model,eems_online_model_name);
         });
+
+        eems_bundled_commands = {}
+        eems_bundled_commands["action"] = "ProcessCmds"
+        eems_bundled_commands["cmds"] = []
+        eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name})
+
     }
 );
 
@@ -93,7 +112,10 @@ $("#run_eems_button").click(function(){run_eems(eems_model_id)});
 // Send the user defined changes to the back end and run EEMS.
 function run_eems() {
 
-    eems_operator_changes_string = JSON.stringify(eems_operator_changes)
+    eems_bundled_commands["cmds"].push({"action": "RunProg"})
+
+    eems_operator_changes_string = JSON.stringify(eems_bundled_commands)
+
 
     $.ajax({
         url: "/run_eems", // the endpoint
@@ -116,6 +138,8 @@ function run_eems() {
             console.log(xhr.status + ": " + xhr.responseText);
         }
     });
+
+	
 }
 
 // On settings icon click, create a dialog box that allows the user to change the EEMS operator.
@@ -263,9 +287,26 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
 eems_operator_changes={};
 
 function updateEEMSOperator(node_id, alias, new_operator, options){
-    eems_operator_changes[node_id]=[];
-    eems_operator_changes[node_id].push(new_operator);
-    eems_operator_changes[node_id].push(options);
+
+    update_cmd_dict = {}
+
+    update_cmd_dict["action"] = 'UpdateCmd';
+    update_cmd_dict["cmd"]={}
+    update_cmd_dict["cmd"]["rsltNm"] = node_id;
+    update_cmd_dict["cmd"]["cmd"] = new_operator;
+    update_cmd_dict["cmd"]["params"] = {};
+
+    update_cmd_dict["cmd"]["params"]["InFieldNames"] = [];
+
+    $.each(eems_children_dict[node_id], function(count, value) {
+        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+        var child_name=value.split(":")[0]
+        update_cmd_dict["cmd"]["params"]["InFieldNames"].push(child_name);
+    });
+
+    eems_bundled_commands["cmds"].push(update_cmd_dict)
+
+    eems_operator_changes_count+=1;
 
     $("#" + node_id + "_current_operator").html(new_operator);
     $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");

@@ -93,6 +93,10 @@ def run_eems(request):
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
     eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
 
+    eems_operator_changes_dict = json.loads(eems_operator_changes_string)
+
+    print json.dumps(eems_operator_changes_dict,indent=2)
+
     print eems_model_modified_id
 
     cursor = connection.cursor()
@@ -118,11 +122,14 @@ def run_eems(request):
     for row in cursor:
         modified_eems_model = pickle.loads(str(row[0]))
 
+    command = {}
+    command['action']={}
+
     # ToDo: Apply changes in the eems_operator_changes_string variable to the EEMS model stored in modified_eems_model
     # ToDo: Over-write the model in the EEMS_USER_MODELS Database.
     # ToDo: Run EEMS on the new model
     # ToDo: Create PNGs stored in folder that matches the user id.
 
-    print modified_eems_model
+    #print modified_eems_model
 
     return HttpResponse(eems_model_modified_id)
