@@ -238,6 +238,8 @@ function init(json, eems_file_name){
             	}
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
+
+                /*
                if(!node.anySubnode("exist")) {
                      node['collapsed']=true;
                      node.eachSubgraph(function(subnode) {
@@ -264,6 +266,7 @@ function init(json, eems_file_name){
                    st.onClick(node.id, { Move: m });
 
                }
+               */
 
             };
 
