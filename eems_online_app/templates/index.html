@@ -68,8 +68,10 @@
         <div id="infovis"></div>
         <div id="file_upload_controls">
             <div id="current_file"><b>Current Model:</b>
-                <select id="eems_model_dropdown">
+                <select id="eems_model_dropdown" name="eems_model_dropdown">
+                   <option value="0"></option>
                 </select>
+                <div id="user_defined_model"></div>
             </div>
             <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>
             <!--

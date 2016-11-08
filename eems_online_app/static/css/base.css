@@ -378,6 +378,29 @@ li a.active {
    height:16px;
 }
 
-#weighted_union_table td{
+#weighted_union_table td {
     padding-right:3px;
+}
+
+#model_run_complete_alert {
+}
+
+#model_run_complete_alert_text{
+    color: #666565;
+	position: absolute;
+	font-size: 20px;
+	margin-left: 25px;
+}
+
+#check_icon {
+	height: 40px;
+	margin-left: 30px;
+	top: -10px;
+	position: relative;
+}
+
+#user_defined_model {
+	position: relative;
+	float: right;
+	padding-left: 5px;
 }

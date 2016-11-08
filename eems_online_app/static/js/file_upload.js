@@ -1,5 +1,3 @@
-
-
 function readBlob(opt_startByte, opt_stopByte, filename) {
 
     var files = document.getElementById('files').files;
