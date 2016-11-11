@@ -370,7 +370,7 @@ li a.active {
 #modify_span {
     position:absolute;
     float:right;
-    top:20px;
+    top:3px;
     right:2px;
 }
 
@@ -403,4 +403,8 @@ li a.active {
 	position: relative;
 	float: right;
 	padding-left: 5px;
+}
+
+#form_div {
+	padding: 0px 0px 0px 10px;
 }

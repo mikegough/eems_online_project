@@ -1,9 +1,6 @@
 var labelType, useGradients, nativeTextSupport, animate;
 modelForTree="intactness"
 resultsJSON=""
-
-//default renderer
-//renderer=EEMSParams['defaultRenderer']
 renderer="continuous"
 
 function switchRenderer(node_id,renderer_arg){
@@ -176,7 +173,7 @@ function init(json, eems_file_name){
             });
 
             if (node.data.operation != "Read") {
-                label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"
+                /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
                 label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
@@ -238,35 +235,7 @@ function init(json, eems_file_name){
             	}
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
-
-                /*
-               if(!node.anySubnode("exist")) {
-                     node['collapsed']=true;
-                     node.eachSubgraph(function(subnode) {
-                                               if(node.id!=subnode.id)
-                                                 {
-                                                    subnode.drawn=false;
-                                                    subnode.setData('alpha',1);
-                                                 }
-                                });
-                   st.onClick(node.id, { Move: m });
-
-               } else {
-                    node['collapsed']=false;
-
-                        node.eachSubgraph(function(subnode) {
-                               if(node.id!=subnode.id)
-                                 {
-                                  subnode.exist=false;
-                                  subnode.drawn=false;
-                                  subnode.setData('alpha',0);
-                                 }
-
-                                });
-                   st.onClick(node.id, { Move: m });
-
-               }
-               */
+               // DELETED //
 
             };
 
@@ -370,7 +339,7 @@ function init(json, eems_file_name){
                 }
             });
         }
-    };
+    }
 
     //top.onchange = left.onchange = bottom.onchange = right.onchange = changeHandler;
     //end

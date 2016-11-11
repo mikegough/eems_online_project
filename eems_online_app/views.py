@@ -32,14 +32,10 @@ def index(request):
 
         # GET EEMS Commands
         # ToDo: Get EEMS Commands from eems? Something like this...
-        eems_available_commands = {}
-        eems_available_commands["Union"] = ''
-        eems_available_commands["Weighted Union"] = "Each child <Input Text Field>"
-        eems_available_commands["Selected Union"] = "Select the <Dropdown (Truest/Falsest)> <Input Text Field>"
 
         template = 'index.html'
         context = {
-            'eems_available_commands_dict': eems_available_commands,
+            #'eems_available_commands_dict': eems_available_commands,
             'eems_online_models_json': eems_online_models_json
         }
 
@@ -122,13 +118,11 @@ def run_eems(request):
     for row in cursor:
         modified_eems_model = pickle.loads(str(row[0]))
 
-    command = {}
-    command['action']={}
-
-    # ToDo: Apply changes in the eems_operator_changes_string variable to the EEMS model stored in modified_eems_model
-    # ToDo: Over-write the model in the EEMS_USER_MODELS Database.
+    # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
     # ToDo: Create PNGs stored in folder that matches the user id.
+
+    # ToDo: Over-write the model in the EEMS_USER_MODELS Database.
 
     #print modified_eems_model
 

@@ -1,5 +1,6 @@
 $( document ).ready(function() {
 
+
     $("#files").prop('value', '');
 
     // Add the list of available eems_online_models to the dropdown menu
@@ -145,151 +146,9 @@ function run_eems() {
 
 }
 
-// On settings icon click, create a dialog box that allows the user to change the EEMS operator.
-function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
-
-    var children_array = children_string.split(',');
-
-    if (node_current_operator == "Convert To Fuzzy"){
-        alertify.confirm(
-            "<div id='change_operator_form'><b>Node: </b>" + alias +
-            "<p><b>True Threshold: </b> <input id='true_threshold' type='text' size='6'>" +
-            "<p><b>False Threshold: </b> <input id='false_threshold' type='text' size='6'>" +
-            "</div>"
-            , function (e, str) {
-                if (e) {
-                    var true_threshold = $("#true_threshold").val();
-                    var false_threshold = $("#false_threshold").val();
-                    updateEEMSThresholds(node_id, alias, true_threshold,false_threshold);
-                }
-            }
-        );
-
-    }
-
-    // Non-Fuzzy Operations
-    else if (["Difference", "Weighted Sum"].includes(node_current_operator)){
-        alertify.confirm(
-            "<div id='change_operator_form'><b>Node: </b>" + alias +
-            "<p><b>Operator: </b>" +
-            "<select id='new_operator_select'>" +
-                "<option name='new_operator' value='Difference'>Difference</option>" +
-                "<option name='new_operator' value='Weighted Sum'>Weighted Sum</option>" +
-            "</select>" +
-            "</div>"
-            // On Confirm
-            , function (e, str) {
-                if (e) {
-                    var new_operator = $("#new_operator_select option:selected").text();
-                    updateEEMSOperator(node_id, alias, new_operator);
-                }
-            }
-        );
-    }
-
-    // Fuzzy Operations
-    else {
-        alertify.confirm(
-            "<div id='change_operator_form'><b>Node: </b>" + alias +
-            "<p><b>Operator: </b>" +
-                "<select id='new_operator_select'>" +
-                    "<option name='new_operator' value='And'>And</option>" +
-                    "<option name='new_operator' value='Or'>Or</option>" +
-                    "<option name='new_operator' value='Negative Or'>Negative Or</option>" +
-                    "<option name='new_operator' value='Union'>Union</option>" +
-                    "<option name='new_operator' value='Selected Union'>Selected Union</option>" +
-                    "<option name='new_operator' value='Weighted Union'>Weighted Union</option>" +
-                "</select>" +
-            "<div id='operator_options'></div>" +
-            "</div>"
-
-            // On Confirm...
-            , function (e, str) {
-                if (e) {
-                    var new_operator = $("#new_operator_select option:selected").text();
-
-                    // Get options
-                    var options={};
-
-                    var new_operator = $("#new_operator_select").val();
-
-                    if (new_operator == "Weighted Union") {
-
-                        $('#options *').filter(':selected').each(function (a, b) {
-                            options["truest_or_falsest"] = b.value
-                        });
-                    }
-
-                    else if (new_operator == "Selected Union") {
-
-                        $('#options *').filter(':input').each(function (a, b) {
-                            options[b.name] = b.value
-                        });
-                    }
-
-                    // Call function to store new eems operator and options in a dictionary
-                    updateEEMSOperator(node_id, alias, new_operator, options)
-                }
-            }
-        );
-    }
-
-    // Operator specific options
-    $("#new_operator_select").on("change", function(){
-
-        var new_operator=this.value;
-
-        $("#operator_options").empty();
-
-        switch(new_operator) {
-
-            case "Weighted Union":
-
-                // Create the options form.
-                $("#operator_options").append("<form id='options'>");
-                $("#options").append("<table id='weighted_union_table'>");
-
-                // Iterate over each child and create an input weighted union field.
-                $.each(children_array, function(index,child){
-
-                    $("#weighted_union_table").append("<tr><td>" +child + "</td><td><input type='text' name='" + child + "' size=3></td></tr>")
-
-                });
-                $("#options").append("</table>");
-                $("#operator_options").append("</form>");
-                break;
-
-            case "Selected Union":
-
-                // Create the options form.
-                $("#operator_options").append("<form id='options'>");
-
-                $("#options").append("<b>Select the: </b>");
-
-                $("#options").append(
-                    "<select>" +
-                    "<option name='truest_or_falsest' value='t'>Truest</option>" +
-                    "<option name='truest_or_falsest' value='f'>Falsest</option>" +
-                    "</select>"
-                );
-
-                $("#options").append(
-                    " <input name='truest_or_falsest_count' size='3'>"
-                );
-
-                $("#operator_options").append("</form>");
-                break;
-        }
-
-    });
-
-    $("#new_operator_select option:contains(" + node_current_operator + ")").attr('selected', 'selected');
-
-}
-
 eems_operator_changes={};
 
-function updateEEMSOperator(node_id, alias, new_operator, options){
+function updateEEMSOperator(node_id, alias, new_operator, required_params){
 
     update_cmd_dict = {};
 
@@ -305,6 +164,12 @@ function updateEEMSOperator(node_id, alias, new_operator, options){
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
         var child_name=value.split(":")[0];
         update_cmd_dict["cmd"]["params"]["InFieldNames"].push(child_name);
+    });
+
+    $.each(required_params, function(param, value) {
+        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+        var child_name=value.split(":")[0];
+        update_cmd_dict["cmd"]["params"][param]=value;
     });
 
     eems_bundled_commands["cmds"].push(update_cmd_dict);
@@ -325,3 +190,70 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands["cmds"] = [];
     eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
+
+eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite"];
+
+function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
+
+    var children_array = children_string.split(',');
+
+    form_string = "<div id='form_div'><b>Operator: </b>";
+    form_string += "<select id='new_operator_select'>";
+
+     $.each(json_eems_commands, function(index,operator){
+         if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1){
+             form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+         }
+    });
+
+    form_string += "</select>";
+    form_string += "<span id='eems_operator_info'><img src='static/img/info.png'></span>";
+    form_string += "<form id='eems_operator_params'></form>";
+    form_string += "</div>";
+
+    alertify.confirm(form_string, function (e, str){
+        var new_operator = $("#new_operator_select option:selected").text()
+        var $inputs = $('#eems_operator_params :input');
+        required_params = {};
+        $inputs.each(function (index)
+         {
+             required_params[$(this).attr('id')] = $(this).val();
+         });
+
+        // Call function to store new eems operator and options in a dictionary
+        updateEEMSOperator(node_id, alias, new_operator, required_params)
+
+    });
+
+    bind_params(children_array, node_current_operator)
+}
+
+function bind_params(children_array, node_current_operator) {
+
+    // Operator specific options
+    $("#new_operator_select").on("change", function () {
+
+        $("#eems_operator_info").prop('title', json_eems_commands[this.value]["ShortDesc"]);
+
+        $("#eems_operator_params").html("<p><b>Input Nodes:</b><br>");
+        $.each(children_array, function(index,child) {
+            $("#eems_operator_params").append(child.split(":")[0] + "<br>")
+        });
+
+        var required_params = json_eems_commands[this.value]["ReqParams"];
+        delete required_params["InFieldNames"]
+        delete required_params["InFieldName"]
+
+        if (! $.isEmptyObject(required_params)) {
+            $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
+            $.each(required_params, function (key, value) {
+                $("#eems_operator_params").append(key + ": " + "<input id='"+key +"'type='text'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
+            });
+        }
+    });
+
+    $("select option").filter(function() {
+        return $(this).text() == node_current_operator;
+    }).prop('selected', true).change();
+}
+
