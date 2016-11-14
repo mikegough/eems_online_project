@@ -191,7 +191,7 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
 
-eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite"];
+eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 
 // Click settings icon in spacetree.js
 function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
@@ -201,40 +201,63 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     form_string = "<div id='form_div'><b>Operator: </b>";
     form_string += "<select id='new_operator_select'>";
 
-    // Add the EEMS operators to the dropdown.
-     $.each(json_eems_commands, function(index,operator){
-         if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1){
-             form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
-         }
-    });
+    //Add the EEMS operators to the dropdown.
+
+    if (node_current_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
+        $.each(json_eems_commands, function (index, operator) {
+            if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
+                form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+            }
+        });
+    }
+
+    else {
+        if (node_current_operator.indexOf("Fuzzy") != -1) {
+            $.each(json_eems_commands, function (index, operator) {
+                if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
+                    form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                }
+            });
+        }
+
+        else {
+            $.each(json_eems_commands, function (index, operator) {
+                if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
+                    form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                }
+            });
+        }
+    }
+
     form_string += "</select>";
     form_string += "<span id='eems_operator_info'><img src='static/img/info.png'></span>";
 
-    //Empty div for operator params
+    //Create an empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</div>";
 
     // Create the tool dialog box.
-    alertify.confirm(form_string, function (e, str){
-        var new_operator = $("#new_operator_select option:selected").text()
-        var $inputs = $('#eems_operator_params :input');
-        required_params = {};
-        $inputs.each(function (index)
-         {
-             required_params[$(this).attr('id')] = $(this).val();
-         });
+    alertify.confirm(form_string, function (e, str) {
+        if (e) {
+            var new_operator = $("#new_operator_select option:selected").text();
+            var $inputs = $('#eems_operator_params :input');
+            required_params = {};
+            $inputs.each(function (index) {
+                required_params[$(this).attr('id')] = $(this).val();
+            });
 
-        // Call function to store new eems operator and options in a dictionary
-        updateEEMSOperator(node_id, alias, new_operator, required_params)
-
+            // Call function to store new eems operator and options in a dictionary
+            updateEEMSOperator(node_id, alias, new_operator, required_params)
+        }
     });
 
     // Bind the change event to drop down change
-    bind_params(children_array, node_current_operator)
+    bind_params(children_array, node_current_operator);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
     $("select option").filter(function() {
-        return $(this).text() == node_current_operator;
+        // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
+        return $(this).text().toLowerCase().replace("by ",'') == node_current_operator.toLowerCase();
     }).prop('selected', true).change();
 }
 
@@ -250,9 +273,17 @@ function bind_params(children_array, node_current_operator) {
             $("#eems_operator_params").append(child.split(":")[0] + "<br>")
         });
 
+        // Have to handle "Convert to Fuzzy" differently since the arguments we need are OPTIONAL parameters.
+        if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
+
+            $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
+            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text'><img title='Float' src='static/img/info.png'><br>");
+        }
+
         var required_params = json_eems_commands[this.value]["ReqParams"];
-        delete required_params["InFieldNames"]
-        delete required_params["InFieldName"]
+        delete required_params["InFieldNames"];
+        delete required_params["InFieldName"];
 
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
@@ -260,7 +291,7 @@ function bind_params(children_array, node_current_operator) {
                 $("#eems_operator_params").append(key + ": " + "<input id='"+key +"'type='text'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
         }
-    });
 
+    });
 }
 
