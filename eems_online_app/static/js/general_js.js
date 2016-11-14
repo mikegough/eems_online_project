@@ -186,7 +186,7 @@ function reset_eems_bundled_commands(){
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 
 // Triggered after users clicks the settings icon created in spacetree.js
-function changeEEMSOperator(node_id, alias, node_current_operator, children_string, current_arguments) {
+function changeEEMSOperator(node_id, alias, node_current_operator, children_string, original_arguments) {
 
     var children_array = children_string.split(',');
 
@@ -238,6 +238,11 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
                 required_params[$(this).attr('id')] = $(this).val();
             });
 
+            // Store the user-defined arguments in a dictionary, so that they can be recalled later.
+            $('#eems_operator_params *').filter(':input').each(function(){
+                current_arguments_dict[node_id][this.id]=this.value;
+            });
+
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params);
             $("#run_eems_button").show();
@@ -245,7 +250,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     });
 
     // Bind the change event to drop down change
-    bind_params(children_array, node_current_operator, current_arguments);
+    bind_params(node_id, children_array, node_current_operator, original_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
     $("select option").filter(function() {
@@ -254,17 +259,25 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     }).prop('selected', true).change();
 }
 
-function bind_params(children_array, node_current_operator, current_arguments) {
+current_arguments_dict={}
 
-    // Split the argument string on the arbitrary deliniater specified in spacetree.js
-    current_arguments_parsed = current_arguments.split('**##**');
-    current_arguments_dict = {};
+function bind_params(node_id, children_array, node_current_operator, original_arguments) {
 
-    // Make a dictionary out of the arguments
-    $.each(current_arguments_parsed, function(index,kv_pair){
-        current_arguments_dict[kv_pair.split(":")[0]] = kv_pair.split(":")[1]
 
-    });
+    // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
+    if (! (node_id in current_arguments_dict)) {
+
+        current_arguments_dict[node_id]={}
+        // Split the argument string on the arbitrary deliniater specified in spacetree.js
+        current_arguments_parsed = original_arguments.split('**##**');
+
+        // Make a dictionary out of the arguments
+        $.each(current_arguments_parsed, function (index, kv_pair) {
+            current_arguments_dict[node_id][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+
+        });
+    }
+
 
     // Operator specific options
     $("#new_operator_select").on("change", function () {
@@ -280,8 +293,8 @@ function bind_params(children_array, node_current_operator, current_arguments) {
         if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
 
             $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
-            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
-            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[node_id]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
         }
 
         var required_params = json_eems_commands[this.value]["ReqParams"];
@@ -291,7 +304,10 @@ function bind_params(children_array, node_current_operator, current_arguments) {
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                $("#eems_operator_params").append(key + ": " + "<input id='"+key +"'type='text' value='" + current_arguments_dict[key] +"'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
+                if (typeof current_arguments_dict[node_id][key] == "undefined") {
+                    current_arguments_dict[node_id][key] = ""
+                }
+                    $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
         }
     });
