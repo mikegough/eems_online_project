@@ -247,7 +247,8 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
             });
 
             // Call function to store new eems operator and options in a dictionary
-            updateEEMSOperator(node_id, alias, new_operator, required_params)
+            updateEEMSOperator(node_id, alias, new_operator, required_params);
+            $("#run_eems_button").show();
         }
     });
 
