@@ -172,9 +172,17 @@ function init(json, eems_file_name){
                eems_children_dict[node.id].push(child.name)
             });
 
+            var argument_string="";
+
+            //Convert the argument list to a string that can be easily parsed using the arbitrary separator specified below
+            $.each(node.data.arguments, function(index, argument){
+                argument_string += argument;
+                argument_string += '**##**';
+            });
+
             if (node.data.operation != "Read") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
-                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
             if (EEMSParams['hasSubNodeImageOverlays']){

@@ -1,6 +1,5 @@
 $( document ).ready(function() {
 
-
     $("#files").prop('value', '');
 
     // Add the list of available eems_online_models to the dropdown menu
@@ -12,7 +11,6 @@ $( document ).ready(function() {
 
     // Set the eems model dropdown menu to the first option on page load.
     $('#eems_model_dropdown option').eq(1).prop('selected', true).trigger('change');
-
 
     // Initialize MEEMSE with the JSON file below
     init_eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
@@ -51,7 +49,7 @@ $('#eems_model_dropdown').change(function(){
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
 
-            eems_model_id = this.value
+            eems_model_id = this.value;
 
             $.get(path_to_json_file, function (results) {
                 var json_model = JSON.parse(results);
@@ -66,13 +64,13 @@ $('#eems_model_dropdown').change(function(){
 
 // File upload button
 $('input:file').change(function(e){
-        var filename=e.target.files[0].name
-        $("#user_defined_model").html(filename.replace('.json','').replace('.JSON',''))
+        var filename=e.target.files[0].name;
+        $("#user_defined_model").html(filename.replace('.json','').replace('.JSON',''));
         $('#eems_model_dropdown option').eq(0).prop('selected', true).trigger('change');
         var startByte = e.target.getAttribute('data-startbyte');
         var endByte = e.target.getAttribute('data-endbyte');
 
-        reset_eems_bundled_commands()
+        reset_eems_bundled_commands();
 
         // function defined in the file_upload.js script.
         readBlob(startByte, endByte, filename);
@@ -114,9 +112,9 @@ $("#run_eems_button").click(function(){run_eems(eems_model_id)});
 // Send the user defined changes to the back end and run EEMS.
 function run_eems() {
 
-    eems_bundled_commands["cmds"].push({"action": "RunProg"})
+    eems_bundled_commands["cmds"].push({"action": "RunProg"});
 
-    eems_operator_changes_string = JSON.stringify(eems_bundled_commands)
+    eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
 
     $.ajax({
         url: "/run_eems", // the endpoint
@@ -132,7 +130,7 @@ function run_eems() {
             eems_model_modified_id = response
             alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
             console.log("EEMS Model ID: " + eems_model_modified_id)
-            console.log("EEMS Command Modifications: ")
+            console.log("EEMS Command Modifications: ");
             console.log(JSON.stringify(eems_bundled_commands, null, 2))
         },
 
@@ -150,7 +148,7 @@ eems_operator_changes={};
 
 function updateEEMSOperator(node_id, alias, new_operator, required_params){
 
-    update_cmd_dict = {};
+    var update_cmd_dict = {};
 
     update_cmd_dict["action"] = 'UpdateCmd';
     update_cmd_dict["cmd"] = {};
@@ -178,12 +176,6 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
     $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
 }
 
-function updateEEMSThresholds(node_id,alias, true_threshold, false_threshold){
-    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
-    eems_operator_changes[node_id]=[];
-    eems_operator_changes[node_id].push("Covert to Fuzzy", [true_threshold,false_threshold]);
-}
-
 function reset_eems_bundled_commands(){
     eems_bundled_commands = {};
     eems_bundled_commands["action"] = "ProcessCmds";
@@ -193,8 +185,8 @@ function reset_eems_bundled_commands(){
 
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 
-// Click settings icon in spacetree.js
-function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
+// Triggered after users clicks the settings icon created in spacetree.js
+function changeEEMSOperator(node_id, alias, node_current_operator, children_string, current_arguments) {
 
     var children_array = children_string.split(',');
 
@@ -253,7 +245,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     });
 
     // Bind the change event to drop down change
-    bind_params(children_array, node_current_operator);
+    bind_params(children_array, node_current_operator, current_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
     $("select option").filter(function() {
@@ -262,7 +254,17 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     }).prop('selected', true).change();
 }
 
-function bind_params(children_array, node_current_operator) {
+function bind_params(children_array, node_current_operator, current_arguments) {
+
+    // Split the argument string on the arbitrary deliniater specified in spacetree.js
+    current_arguments_parsed = current_arguments.split('**##**');
+    current_arguments_dict = {};
+
+    // Make a dictionary out of the arguments
+    $.each(current_arguments_parsed, function(index,kv_pair){
+        current_arguments_dict[kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+
+    });
 
     // Operator specific options
     $("#new_operator_select").on("change", function () {
@@ -271,15 +273,15 @@ function bind_params(children_array, node_current_operator) {
 
         $("#eems_operator_params").html("<p><b>Input Nodes:</b><br>");
         $.each(children_array, function(index,child) {
-            $("#eems_operator_params").append(child.split(":")[0] + "<br>")
+            $("#eems_operator_params").append(child.split(":")[0] + "<br>");
         });
 
         // Have to handle "Convert to Fuzzy" differently since the arguments we need are OPTIONAL parameters.
         if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
 
             $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
-            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text'><img title='Float' src='static/img/info.png'><br>");
-            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
         }
 
         var required_params = json_eems_commands[this.value]["ReqParams"];
@@ -289,10 +291,9 @@ function bind_params(children_array, node_current_operator) {
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                $("#eems_operator_params").append(key + ": " + "<input id='"+key +"'type='text'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
+                $("#eems_operator_params").append(key + ": " + "<input id='"+key +"'type='text' value='" + current_arguments_dict[key] +"'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
         }
-
     });
 }
 
