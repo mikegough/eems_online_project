@@ -193,6 +193,7 @@ function reset_eems_bundled_commands(){
 
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite"];
 
+// Click settings icon in spacetree.js
 function changeEEMSOperator(node_id, alias, node_current_operator, children_string) {
 
     var children_array = children_string.split(',');
@@ -200,17 +201,20 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     form_string = "<div id='form_div'><b>Operator: </b>";
     form_string += "<select id='new_operator_select'>";
 
+    // Add the EEMS operators to the dropdown.
      $.each(json_eems_commands, function(index,operator){
          if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1){
              form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
          }
     });
-
     form_string += "</select>";
     form_string += "<span id='eems_operator_info'><img src='static/img/info.png'></span>";
+
+    //Empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</div>";
 
+    // Create the tool dialog box.
     alertify.confirm(form_string, function (e, str){
         var new_operator = $("#new_operator_select option:selected").text()
         var $inputs = $('#eems_operator_params :input');
@@ -225,7 +229,13 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
 
     });
 
+    // Bind the change event to drop down change
     bind_params(children_array, node_current_operator)
+
+    // Set the selected dropdown item to the current operator, and trigger a change.
+    $("select option").filter(function() {
+        return $(this).text() == node_current_operator;
+    }).prop('selected', true).change();
 }
 
 function bind_params(children_array, node_current_operator) {
@@ -252,8 +262,5 @@ function bind_params(children_array, node_current_operator) {
         }
     });
 
-    $("select option").filter(function() {
-        return $(this).text() == node_current_operator;
-    }).prop('selected', true).change();
 }
 
