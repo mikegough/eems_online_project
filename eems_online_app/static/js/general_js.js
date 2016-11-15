@@ -13,7 +13,7 @@ $( document ).ready(function() {
     $('#eems_model_dropdown option').eq(1).prop('selected', true).trigger('change');
 
     // Initialize MEEMSE with the JSON file below
-    init_eems_file = "static/eems/json_models/HighSiteSensitivityFz.json"
+    init_eems_file = "static/eems/json_models/HighSiteSensitivityFz_Changes_To_CVTFZYCAT.json"
     init_eems_file_name = init_eems_file.split("/").pop();
     init_eems_model = init_eems_file_name.split(".")[0];
     eems_model_id = 1;
@@ -71,7 +71,6 @@ $('input:file').change(function(e){
         var endByte = e.target.getAttribute('data-endbyte');
 
         reset_eems_bundled_commands();
-        // New comment
 
         // function defined in the file_upload.js script.
         readBlob(startByte, endByte, filename);
