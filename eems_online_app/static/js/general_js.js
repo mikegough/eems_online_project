@@ -145,46 +145,6 @@ function run_eems() {
 }
 
 eems_operator_changes={};
-
-function updateEEMSOperator(node_id, alias, new_operator, required_params){
-
-
-
-    var update_cmd_dict = {};
-
-    update_cmd_dict["action"] = 'UpdateCmd';
-    update_cmd_dict["cmd"] = {};
-    update_cmd_dict["cmd"]["rsltNm"] = node_id;
-    update_cmd_dict["cmd"]["cmd"] = new_operator;
-    update_cmd_dict["cmd"]["params"] = {};
-
-    update_cmd_dict["cmd"]["params"]["InFieldNames"] = [];
-
-    $.each(eems_children_dict[node_id], function(count, value) {
-        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
-        var child_name=value.split(":")[0];
-        update_cmd_dict["cmd"]["params"]["InFieldNames"].push(child_name);
-    });
-
-    $.each(required_params, function(param, value) {
-        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
-        var child_name=value.split(":")[0];
-        update_cmd_dict["cmd"]["params"][param]=value;
-    });
-
-    eems_bundled_commands["cmds"].push(update_cmd_dict);
-
-    $("#" + node_id + "_current_operator").html(new_operator);
-    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
-}
-
-function reset_eems_bundled_commands(){
-    eems_bundled_commands = {};
-    eems_bundled_commands["action"] = "ProcessCmds";
-    eems_bundled_commands["cmds"] = [];
-    eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
-}
-
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 changed_params_list=[];
 
@@ -348,5 +308,42 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             });
         }
     });
+}
+
+function updateEEMSOperator(node_id, alias, new_operator, required_params){
+
+    var update_cmd_dict = {};
+
+    update_cmd_dict["action"] = 'UpdateCmd';
+    update_cmd_dict["cmd"] = {};
+    update_cmd_dict["cmd"]["rsltNm"] = node_id;
+    update_cmd_dict["cmd"]["cmd"] = new_operator;
+    update_cmd_dict["cmd"]["params"] = {};
+
+    update_cmd_dict["cmd"]["params"]["InFieldNames"] = [];
+
+    $.each(eems_children_dict[node_id], function(count, value) {
+        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+        var child_name=value.split(":")[0];
+        update_cmd_dict["cmd"]["params"]["InFieldNames"].push(child_name);
+    });
+
+    $.each(required_params, function(param, value) {
+        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+        var child_name=value.split(":")[0];
+        update_cmd_dict["cmd"]["params"][param]=value;
+    });
+
+    eems_bundled_commands["cmds"].push(update_cmd_dict);
+
+    $("#" + node_id + "_current_operator").html(new_operator);
+    $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
+}
+
+function reset_eems_bundled_commands(){
+    eems_bundled_commands = {};
+    eems_bundled_commands["action"] = "ProcessCmds";
+    eems_bundled_commands["cmds"] = [];
+    eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
 
