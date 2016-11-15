@@ -240,7 +240,8 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
 
             // Store the user-defined arguments in a dictionary, so that they can be recalled later.
             $('#eems_operator_params *').filter(':input').each(function(){
-                current_arguments_dict[node_id][this.id]=this.value;
+                var combo_key =  node_id + new_operator.replace("by ", "").toLowerCase()
+                current_arguments_dict[combo_key][this.id]=this.value;
             });
 
             // Call function to store new eems operator and options in a dictionary
@@ -263,24 +264,30 @@ current_arguments_dict={}
 
 function bind_params(node_id, children_array, node_current_operator, original_arguments) {
 
-
-    // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
-    if (! (node_id in current_arguments_dict)) {
-
-        current_arguments_dict[node_id]={}
-        // Split the argument string on the arbitrary deliniater specified in spacetree.js
-        current_arguments_parsed = original_arguments.split('**##**');
-
-        // Make a dictionary out of the arguments
-        $.each(current_arguments_parsed, function (index, kv_pair) {
-            current_arguments_dict[node_id][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
-
-        });
-    }
-
+    console.log(node_current_operator)
 
     // Operator specific options
     $("#new_operator_select").on("change", function () {
+
+        $("#eems_operator_params").empty()
+
+        operator=$(this).find("option:selected").text().replace("by ", "");
+
+        combo_key=node_id+operator.toLowerCase()
+
+        // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
+        if (! (combo_key in current_arguments_dict)) {
+
+            current_arguments_dict[combo_key]={}
+            // Split the argument string on the arbitrary deliniater specified in spacetree.js
+            current_arguments_parsed = original_arguments.split('**##**');
+
+            // Make a dictionary out of the arguments
+            $.each(current_arguments_parsed, function (index, kv_pair) {
+                current_arguments_dict[combo_key][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+
+            });
+        }
 
         $("#eems_operator_info").prop('title', json_eems_commands[this.value]["ShortDesc"]);
 
@@ -292,9 +299,14 @@ function bind_params(node_id, children_array, node_current_operator, original_ar
         // Have to handle "Convert to Fuzzy" differently since the arguments we need are OPTIONAL parameters.
         if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
 
+            if (typeof current_arguments_dict[combo_key]['TrueThreshold'] == "undefined") {
+                    current_arguments_dict[combo_key]["TrueThreshold"] = "";
+                    current_arguments_dict[combo_key]["FalseThreshold"] = "";
+            }
+
             $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
-            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[node_id]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
-            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[combo_key]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[combo_key]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
         }
 
         var required_params = json_eems_commands[this.value]["ReqParams"];
@@ -304,10 +316,10 @@ function bind_params(node_id, children_array, node_current_operator, original_ar
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                if (typeof current_arguments_dict[node_id][key] == "undefined") {
-                    current_arguments_dict[node_id][key] = ""
+                if (typeof current_arguments_dict[combo_key][key] == "undefined" || operator.toLowerCase() != node_current_operator.toLowerCase()) {
+                    current_arguments_dict[combo_key][key] = ""
                 }
-                    $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
+                    $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[combo_key][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
         }
     });
