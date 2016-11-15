@@ -7,6 +7,7 @@ $( document ).ready(function() {
 
         var available_eems_online_model_name =  value.toString().split(',')[0];
         $("#eems_model_dropdown").append("<option value='" + key + "'>" + available_eems_online_model_name + "</option>");
+
     });
 
     // Set the eems model dropdown menu to the first option on page load.
@@ -58,7 +59,6 @@ $('#eems_model_dropdown').change(function(){
         }
 
         reset_eems_bundled_commands()
-
     }
 );
 
@@ -141,7 +141,6 @@ function run_eems() {
             console.log(xhr.status + ": " + xhr.responseText);
         }
     });
-
 }
 
 var eems_operator_changes={};
@@ -243,7 +242,6 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             return $(this).text().toLowerCase() == current_operator.toLowerCase();
         }
     }).prop('selected', true).change();
-
 }
 
 var current_arguments_dict={};
@@ -346,6 +344,7 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
 }
 
 function reset_eems_bundled_commands(){
+
     eems_bundled_commands = {};
     eems_bundled_commands["action"] = "ProcessCmds";
     eems_bundled_commands["cmds"] = [];
