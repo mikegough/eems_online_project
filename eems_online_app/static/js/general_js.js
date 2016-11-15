@@ -250,12 +250,10 @@ var current_arguments_dict={};
 
 function bind_params(node_id, children_array, node_original_operator, original_arguments) {
 
-    console.log(node_original_operator)
-
     // Operator specific options
     $("#new_operator_select").on("change", function () {
 
-        $("#eems_operator_params").empty()
+        $("#eems_operator_params").empty();
 
         new_operator=$(this).find("option:selected").text().replace("by ", "");
 
@@ -304,10 +302,6 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                console.log(node_id)
-                console.log(new_operator)
-                console.log(key)
-                console.log(current_arguments_dict[node_id][new_operator][key])
                 if (typeof current_arguments_dict[node_id][new_operator][key] == "undefined") {
                     current_arguments_dict[node_id][new_operator][key] = ""
                 }
