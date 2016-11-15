@@ -144,12 +144,15 @@ function run_eems() {
 
 }
 
-eems_operator_changes={};
-eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
-changed_params_list=[];
+var eems_operator_changes={};
+var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
+var changed_params_list=[];
 
 // Triggered after users clicks the settings icon created in spacetree.js
 function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments) {
+
+    // Get the current operator out of the div at the bottom of the node.
+    var current_operator = $("#" + node_id + "_current_operator").html();
 
     var children_array = children_string.split(',');
 
@@ -177,7 +180,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
         }
 
-    // Non-Fuzzy Options
+        // Non-Fuzzy Options
         else {
             $.each(json_eems_commands, function (index, operator) {
                 if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
@@ -206,15 +209,15 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
             current_arguments_dict[node_id][new_operator] = {}
             // Store the user-defined arguments in a dictionary, so that they can be recalled later.
-            $('#eems_operator_params *').filter(':input').each(function(){
-                current_arguments_dict[node_id][new_operator][this.id]=this.value;
+            $('#eems_operator_params *').filter(':input').each(function () {
+                current_arguments_dict[node_id][new_operator][this.id] = this.value;
             });
 
             // If the user updated the node operator already, delete the old one.
-            $.each(eems_bundled_commands["cmds"], function(index, cmd_object){
-                if (typeof cmd_object["action"] != "undefined"  && cmd_object["action"] == "UpdateCmd") {
-                    if (cmd_object["cmd"]["rsltNm"] == node_id){
-                        eems_bundled_commands["cmds"].splice(index,1);
+            $.each(eems_bundled_commands["cmds"], function (index, cmd_object) {
+                if (typeof cmd_object["action"] != "undefined" && cmd_object["action"] == "UpdateCmd") {
+                    if (cmd_object["cmd"]["rsltNm"] == node_id) {
+                        eems_bundled_commands["cmds"].splice(index, 1);
                     }
                 }
             });
@@ -226,20 +229,24 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         }
     });
 
-
     // Pick appropriate operators to show & bind change event
     bind_params(node_id, children_array, node_original_operator, original_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
 
-
-    $("select option").filter(function() {
+    $("select option").filter(function () {
         // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
-        return $(this).text().toLowerCase().replace("by ",'') == node_original_operator.toLowerCase();
+        if (current_operator.replace(/ /g, "") == node_original_operator.replace(/ /g, "")) {
+            return $(this).text().toLowerCase().replace("by ", '') == node_original_operator.toLowerCase();
+        } else {
+            // If the user has changed the operator, show the current operator
+            return $(this).text().toLowerCase().replace("by ", '') == current_operator.toLowerCase();
+        }
     }).prop('selected', true).change();
+
 }
 
-current_arguments_dict={}
+var current_arguments_dict={};
 
 function bind_params(node_id, children_array, node_original_operator, original_arguments) {
 
@@ -259,7 +266,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
         if (! (new_operator in current_arguments_dict[node_id])) {
 
-            current_arguments_dict[node_id][new_operator]={}
+            current_arguments_dict[node_id][new_operator]={};
             // Split the argument string on the arbitrary deliniater specified in spacetree.js
             current_arguments_parsed = original_arguments.split('**##**');
 
