@@ -71,6 +71,7 @@ $('input:file').change(function(e){
         var endByte = e.target.getAttribute('data-endbyte');
 
         reset_eems_bundled_commands();
+        // New comment
 
         // function defined in the file_upload.js script.
         readBlob(startByte, endByte, filename);
@@ -237,10 +238,10 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     $("select option").filter(function () {
         // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
         if (current_operator.replace(/ /g, "") == node_original_operator.replace(/ /g, "")) {
-            return $(this).text().toLowerCase().replace("by ", '') == node_original_operator.toLowerCase();
+            return $(this).text().toLowerCase() == node_original_operator.toLowerCase();
         } else {
             // If the user has changed the operator, show the current operator
-            return $(this).text().toLowerCase().replace("by ", '') == current_operator.toLowerCase();
+            return $(this).text().toLowerCase() == current_operator.toLowerCase();
         }
     }).prop('selected', true).change();
 
@@ -255,7 +256,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
         $("#eems_operator_params").empty();
 
-        new_operator=$(this).find("option:selected").text().replace("by ", "");
+        new_operator=$(this).find("option:selected").text();
 
         if (typeof current_arguments_dict[node_id] == "undefined") {
            current_arguments_dict[node_id] = {}
