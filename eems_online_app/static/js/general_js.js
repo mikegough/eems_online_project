@@ -186,7 +186,7 @@ function reset_eems_bundled_commands(){
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 
 // Triggered after users clicks the settings icon created in spacetree.js
-function changeEEMSOperator(node_id, alias, node_current_operator, children_string, original_arguments) {
+function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments) {
 
     var children_array = children_string.split(',');
 
@@ -195,7 +195,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
 
     //Add the EEMS operators to the dropdown.
 
-    if (node_current_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
+    if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
         $.each(json_eems_commands, function (index, operator) {
             if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
                 form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
@@ -204,7 +204,7 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     }
 
     else {
-        if (node_current_operator.indexOf("Fuzzy") != -1) {
+        if (node_original_operator.indexOf("Fuzzy") != -1) {
             $.each(json_eems_commands, function (index, operator) {
                 if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
                     form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
@@ -251,20 +251,20 @@ function changeEEMSOperator(node_id, alias, node_current_operator, children_stri
     });
 
     // Bind the change event to drop down change
-    bind_params(node_id, children_array, node_current_operator, original_arguments);
+    bind_params(node_id, children_array, node_original_operator, original_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
     $("select option").filter(function() {
         // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
-        return $(this).text().toLowerCase().replace("by ",'') == node_current_operator.toLowerCase();
+        return $(this).text().toLowerCase().replace("by ",'') == node_original_operator.toLowerCase();
     }).prop('selected', true).change();
 }
 
 current_arguments_dict={}
 
-function bind_params(node_id, children_array, node_current_operator, original_arguments) {
+function bind_params(node_id, children_array, node_original_operator, original_arguments) {
 
-    console.log(node_current_operator)
+    console.log(node_original_operator)
 
     // Operator specific options
     $("#new_operator_select").on("change", function () {
@@ -316,7 +316,7 @@ function bind_params(node_id, children_array, node_current_operator, original_ar
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                if (typeof current_arguments_dict[combo_key][key] == "undefined" || operator.toLowerCase() != node_current_operator.toLowerCase()) {
+                if (typeof current_arguments_dict[combo_key][key] == "undefined" || operator.toLowerCase() != node_original_operator.toLowerCase()) {
                     current_arguments_dict[combo_key][key] = ""
                 }
                     $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[combo_key][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
