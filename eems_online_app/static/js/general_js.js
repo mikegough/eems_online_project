@@ -184,6 +184,7 @@ function reset_eems_bundled_commands(){
 }
 
 eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
+changed_params_list=[];
 
 // Triggered after users clicks the settings icon created in spacetree.js
 function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments) {
@@ -195,6 +196,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
     //Add the EEMS operators to the dropdown.
 
+    // Convert to Fuzzy Options
     if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
         $.each(json_eems_commands, function (index, operator) {
             if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
@@ -203,6 +205,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         });
     }
 
+    // Fuzzy Options
     else {
         if (node_original_operator.indexOf("Fuzzy") != -1) {
             $.each(json_eems_commands, function (index, operator) {
@@ -212,6 +215,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
         }
 
+    // Non-Fuzzy Options
         else {
             $.each(json_eems_commands, function (index, operator) {
                 if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
@@ -228,7 +232,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</div>";
 
-    // Create the tool dialog box.
+    // Create and open the tool dialog box.
+    // New operator only identified after the users clicks ok
     alertify.confirm(form_string, function (e, str) {
         if (e) {
             var new_operator = $("#new_operator_select option:selected").text();
@@ -237,23 +242,26 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             $inputs.each(function (index) {
                 required_params[$(this).attr('id')] = $(this).val();
             });
-
+            current_arguments_dict[node_id][new_operator] = {}
             // Store the user-defined arguments in a dictionary, so that they can be recalled later.
             $('#eems_operator_params *').filter(':input').each(function(){
-                var combo_key =  node_id + new_operator.replace("by ", "").toLowerCase()
-                current_arguments_dict[combo_key][this.id]=this.value;
+                current_arguments_dict[node_id][new_operator][this.id]=this.value;
             });
 
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params);
             $("#run_eems_button").show();
+
         }
     });
 
-    // Bind the change event to drop down change
+
+    // Pick appropriate operators to show & bind change event
     bind_params(node_id, children_array, node_original_operator, original_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
+
+
     $("select option").filter(function() {
         // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
         return $(this).text().toLowerCase().replace("by ",'') == node_original_operator.toLowerCase();
@@ -271,20 +279,22 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
         $("#eems_operator_params").empty()
 
-        operator=$(this).find("option:selected").text().replace("by ", "");
+        new_operator=$(this).find("option:selected").text().replace("by ", "");
 
-        combo_key=node_id+operator.toLowerCase()
+        if (typeof current_arguments_dict[node_id] == "undefined") {
+           current_arguments_dict[node_id] = {}
+        }
 
         // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
-        if (! (combo_key in current_arguments_dict)) {
+        if (! (new_operator in current_arguments_dict[node_id])) {
 
-            current_arguments_dict[combo_key]={}
+            current_arguments_dict[node_id][new_operator]={}
             // Split the argument string on the arbitrary deliniater specified in spacetree.js
             current_arguments_parsed = original_arguments.split('**##**');
 
             // Make a dictionary out of the arguments
             $.each(current_arguments_parsed, function (index, kv_pair) {
-                current_arguments_dict[combo_key][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+                current_arguments_dict[node_id][new_operator][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
 
             });
         }
@@ -299,14 +309,14 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         // Have to handle "Convert to Fuzzy" differently since the arguments we need are OPTIONAL parameters.
         if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
 
-            if (typeof current_arguments_dict[combo_key]['TrueThreshold'] == "undefined") {
-                    current_arguments_dict[combo_key]["TrueThreshold"] = "";
-                    current_arguments_dict[combo_key]["FalseThreshold"] = "";
+            if (typeof current_arguments_dict[node_id][new_operator]['TrueThreshold'] == "undefined") {
+                    current_arguments_dict[node_id][new_operator]["TrueThreshold"] = "";
+                    current_arguments_dict[node_id][new_operator]["FalseThreshold"] = "";
             }
 
             $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
-            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[combo_key]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
-            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[combo_key]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+            $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
         }
 
         var required_params = json_eems_commands[this.value]["ReqParams"];
@@ -316,10 +326,14 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
-                if (typeof current_arguments_dict[combo_key][key] == "undefined" || operator.toLowerCase() != node_original_operator.toLowerCase()) {
-                    current_arguments_dict[combo_key][key] = ""
+                console.log(node_id)
+                console.log(new_operator)
+                console.log(key)
+                console.log(current_arguments_dict[node_id][new_operator][key])
+                if (typeof current_arguments_dict[node_id][new_operator][key] == "undefined" || new_operator.toLowerCase() != node_original_operator.toLowerCase()) {
+                    current_arguments_dict[node_id][new_operator][key] = ""
                 }
-                    $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[combo_key][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
+                    $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][new_operator][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
         }
     });
