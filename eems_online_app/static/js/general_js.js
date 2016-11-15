@@ -262,17 +262,21 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         }
 
         // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
-        if (! (new_operator in current_arguments_dict[node_id])) {
+        if (! (new_operator in current_arguments_dict[node_id]) ) {
 
             current_arguments_dict[node_id][new_operator]={};
-            // Split the argument string on the arbitrary deliniater specified in spacetree.js
-            current_arguments_parsed = original_arguments.split('**##**');
 
-            // Make a dictionary out of the arguments
-            $.each(current_arguments_parsed, function (index, kv_pair) {
-                current_arguments_dict[node_id][new_operator][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+            // If the new operator is the same as the original operator, get the arguments from the original Spacetree node arguments.
+            if (new_operator.toLowerCase() == node_original_operator.toLowerCase()) {
+                // Split the argument string on the arbitrary deliniater specified in spacetree.js
+                current_arguments_parsed = original_arguments.split('**##**');
 
-            });
+                // Make a dictionary out of the arguments
+                $.each(current_arguments_parsed, function (index, kv_pair) {
+                    current_arguments_dict[node_id][new_operator][kv_pair.split(":")[0]] = kv_pair.split(":")[1]
+
+                });
+            }
         }
 
         $("#eems_operator_info").prop('title', json_eems_commands[this.value]["ShortDesc"]);
