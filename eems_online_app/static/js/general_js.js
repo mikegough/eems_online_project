@@ -148,6 +148,8 @@ eems_operator_changes={};
 
 function updateEEMSOperator(node_id, alias, new_operator, required_params){
 
+
+
     var update_cmd_dict = {};
 
     update_cmd_dict["action"] = 'UpdateCmd';
@@ -248,6 +250,15 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
                 current_arguments_dict[node_id][new_operator][this.id]=this.value;
             });
 
+            // If the user updated the node operator already, delete the old one.
+            $.each(eems_bundled_commands["cmds"], function(index, cmd_object){
+                if (typeof cmd_object["action"] != "undefined"  && cmd_object["action"] == "UpdateCmd") {
+                    if (cmd_object["cmd"]["rsltNm"] == node_id){
+                        eems_bundled_commands["cmds"].splice(index,1);
+                    }
+                }
+            });
+
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params);
             $("#run_eems_button").show();
@@ -330,7 +341,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
                 console.log(new_operator)
                 console.log(key)
                 console.log(current_arguments_dict[node_id][new_operator][key])
-                if (typeof current_arguments_dict[node_id][new_operator][key] == "undefined" || new_operator.toLowerCase() != node_original_operator.toLowerCase()) {
+                if (typeof current_arguments_dict[node_id][new_operator][key] == "undefined") {
                     current_arguments_dict[node_id][new_operator][key] = ""
                 }
                     $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][new_operator][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
