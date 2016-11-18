@@ -150,44 +150,44 @@ var changed_params_list=[];
 // Triggered after users clicks the settings icon created in spacetree.js
 function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments) {
 
-    // Get the current operator out of the div at the bottom of the node.
+    // Get the current operator out of the div at the bottom of the node (used to set the selected dropdown option).
     var current_operator = $("#" + node_id + "_current_operator").html();
 
     var children_array = children_string.split(',');
 
+    // Create the form...
     form_string = "<div id='form_div'><b>Operator: </b>";
     form_string += "<select id='new_operator_select'>";
 
-    //Add the EEMS operators to the dropdown.
-
-    // Convert to Fuzzy Options
-    if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
-        $.each(json_eems_commands, function (index, operator) {
-            if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
-                form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
-            }
-        });
-    }
-
-    // Fuzzy Options
-    else {
-        if (node_original_operator.indexOf("Fuzzy") != -1) {
+        //Add the compatible EEMS operators to the dropdown.
+        // Convert to Fuzzy Options
+        if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
             $.each(json_eems_commands, function (index, operator) {
-                if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
+                if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
                     form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
                 }
             });
         }
 
-        // Non-Fuzzy Options
+        // Fuzzy Options
         else {
-            $.each(json_eems_commands, function (index, operator) {
-                if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
-                    form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
-                }
-            });
+            if (node_original_operator.indexOf("Fuzzy") != -1) {
+                $.each(json_eems_commands, function (index, operator) {
+                    if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
+                        form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                    }
+                });
+            }
+
+            // Non-Fuzzy Options
+            else {
+                $.each(json_eems_commands, function (index, operator) {
+                    if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
+                        form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                    }
+                });
+            }
         }
-    }
 
     form_string += "</select>";
     form_string += "<span id='eems_operator_info'><img src='static/img/info.png'></span>";
@@ -196,18 +196,20 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</div>";
 
-    // Create and open the tool dialog box.
-    // New operator only identified after the users clicks ok
+    // Create and open the tool dialog box. On confirm store the new operator data in a dictionary.
     alertify.confirm(form_string, function (e, str) {
         if (e) {
             var new_operator = $("#new_operator_select option:selected").text();
             var $inputs = $('#eems_operator_params :input');
+
+            // Get the user entered required parameters.
             required_params = {};
             $inputs.each(function (index) {
                 required_params[$(this).attr('id')] = $(this).val();
             });
+
+            // Store the user-defined operators & last set of arguments in a dictionary, so that they can be recalled later.
             current_arguments_dict[node_id][new_operator] = {}
-            // Store the user-defined arguments in a dictionary, so that they can be recalled later.
             $('#eems_operator_params *').filter(':input').each(function () {
                 current_arguments_dict[node_id][new_operator][this.id] = this.value;
             });
@@ -232,9 +234,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     bind_params(node_id, children_array, node_original_operator, original_arguments);
 
     // Set the selected dropdown item to the current operator, and trigger a change.
-
     $("select option").filter(function () {
-        // Hack to account for the fact that EEMS 2.0 operator is called "Convert to Fuzzy Category" and EEMS 3.0 operator is called "Convert to Fuzzy By Category"
         if (current_operator.replace(/ /g, "") == node_original_operator.replace(/ /g, "")) {
             return $(this).text().toLowerCase() == node_original_operator.toLowerCase();
         } else {
@@ -248,12 +248,13 @@ var current_arguments_dict={};
 
 function bind_params(node_id, children_array, node_original_operator, original_arguments) {
 
-    // Operator specific options
+    // Operator specific options. Happens on dropdown change. Triggered when the user first clicks the gear AND on subsequent operator changes.
     $("#new_operator_select").on("change", function () {
 
         $("#eems_operator_params").empty();
 
-        new_operator=$(this).find("option:selected").text();
+        // Get the new operator from the dropdown.
+        var new_operator=$(this).find("option:selected").text();
 
         if (typeof current_arguments_dict[node_id] == "undefined") {
            current_arguments_dict[node_id] = {}
@@ -297,10 +298,12 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
         }
 
+        // Get the list of required params for the selected operator ....
         var required_params = json_eems_commands[this.value]["ReqParams"];
         delete required_params["InFieldNames"];
         delete required_params["InFieldName"];
 
+        //  Write out the required params input fields. If there was something entered previously or this is the original operator, write out the current arguments...
         if (! $.isEmptyObject(required_params)) {
             $("#eems_operator_params").append("<p><b>Required Parameters:</b><br>");
             $.each(required_params, function (key, value) {
