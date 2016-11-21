@@ -66,26 +66,27 @@
     <div id="map_container">
         <div id="map"></div>
     </div>
+    <div id="file_upload_controls">
+      <div id="current_file"><b>Current Model:</b>
+        <select id="eems_model_dropdown" name="eems_model_dropdown">
+          <option value="0"></option>
+        </select>
+        <div id="user_defined_model"></div>
+      </div>
+      <div id="disable_div" title="No changes have been made"></div>
+      <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
+      <!--
+      <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
+      -->
+      <label for="files" class="alertify-button alertify-button-ok" id="files_label">
+        Browse <img id="open_file" src="{% static '/img/open.svg' %}">
+      </label>
+      <input type="file" id="files" name="file" style="display:none"/>
+
+    </div>
     <div id="meemse_container">
         <div id="log"></div>
         <div id="infovis"></div>
-        <div id="file_upload_controls">
-            <div id="current_file"><b>Current Model:</b>
-                <select id="eems_model_dropdown" name="eems_model_dropdown">
-                   <option value="0"></option>
-                </select>
-                <div id="user_defined_model"></div>
-            </div>
-            <button id="run_eems_button" class="alertify-button alertify-button-ok">Run</button>
-            <!--
-            <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
-            -->
-            <label for="files" class="alertify-button alertify-button-ok" id="files_label">
-            Browse <img id="open_file" src="{% static '/img/open.svg' %}">
-            </label>
-            <input type="file" id="files" name="file" style="display:none"/>
-
-        </div>
     </div>
 
     <!-- Leaflet Map -->

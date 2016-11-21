@@ -43,6 +43,9 @@ $('#eems_model_dropdown').change(function(){
         // Get the JSON file and render the model
         if ($('#eems_model_dropdown option:selected').text() != "") {
 
+            $("#run_eems_button").addClass("disabled");
+            $("#disable_div").show();
+
             $("#user_defined_model").html("")
 
             var eems_online_json_file_name = eems_online_models_json[this.value][0][1];
@@ -57,6 +60,8 @@ $('#eems_model_dropdown').change(function(){
                 init(json_model, eems_online_model_name);
             });
         }
+
+        current_arguments_dict={};
 
         reset_eems_bundled_commands()
     }
@@ -225,7 +230,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params);
-            $("#run_eems_button").show();
+            $("#run_eems_button").removeClass("disabled");
+            $("#disable_div").hide();
 
         }
     });
@@ -244,7 +250,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     }).prop('selected', true).change();
 }
 
-var current_arguments_dict={};
+current_arguments_dict={};
 
 function bind_params(node_id, children_array, node_original_operator, original_arguments) {
 
