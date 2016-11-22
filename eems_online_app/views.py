@@ -18,11 +18,13 @@ except:
 @csrf_exempt
 def index(request):
 
+
+        # Get initial EEMS model (default to ID=1)
         initial_eems_model = request.GET.get('model', 1)
 
-        cursor = connection.cursor()
-
         query="SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model)
+
+        cursor = connection.cursor()
         cursor.execute(query)
 
         initial_eems_model=[]
@@ -47,8 +49,8 @@ def index(request):
         template = 'index.html'
         context = {
             #'eems_available_commands_dict': eems_available_commands,
+            'initial_eems_model_json': initial_eems_model_json,
             'eems_online_models_json': eems_online_models_json,
-            'initial_eems_model_json': initial_eems_model_json
         }
 
         return render(request, template, context)

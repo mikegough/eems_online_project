@@ -114,7 +114,7 @@ function init(json, eems_file_name){
         
         onAfterCompute: function(){
             //Log.write(EEMSParams["models"][modelForTree][1] + ": Click boxes to show inputs");
-            Log.write("Click boxes to show inputs");
+            Log.write("Click the boxes to map the data and show the input nodes");
             //$(".EEMS_Tree_Value").remove()
             //$("#" + top_node).append("<div class='EEMS_Tree_Value'>"  + resultsJSON['c5tmids1t1_avg'] + "</div>")
             if (typeof resultsJSON[modelForTree+"_avg"] != 'undefined') {
