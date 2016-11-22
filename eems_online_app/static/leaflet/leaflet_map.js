@@ -12,8 +12,6 @@ oceans=L.esri.basemapLayer("Oceans")
 shaded_relief=L.esri.basemapLayer("ShadedRelief")
 usa_topo=L.esri.basemapLayer("USATopo")
 
-//imagery_labels=L.esri.basemapLayer("ImageryLabels").addTo(map)
-
 var groupedOverlays = {
     "Base Maps": {
         'Gray': gray,
@@ -35,6 +33,15 @@ L.control.zoom({
 var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topleft'};
 L.control.groupedLayers("", groupedOverlays, options).addTo(map);
 
+function swapImageOverlay(layerName) {
 
+    if (typeof image_overlay != "undefined") {
+        map.removeLayer(image_overlay);
+    }
 
+    var image_overlay_url = "static/eems/data/" + eems_model_id + "/overlay/png/" + layerName + ".png";
+    image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds);
+    image_overlay.addTo(map);
+    image_overlay.bringToBack();
 
+}

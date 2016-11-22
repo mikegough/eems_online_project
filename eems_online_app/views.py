@@ -18,25 +18,27 @@ except:
 @csrf_exempt
 def index(request):
 
+        eems_model_id = request.GET.get('model', 1)
+        print eems_model_id
         cursor = connection.cursor()
 
         # GET EEMS Models
         eems_online_models={}
-        query="SELECT ID, NAME, JSON_FILE_NAME FROM EEMS_ONLINE_MODELS"
+        query="SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS"
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
-            eems_online_models[str(row[0])].append([row[1], row[2]])
+            eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
 
         eems_online_models_json=json.dumps(eems_online_models)
 
-        # GET EEMS Commands
-        # ToDo: Get EEMS Commands from eems? Something like this...
+        # ToDo: Get EEMS Commands from eems
 
         template = 'index.html'
         context = {
             #'eems_available_commands_dict': eems_available_commands,
-            'eems_online_models_json': eems_online_models_json
+            'eems_online_models_json': eems_online_models_json,
+            'eems_model_id': eems_model_id
         }
 
         return render(request, template, context)

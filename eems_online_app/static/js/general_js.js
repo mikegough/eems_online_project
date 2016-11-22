@@ -3,11 +3,13 @@ $( document ).ready(function() {
     $("#files").prop('value', '');
 
     // Add the list of available eems_online_models to the dropdown menu
-    $.each(eems_online_models_json, function(key,value){
+    $.each(eems_online_models_json, function(index, object){
 
-        var available_eems_online_model_name =  value.toString().split(',')[0];
-        $("#eems_model_dropdown").append("<option value='" + key + "'>" + available_eems_online_model_name + "</option>");
-
+        $.each(object, function(id,array){
+            var available_eems_online_model_name =  array[0];
+            var available_eems_online_model_extent =  array[2];
+            $("#eems_model_dropdown").append("<option extent='" + available_eems_online_model_extent + "' value='" + index + "'>" + available_eems_online_model_name + "</option>");
+        })
     });
 
     // Set the eems model dropdown menu to the first option on page load.
@@ -17,7 +19,6 @@ $( document ).ready(function() {
     init_eems_file = "static/eems/json_models/HighSiteSensitivityFz_Changes_To_CVTFZYCAT.json"
     init_eems_file_name = init_eems_file.split("/").pop();
     init_eems_model = init_eems_file_name.split(".")[0];
-    eems_model_id = 1;
     $.get(init_eems_file, function(results) {
         json = JSON.parse(results);
         init(json,init_eems_file_name);
@@ -37,6 +38,8 @@ $( document ).ready(function() {
 
 // Change model (drop-down)
 $('#eems_model_dropdown').change(function(){
+
+        overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
 
         eems_model_modified_id = '';
 

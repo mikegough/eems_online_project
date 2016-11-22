@@ -1,11 +1,12 @@
 {% load staticfiles %}
-<html>
+<!DOCTYPE html>
 <head>
 
     <script>
 
     eems_available_commands = {{ eems_available_commands_dict | safe }}
     eems_online_models_json = {{ eems_online_models_json | safe}}
+    eems_model_id = {{ eems_model_id }}
 
     </script>
 
@@ -100,4 +101,4 @@
 
 </body>
 
-</html>
+</>

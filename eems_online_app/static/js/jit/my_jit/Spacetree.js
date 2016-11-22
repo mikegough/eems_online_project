@@ -213,34 +213,8 @@ function init(json, eems_file_name){
 
                 st.onClick(node.id, { Move: m });
 
-                //if( normal.checked) {
-                if( 1==1) {
-            	st.onClick(node.id);
-
-                    if (EEMSParams['hasSubNodeImageOverlays'] == true) {
-
-                        //Get renderer type on click based on the selected hidden radio button option
-                        renderer = $("#" + node.id + " input[type='radio']:checked").val()
-
-                        eems_node_image_name = eems_file_name.replace(".eem", "") + "_" + node.id
-                        //Note: have to do swapImageOverlay before swapLegend
-                        //swapImageOverlay(eems_node_image_name, 'EEMSmodel')
-
-                        //For stretched
-                        if (renderer == 'stretched') {
-                            //swapLegend(node.id + "_legend", node.name, 'EEMSmodelTREE_Stretched')
-                            //swapLegend(node.id, node.name, 'EEMSmodelTREE_Stretched')
-                        }
-                        //For classified (original)
-                        else {
-                            //swapLegend(modelForTree, node.name, 'EEMSmodelTREE_Standard')
-                        }
-                    }
-                    $('#legendHeader').html(alias)
-
-            	} else {
-                    st.setRoot(node.id, 'animate');
-            	}
+                swapImageOverlay(node.id)
+                st.setRoot(node.id, 'animate');
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
                // DELETED //
