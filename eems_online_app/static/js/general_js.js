@@ -12,13 +12,17 @@ $( document ).ready(function() {
         })
     });
 
-    // Set the eems model dropdown menu to the first option on page load.
-    $('#eems_model_dropdown option').eq(1).prop('selected', true).trigger('change');
+    // Set the initial model parameters
+    // Set the eems model dropdown menu to the initial eems model on page load
 
-    // Initialize MEEMSE with the JSON file below
-    init_eems_file = "static/eems/json_models/HighSiteSensitivityFz_Changes_To_CVTFZYCAT.json"
-    init_eems_file_name = init_eems_file.split("/").pop();
+    eems_model_id = initial_eems_model_json[0][0];
+
+    $('#eems_model_dropdown option').eq(eems_model_id).prop('selected', true).trigger('change');
+
+    init_eems_file_name = initial_eems_model_json[0][1][1];
+    init_eems_file = "static/eems/json_models/" + init_eems_file_name;
     init_eems_model = init_eems_file_name.split(".")[0];
+
     $.get(init_eems_file, function(results) {
         json = JSON.parse(results);
         init(json,init_eems_file_name);
