@@ -8,7 +8,6 @@ settings.py
 *.js.swp
 */static/tables/*
 */static/data/*
-*/static/deps/*
 */static/Leaflet/myPNG/*
 Archive/
 */static/docs/*
