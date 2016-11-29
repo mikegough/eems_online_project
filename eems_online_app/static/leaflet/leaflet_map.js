@@ -30,6 +30,18 @@ L.control.zoom({
      position:'topleft'
 }).addTo(map);
 
+//DYNAMIC LEGEND
+var dynamic_legend = L.control({position: 'bottomleft'});
+
+//Initialize Legend
+dynamic_legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend');
+    div.innerHTML=""
+    return div;
+};
+
+dynamic_legend.addTo(map)
+
 var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topleft'};
 L.control.groupedLayers("", groupedOverlays, options).addTo(map);
 
@@ -44,4 +56,11 @@ function swapImageOverlay(layerName) {
     image_overlay.addTo(map);
     image_overlay.bringToBack();
 
+    swapLegend(layerName)
+}
+
+function swapLegend(layerName){
+    document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
+              "<img style='float:left' src='static/eems/data/" + eems_model_id + "/overlay/legend/" + layerName + "_legend.png'>" +
+              "<div class='legendLabels'>"
 }

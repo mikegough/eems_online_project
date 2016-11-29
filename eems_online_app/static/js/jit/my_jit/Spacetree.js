@@ -1,16 +1,4 @@
 var labelType, useGradients, nativeTextSupport, animate;
-modelForTree="intactness"
-resultsJSON=""
-renderer="continuous"
-
-function switchRenderer(node_id,renderer_arg){
-    if (renderer_arg=="classified") {
-        $("#" + node_id + "_classified").prop("checked", true)
-    }
-    else if (renderer_arg=="stretched") {
-        $("#" + node_id + "_stretched").prop("checked", true)
-    }
-}
 
 (function() {
 
@@ -20,12 +8,12 @@ function switchRenderer(node_id,renderer_arg){
       nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
       textSupport = nativeCanvasSupport 
         && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-  //I'm setting this based on the fact that ExCanvas provides text support for IE
-  //and that as of today iPhone/iPad current text support is lame
-  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
-  nativeTextSupport = labelType == 'Native';
-  useGradients = nativeCanvasSupport;
-  animate = !(iStuff || !nativeCanvasSupport);
+      //I'm setting this based on the fact that ExCanvas provides text support for IE
+      //and that as of today iPhone/iPad current text support is lame
+      labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+      nativeTextSupport = labelType == 'Native';
+      useGradients = nativeCanvasSupport;
+      animate = !(iStuff || !nativeCanvasSupport);
 })();
 
 var Log = {
@@ -40,7 +28,6 @@ var Log = {
     this.elem.style.verticalAlign = 'top';
   }
 };
-
 
 //function for scaling the labels when you zoom (mouse wheel in and out)
 function setLabelScaling() {
@@ -113,15 +100,8 @@ function init(json, eems_file_name){
         },
         
         onAfterCompute: function(){
-            //Log.write(EEMSParams["models"][modelForTree][1] + ": Click boxes to show inputs");
             Log.write("Click the boxes to map the data and show the input nodes");
-            //$(".EEMS_Tree_Value").remove()
-            //$("#" + top_node).append("<div class='EEMS_Tree_Value'>"  + resultsJSON['c5tmids1t1_avg'] + "</div>")
-            if (typeof resultsJSON[modelForTree+"_avg"] != 'undefined') {
-                $(".EEMS_Tree_Value").remove()
-                $("#" + top_node).append("<div class='EEMS_Tree_Value'>" + resultsJSON[modelForTree+"_avg"] + "</div>")
-
-            }
+            // Remove logic to show eems value in top node
         },
 
         onPlaceLabel: function(label, node, controllers){
@@ -156,13 +136,6 @@ function init(json, eems_file_name){
                 label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='This is the operation used to create this node'> " + node.data.operation + "</div>";
             }
 
-            /*
-            $("#" + node.id + "_change_button").click(function( event ) {
-                    alert(this)
-                    event.stopPropagation();
-            });
-            */
-
             // Get a list of direct children for this node for making the form.
 
             eems_children_dict[node.id]=[]
@@ -185,25 +158,7 @@ function init(json, eems_file_name){
                 label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
-            if (EEMSParams['hasSubNodeImageOverlays']){
-
-                if (node.id.indexOf("Fz") >= 1) {
-                    //Change renderer options. Clicking a color ramp selects the corresponding radio button.
-                    //Whichever radio button is set to checked below sets the default renderer.
-                    /*
-                    label.innerHTML += '<span style="display:none"><input type="radio" name="' + node.id + '" id="' + node.id + '_classified" value="classified">class</span>';
-                    label.innerHTML += '<span style="display:none"><input type="radio" checked   name="' + node.id + '"id="' + node.id + '_stretched" value="stretched">stretch</span>';
-                    label.innerHTML += '<span title="Click to apply a classified renderer to the map" style="position:absolute; float:right; top:0px; right:12px"><img onclick=switchRenderer("' + node.id + '","classified") id="' + node.id + '_image" style="height:51px; width:10px" src="' + static_url + 'Leaflet/myPNG/climate/' + climateParams['imageOverlayDIR'] + '/Legends/' + EEMSParams["models"][modelForTree][2] + '.png"></span>'
-                    label.innerHTML += '<span title="Click to apply a stretched renderer to the map" style="position:absolute; float:right; top:-7px; right:-30px"><img onclick=switchRenderer("' + node.id + '","stretched") id="' + node.id + '_image" style="height:62px; width:40px" src="' + static_url + 'Leaflet/myPNG/climate/' + climateParams['imageOverlayDIR'] + '/Stretched/' + legendImage + '.png"></span>'
-                    */
-                } else {
-                    //Non-Fuzzy inputs don't have a classified renderer.
-                    label.innerHTML += '<span style="display:none"><input type="radio"  checked name="' + node.id + '"id="' + node.id + '_stretched" value="stretched">stretch</span>';
-                }
-            }
-
             label.onclick = function(){
-
 
                 //Fix for nodes shooting off the screen after panning then clicking.
                 var m = {
@@ -212,9 +167,9 @@ function init(json, eems_file_name){
                 };
 
                 st.onClick(node.id, { Move: m });
+                st.setRoot(node.id, 'animate');
 
                 swapImageOverlay(node.id)
-                st.setRoot(node.id, 'animate');
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
                // DELETED //
@@ -280,7 +235,7 @@ function init(json, eems_file_name){
         //This method is called right before plotting
         //an edge. It's useful for changing an individual edge
         //style properties before plotting it.
-        //Edge data proprties prefixed with a dollar sign will
+        //Edge data properties prefixed with a dollar sign will
         //override the Edge global style properties.
         onBeforePlotLine: function(adj){
             if (adj.nodeFrom.selected && adj.nodeTo.selected) {
@@ -302,7 +257,6 @@ function init(json, eems_file_name){
     //emulate a click on the root node.
     st.onClick(st.root);
 
-
     //end
     //Add event handlers to switch spacetree orientation.
     var top = $jit.id('r-top'), 
@@ -310,7 +264,6 @@ function init(json, eems_file_name){
         bottom = $jit.id('r-bottom'), 
         right = $jit.id('r-right'),
         normal = $jit.id('s-normal');
-
 
     function changeHandler() {
         if(this.checked) {
@@ -322,10 +275,6 @@ function init(json, eems_file_name){
             });
         }
     }
-
-    //top.onchange = left.onchange = bottom.onchange = right.onchange = changeHandler;
-    //end
-
 }
 
 function remove_node(label_id) {
@@ -344,11 +293,5 @@ function remove_node(label_id) {
         }
     });
 }
-
-
-
-
-
-
 
 
