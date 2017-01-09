@@ -176,7 +176,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
             $.each(json_eems_commands, function (index, operator) {
                 if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
-                    form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                    form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
                 }
             });
         }
@@ -186,7 +186,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             if (node_original_operator.indexOf("Fuzzy") != -1) {
                 $.each(json_eems_commands, function (index, operator) {
                     if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
-                        form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                        form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
                     }
                 });
             }
@@ -195,7 +195,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             else {
                 $.each(json_eems_commands, function (index, operator) {
                     if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
-                        form_string += "<option value='" + index + "'>" + operator["DisplayName"] + "</option>"
+                        form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
                     }
                 });
             }
@@ -348,6 +348,7 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
         update_cmd_dict["cmd"]["params"]["InFieldNames"] += child_name + ",";
     });
 
+    // Remove the trailing comma.
     update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
     update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
 
