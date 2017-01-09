@@ -316,8 +316,8 @@ class MPilotWorker(mpprog.MPilotProgram):
     def HandleRqst(
         self,
         id,
-        rqst,
         srcProgNm,
+        rqst,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
@@ -328,7 +328,6 @@ class MPilotWorker(mpprog.MPilotProgram):
         rtrn = None
 
         if rqstIsJSON: rqst = json.loads(rqst)
-
 
         print srcProgNm
             
