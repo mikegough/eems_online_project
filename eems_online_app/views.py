@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 
+
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 import json
@@ -10,6 +11,15 @@ import subprocess
 import bitarray
 import sqlite3
 from django.utils.crypto import get_random_string
+
+#EEMS Dependencies. pip install from wheels:
+    # numpy+MKL (numpy-1.11.3+mkl-cp27-cp27m-win32.whl)
+    # netCDF4 (netCDF4-1.2.6-cp27-cp27m-win32.whl after upgrading pip)
+    # scipy (scipy-0.18.1-cp27-cp27m-win32.whl)
+    # matplot lib (just pip install. No wheel)
+
+from MPilotOnlineWorker import *
+
 try:
    import cPickle as pickle
 except:
@@ -17,7 +27,6 @@ except:
 
 @csrf_exempt
 def index(request):
-
 
         # Get initial EEMS model (default to ID=1)
         initial_eems_model = request.GET.get('model', 1)
@@ -102,7 +111,6 @@ def run_eems(request):
     eems_model_id = request.POST.get('eems_model_id')
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
     eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
-
     eems_operator_changes_dict = json.loads(eems_operator_changes_string)
 
     print json.dumps(eems_operator_changes_dict,indent=2)
@@ -131,6 +139,9 @@ def run_eems(request):
     cursor.execute(query)
     for row in cursor:
         modified_eems_model = pickle.loads(str(row[0]))
+
+    my_mpilot_worker = MPilotWorker()
+    my_mpilot_worker.HandleRqst('1',eems_operator_changes_dict,settings.BASE_DIR,True,False,True)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
