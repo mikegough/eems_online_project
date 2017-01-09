@@ -234,7 +234,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         if not self.RsltNmExists(parsedCmd['rsltNm']):
             raise Exception('missing command')
         self.DelCmdByRsltNm(parsedCmd['rsltNm'])
-        self.self._CreateAndAddMptCmd(parsedCmd)
+        self._CreateAndAddMptCmd(parsedCmd)
         
         return self.ProgAsText()
     
