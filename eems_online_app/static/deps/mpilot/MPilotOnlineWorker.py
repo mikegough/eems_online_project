@@ -1,4 +1,5 @@
 #!/opt/local/bin/python
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 import MPilotProgram as mpprog
 import MPilotFramework as mpf
@@ -169,9 +170,13 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _RunProg(self):
 
     def _ProcessCmds(self,rqstCmds):
-        
+        print "\nProcessing Commands (_ProcessCmds)", rqstCmds
+
         for rqstCmd in rqstCmds:
-            self._ProcessRqst(rqstCmd)
+            print rqstCmd
+            #MG. Fails without this.
+            if rqstCmd['action'] != 'LoadProg':
+                self._ProcessRqst(rqstCmd)
             
         return self.ProgAsText()
     
@@ -224,7 +229,8 @@ class MPilotWorker(mpprog.MPilotProgram):
         return meemseTrees
             
     def _UpdateCmd(self,parsedCmd):
-        
+
+        print parsedCmd['rsltNm']
         if not self.RsltNmExists(parsedCmd['rsltNm']):
             raise Exception('missing command')
         self.DelCmdByRsltNm(parsedCmd['rsltNm'])
@@ -285,6 +291,8 @@ class MPilotWorker(mpprog.MPilotProgram):
 
     def _ProcessRqst(self,rqst):
 
+        print "Processing Request (_ProcessRqst)", rqst
+
         if rqst['action'] ==   'ProcessCmds':             rtrn = self._ProcessCmds(rqst['cmds'])
         elif rqst['action'] == 'CreateProg':              rtrn = self._CreateProg()
         elif rqst['action'] == 'AddCmd':                  rtrn = self._CreateAndAddMptCmd(rqst['cmd'])
@@ -309,6 +317,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         self,
         id,
         rqst,
+        srcProgNm,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
@@ -320,9 +329,11 @@ class MPilotWorker(mpprog.MPilotProgram):
 
         if rqstIsJSON: rqst = json.loads(rqst)
 
-        srcProgNm = '../eems/models/{}/eemssrc/model.mpt'.format(self.id)
+
+        print srcProgNm
             
         if os.path.isfile(srcProgNm) and doFileLoad:
+            print "Loading MptFile (LoadMptFile):  " + srcProgNm
             self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
