@@ -339,13 +339,17 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
     update_cmd_dict["cmd"]["cmd"] = new_operator;
     update_cmd_dict["cmd"]["params"] = {};
 
-    update_cmd_dict["cmd"]["params"]["InFieldNames"] = [];
+    // MPilot needs the list of InFieldNames as a string within brackets. A list won't work.
+    update_cmd_dict["cmd"]["params"]["InFieldNames"] = '[';
 
     $.each(eems_children_dict[node_id], function(count, value) {
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
         var child_name=value.split(":")[0];
-        update_cmd_dict["cmd"]["params"]["InFieldNames"].push(child_name);
+        update_cmd_dict["cmd"]["params"]["InFieldNames"] += child_name + ",";
     });
+
+    update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
+    update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
 
     $.each(required_params, function(param, value) {
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
