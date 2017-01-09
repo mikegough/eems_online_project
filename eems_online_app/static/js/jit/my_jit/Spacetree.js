@@ -142,7 +142,8 @@ function init(json, eems_file_name){
 
             node.eachSubnode(function(child){
                //eems_children_dict[node.id].push(child)
-               eems_children_dict[node.id].push(child.name)
+               //eems_children_dict[node.id].push(child.name)
+               eems_children_dict[node.id].push(child.id)
             });
 
             var argument_string="";

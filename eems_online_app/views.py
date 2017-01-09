@@ -142,7 +142,7 @@ def run_eems(request):
 
     src_program_name = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst('1',src_program_name,eems_operator_changes_dict,True,False,True)
+    my_mpilot_worker.HandleRqst('1',src_program_name,eems_operator_changes_string,True,True,True)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
