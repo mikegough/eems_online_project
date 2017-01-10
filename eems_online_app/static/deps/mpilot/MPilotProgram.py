@@ -297,8 +297,10 @@ class MPilotProgram(object):
         
         if self.orderedMPCmds is None:
             self._OrderCmds()
-            
+        print self.orderedMPCmds.items()
         for mpCmdNm,mpCmd in self.orderedMPCmds.items():
+            print "Here we are...."
+            print self.rslts
             mpCmd.Exec(self.rslts)
 
     def Rslts(self):

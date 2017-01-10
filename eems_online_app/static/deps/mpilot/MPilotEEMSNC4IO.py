@@ -64,7 +64,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
     # def DependencyNms(self):
     
     def Exec(self,executedObjects):
-        
+        print self.ParamByNm('InFileName')
         with nc4.Dataset(self.ParamByNm('InFileName'),'r') as inDS:
             if self.ParamByNm('InFieldName') not in inDS.variables:
                 raise Exception(

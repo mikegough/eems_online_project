@@ -1,5 +1,6 @@
 #!/opt/local/bin/python
 from django.contrib.staticfiles.templatetags.staticfiles import static
+import shutil
 
 import MPilotProgram as mpprog
 import MPilotFramework as mpf
@@ -72,9 +73,10 @@ class MPilotWorker(mpprog.MPilotProgram):
         parsedCmd = {}
         parsedCmd['rsltNm'] = '{}_OutputDone'.format(self.id)
         parsedCmd['cmd'] = 'EEMSWrite'
+        outfile = self.outputBaseDir + 'data/nc/Results.nc'
         parsedCmd['params'] = {
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
-            'OutFileName':'../eems/models/{}/data/nc/Results.nc'.format(self.id),
+            'OutFileName':outfile,
             'OutFileName':'{}.nc'.format('Tst'),
             'DimensionFileName': dimFileNm,
             'DimensionFieldName':dimFieldNm
@@ -89,12 +91,12 @@ class MPilotWorker(mpprog.MPilotProgram):
         # Save each node's data to a graphic
         for rsltNm in rsltNms:
             parsedCmd = {}
-            
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
+            outfile= self.outputBaseDir + 'overlay/png/' + rsltNm + '.png'
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':'../eems/models/{}/overlay/png/{}.png'.format(self.id,rsltNm)
+                'OutFileName':outfile
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -103,15 +105,15 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _AddOutputLayerCmds(self)
 
     def _AddOutputDistributionCmds(self,rsltNms):
-
         # Save each node's data to a graphic
         for rsltNm in rsltNms:
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_{}_HistoDist'.format('Tst',rsltNm)
             parsedCmd['cmd'] = 'HistoDist'
+            outfile = self.outputBaseDir + 'histogram/' + rsltNm + '.png'
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':'../eems/models/{}/histogram/png/{}.png'.format(self.id,rsltNm)
+                'OutFileName':outfile
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -318,11 +320,13 @@ class MPilotWorker(mpprog.MPilotProgram):
         id,
         srcProgNm,
         rqst,
+        outputBaseDir,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
         ):
 
+        self.outputBaseDir = outputBaseDir
         self.id = id
 
         rtrn = None
@@ -333,7 +337,10 @@ class MPilotWorker(mpprog.MPilotProgram):
             
         if os.path.isfile(srcProgNm) and doFileLoad:
             print "Loading MptFile (LoadMptFile):  " + srcProgNm
-            self.LoadMptFile(srcProgNm)
+            #MG For now, make a copy, since the mpt file gets modified.
+            mptFileCopy=os.path.dirname(srcProgNm) + "/model_copy.mpt"
+            shutil.copy(srcProgNm,mptFileCopy)
+            self.LoadMptFile(mptFileCopy)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 

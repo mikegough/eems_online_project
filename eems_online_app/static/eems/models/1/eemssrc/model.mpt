@@ -1,6 +1,6 @@
 # Soils data
 AvailableWaterCapacity = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/awc.nc,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/awc.nc,
     InFieldName = awc, # available water capacity
     )
 
@@ -11,7 +11,7 @@ LowAvailableWaterCapacityFz = CvtToFuzzy(
     )
 
 WaterErodibilityIndex = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/lskf.nc,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/lskf.nc,
     InFieldName = lskf, # erodability factor,
     )
 
@@ -22,7 +22,7 @@ HighWaterErodibilityFz = CvtToFuzzy(
     )
 
 WindErodibilityGroup = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/weg.nc,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/weg.nc,
     InFieldName = weg, #erodability factor,
     )
 
@@ -33,8 +33,8 @@ HighWindErodibilityFz = CvtToFuzzy(
     )
 
 DepthToBedrock = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/rockdep.nc,
-    InFieldName = rockdep, # depth to bedrock,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/rd.nc,
+    InFieldName = rd, # depth to bedrock,
     )
 
 LowDepthToBedrockFz = CvtToFuzzy(
@@ -44,7 +44,7 @@ LowDepthToBedrockFz = CvtToFuzzy(
     )
 
 SoilpH = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/pH.nc,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pH.nc,
     InFieldName = pH, # soil reaction
     )
 
@@ -69,8 +69,8 @@ ExtremeSoilpHFz = CvtToFuzzyCurve(
     )
 
 Salinity = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/salinity.nc,
-    InFieldName = salinity,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/sal.nc,
+    InFieldName = sal,
     )
 
 HighSalinityFz = CvtToFuzzy(
@@ -80,8 +80,8 @@ HighSalinityFz = CvtToFuzzy(
     )
 
 NLCDClass = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/nlcdClass.nc,
-    InFieldName = nlcdClass,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/nlcd_west_1km_wgs84.nc,
+    InFieldName = nlcd,
     DataType = Integer
     )
 
@@ -102,8 +102,8 @@ IsNotBarrenFz = CvtToFuzzyCat(
 
 # PET
 PotentialEvapoTrans = EEMSRead(
-    InFileName = /Users/timsheehan/Projects/Pilot/SiteSensitivity/Input/petNorm.nc,
-    InFieldName = petNorm,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pet_west.nc,
+    InFieldName = pet,
     )
 
 HighPotentialEvapoTransFz = CvtToFuzzy(

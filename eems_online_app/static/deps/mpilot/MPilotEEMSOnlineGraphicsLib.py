@@ -186,7 +186,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         myImg.set_cmap(cmap)
         
-        plt.savefig(outFNm)
+        #plt.savefig(outFNm)
         plt.close(fig)
 
         # now the key

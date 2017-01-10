@@ -16,7 +16,12 @@ from django.utils.crypto import get_random_string
     # numpy+MKL (numpy-1.11.3+mkl-cp27-cp27m-win32.whl)
     # netCDF4 (netCDF4-1.2.6-cp27-cp27m-win32.whl after upgrading pip)
     # scipy (scipy-0.18.1-cp27-cp27m-win32.whl)
-    # matplot lib (just pip install. No wheel)
+    # matplotlib (just pip install. No wheel)
+    # Also need to add the following lines to activate.bat if running this app from a virtual environment:
+        #set TCL_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tcl8.5
+        #set TK_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tk8.5
+
+
 
 from MPilotOnlineWorker import *
 
@@ -141,8 +146,10 @@ def run_eems(request):
         modified_eems_model = pickle.loads(str(row[0]))
 
     src_program_name = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
+    output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_id)
+
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst('1',src_program_name,eems_operator_changes_string,True,True,True)
+    my_mpilot_worker.HandleRqst('1', src_program_name, eems_operator_changes_string, output_base_dir, True,True,True)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
