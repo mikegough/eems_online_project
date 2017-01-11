@@ -13,3 +13,5 @@ Archive/
 */static/docs/*
 */static/eems/models/*
 *.sqlite3
+*/overlay/*
+*/histogram/*
