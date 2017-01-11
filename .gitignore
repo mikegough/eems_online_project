@@ -5,6 +5,7 @@ settings.py
 *.json
 *.gitignore
 *.swp
+*.nc
 *.js.swp
 */static/tables/*
 */static/data/*
@@ -13,5 +14,5 @@ Archive/
 */static/docs/*
 */static/eems/models/*
 *.sqlite3
-*/overlay/*
-*/histogram/*
+overlay/
+histogram/
