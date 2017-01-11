@@ -299,8 +299,7 @@ class MPilotProgram(object):
             self._OrderCmds()
         print self.orderedMPCmds.items()
         for mpCmdNm,mpCmd in self.orderedMPCmds.items():
-            print mpCmd.CleanCmdStr()
-            #print self.rslts
+            #print mpCmd.CleanCmdStr()
             mpCmd.Exec(self.rslts)
 
     def Rslts(self):
