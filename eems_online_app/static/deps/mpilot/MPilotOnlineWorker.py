@@ -1,5 +1,4 @@
 #!/opt/local/bin/python
-from django.contrib.staticfiles.templatetags.staticfiles import static
 import shutil
 
 import MPilotProgram as mpprog
@@ -78,7 +77,7 @@ class MPilotWorker(mpprog.MPilotProgram):
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
             'OutFileName':outfile,
             'OutFileName':'{}.nc'.format('Tst'),
-            'DimensionFileName': dimFileNm,
+            'DimensionFileName':dimFileNm,
             'DimensionFieldName':dimFieldNm
             }
 
@@ -93,7 +92,7 @@ class MPilotWorker(mpprog.MPilotProgram):
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
-            outfile= self.outputBaseDir + 'overlay/png/' + rsltNm + '.png'
+            outfile = self.outputBaseDir + 'overlay/png/' + rsltNm + '.png'
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
                 'OutFileName':outfile
@@ -338,15 +337,15 @@ class MPilotWorker(mpprog.MPilotProgram):
         if os.path.isfile(srcProgNm) and doFileLoad:
             print "Loading MptFile (LoadMptFile):  " + srcProgNm
             #MG For now, make a copy, since the mpt file gets modified.
-            mptFileCopy=os.path.dirname(srcProgNm) + "/model_copy.mpt"
+            mptFileCopy = os.path.dirname(srcProgNm) + "/model_copy.mpt"
             shutil.copy(srcProgNm,mptFileCopy)
             self.LoadMptFile(mptFileCopy)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 
         rtrn = self._ProcessRqst(rqst)
-        
-        with open(srcProgNm,'w') as outF:
+
+        with open(mptFileCopy,'w') as outF:
             outF.write(self.ProgAsText())
             
         if reset:

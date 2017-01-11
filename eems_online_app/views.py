@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 
-
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 import json
@@ -149,7 +148,7 @@ def run_eems(request):
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_id)
 
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst('1', src_program_name, eems_operator_changes_string, output_base_dir, True,True,True)
+    my_mpilot_worker.HandleRqst('1', src_program_name, eems_operator_changes_string, output_base_dir, True, True, True)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model

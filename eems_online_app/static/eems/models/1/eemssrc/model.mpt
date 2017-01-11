@@ -1,150 +1,89 @@
-# Soils data
 AvailableWaterCapacity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/awc.nc,
-    InFieldName = awc, # available water capacity
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = AvailableWaterCapacity
+)
 LowAvailableWaterCapacityFz = CvtToFuzzy(
     InFieldName = AvailableWaterCapacity,
     TrueThreshold = 0,
-    FalseThreshold = 10,
-    )
-
+    FalseThreshold = 10
+)
 WaterErodibilityIndex = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/lskf.nc,
-    InFieldName = lskf, # erodability factor,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = WaterErodibilityIndex
+)
 HighWaterErodibilityFz = CvtToFuzzy(
     InFieldName = WaterErodibilityIndex,
     TrueThreshold = 0.15,
-    FalseThreshold = 0,
-    )
-
+    FalseThreshold = 0
+)
 WindErodibilityGroup = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/weg.nc,
-    InFieldName = weg, #erodability factor,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = WindErodibilityGroup
+)
 HighWindErodibilityFz = CvtToFuzzy(
     InFieldName = WindErodibilityGroup,
     TrueThreshold = 2,
-    FalseThreshold = 7,
-    )
-
+    FalseThreshold = 7
+)
 DepthToBedrock = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/rd.nc,
-    InFieldName = rd, # depth to bedrock,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = DepthToBedrock
+)
 LowDepthToBedrockFz = CvtToFuzzy(
     InFieldName = DepthToBedrock,
     TrueThreshold = 2,
-    FalseThreshold = 15,
-    )
-
+    FalseThreshold = 15
+)
 SoilpH = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pH.nc,
-    InFieldName = pH, # soil reaction
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = SoilpH
+)
 ExtremeSoilpHFz = CvtToFuzzyCurve(
     InFieldName = SoilpH,
-    RawValues =   [
-        3.50,
-        4.00,
-        5.50,
-        7.30,
-        7.80,
-        8.30
-    ]
-    FuzzyValues =   [
-        1,   # 350,
-        0,   # 400,
-        -1,  # 550,
-        -1,  # 730,
-        0,   # 780,
-        1    # 830,
-    ]
-    )
-
+    RawValues = [3.50,4.00,5.50,7.30,7.80,8.30],
+    FuzzyValues = [1,0,-1,-1,0,1]
+)
 Salinity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/sal.nc,
-    InFieldName = sal,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = Salinity
+)
 HighSalinityFz = CvtToFuzzy(
     InFieldName = Salinity,
     TrueThreshold = 16,
-    FalseThreshold = 8,
-    )
-
+    FalseThreshold = 8
+)
 NLCDClass = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/nlcd_west_1km_wgs84.nc,
-    InFieldName = nlcd,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = NLCDClass,
     DataType = Integer
-    )
-
+)
 IsNotBarrenFz = CvtToFuzzyCat(
     InFieldName = NLCDClass,
-    RawValues = [
-        22, # Low intens dev
-        24, # Hi intens dev
-        31 # Barren land
-        ],
-    FuzzyValues = [
-        -1, # Low intens dev
-        -1, # Hi intens dev
-        -1  # Barren land
-        ],
-    DefaultFuzzyValue = 1,
-    )
-
-# PET
+    RawValues = [22,24,31],
+    FuzzyValues = [-1,-1,-1],
+    DefaultFuzzyValue = 1
+)
 PotentialEvapoTrans = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pet_west.nc,
-    InFieldName = pet,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = PotentialEvapoTrans
+)
 HighPotentialEvapoTransFz = CvtToFuzzy(
     InFieldName = PotentialEvapoTrans,
     TrueThreshold = 1700,
-    FalseThreshold = 1400,
-    )
-
-HighSoilErodibilityFz = FuzzyOr(
-    InFieldNames = [
-        HighWindErodibilityFz,
-        HighWaterErodibilityFz
-    ],
+    FalseThreshold = 1400
 )
-
+HighSoilErodibilityFz = FuzzyOr(
+    InFieldNames = [HighWindErodibilityFz,HighWaterErodibilityFz]
+)
 HighSoilSensitivityFz = FuzzyOr(
-    InFieldNames = [
-        HighSoilErodibilityFz,
-        ExtremeSoilpHFz,
-        LowDepthToBedrockFz,
-        HighSalinityFz
-        ],
-    )
-
+    InFieldNames = [HighSoilErodibilityFz,ExtremeSoilpHFz,LowDepthToBedrockFz,HighSalinityFz]
+)
 LowSoilWaterFz = FuzzyUnion(
-    InFieldNames = [
-        HighPotentialEvapoTransFz,
-        LowAvailableWaterCapacityFz
-        ],
-    )
-
+    InFieldNames = [HighPotentialEvapoTransFz,LowAvailableWaterCapacityFz]
+)
 HighPotentialSiteSensitivityFz = FuzzyUnion(
-    InFieldNames = [
-        LowSoilWaterFz,
-        HighSoilSensitivityFz
-        ],
-    )
-
-HighSiteSensitivityFz = FuzzyAnd(
-    InFieldNames = [
-        HighPotentialSiteSensitivityFz,
-        IsNotBarrenFz
-        ],
-    )
+    InFieldNames = [LowSoilWaterFz,HighSoilSensitivityFz]
+)
+HighSiteSensitivityFz = FuzzyOr(
+    InFieldNames = [IsNotBarrenFz,HighPotentialSiteSensitivityFz]
+)

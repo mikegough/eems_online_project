@@ -185,8 +185,9 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             )
 
         myImg.set_cmap(cmap)
-        
-        #plt.savefig(outFNm)
+
+        plt.gca().invert_yaxis()
+        plt.savefig(outFNm, transparent=True)
         plt.close(fig)
 
         # now the key
@@ -205,7 +206,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         
         plt.savefig(outFNm)
         plt.close(fig)
-        
+
         # ax1 = fig.add_subplot(111)
 
         # if dataObj.DataType() == 'Fuzzy':
@@ -372,7 +373,7 @@ class ScatterXY(mpefp._MPilotEEMSFxnParent):
         executedObjects[self.RsltNm()] = self
         
         plt.close(fig) # fig must be closed to get it out of memory
-        
+
     # def Exec(self,executedObjects):
-    
+
 # class ScatterXY(mpefp._MPilotEEMSFxnParent):

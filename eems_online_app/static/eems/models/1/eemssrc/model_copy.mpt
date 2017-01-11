@@ -1,150 +1,257 @@
-# Soils data
 AvailableWaterCapacity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/awc.nc,
-    InFieldName = awc, # available water capacity
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = AvailableWaterCapacity
+)
 LowAvailableWaterCapacityFz = CvtToFuzzy(
     InFieldName = AvailableWaterCapacity,
     TrueThreshold = 0,
-    FalseThreshold = 10,
-    )
-
+    FalseThreshold = 10
+)
 WaterErodibilityIndex = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/lskf.nc,
-    InFieldName = lskf, # erodability factor,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = WaterErodibilityIndex
+)
 HighWaterErodibilityFz = CvtToFuzzy(
     InFieldName = WaterErodibilityIndex,
     TrueThreshold = 0.15,
-    FalseThreshold = 0,
-    )
-
+    FalseThreshold = 0
+)
 WindErodibilityGroup = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/weg.nc,
-    InFieldName = weg, #erodability factor,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = WindErodibilityGroup
+)
 HighWindErodibilityFz = CvtToFuzzy(
     InFieldName = WindErodibilityGroup,
     TrueThreshold = 2,
-    FalseThreshold = 7,
-    )
-
+    FalseThreshold = 7
+)
 DepthToBedrock = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/rd.nc,
-    InFieldName = rd, # depth to bedrock,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = DepthToBedrock
+)
 LowDepthToBedrockFz = CvtToFuzzy(
     InFieldName = DepthToBedrock,
     TrueThreshold = 2,
-    FalseThreshold = 15,
-    )
-
+    FalseThreshold = 15
+)
 SoilpH = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pH.nc,
-    InFieldName = pH, # soil reaction
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = SoilpH
+)
 ExtremeSoilpHFz = CvtToFuzzyCurve(
     InFieldName = SoilpH,
-    RawValues =   [
-        3.50,
-        4.00,
-        5.50,
-        7.30,
-        7.80,
-        8.30
-    ]
-    FuzzyValues =   [
-        1,   # 350,
-        0,   # 400,
-        -1,  # 550,
-        -1,  # 730,
-        0,   # 780,
-        1    # 830,
-    ]
-    )
-
+    RawValues = [3.50,4.00,5.50,7.30,7.80,8.30],
+    FuzzyValues = [1,0,-1,-1,0,1]
+)
 Salinity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/sal.nc,
-    InFieldName = sal,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = Salinity
+)
 HighSalinityFz = CvtToFuzzy(
     InFieldName = Salinity,
     TrueThreshold = 16,
-    FalseThreshold = 8,
-    )
-
+    FalseThreshold = 8
+)
 NLCDClass = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/nlcd_west_1km_wgs84.nc,
-    InFieldName = nlcd,
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = NLCDClass,
     DataType = Integer
-    )
-
+)
 IsNotBarrenFz = CvtToFuzzyCat(
     InFieldName = NLCDClass,
-    RawValues = [
-        22, # Low intens dev
-        24, # Hi intens dev
-        31 # Barren land
-        ],
-    FuzzyValues = [
-        -1, # Low intens dev
-        -1, # Hi intens dev
-        -1  # Barren land
-        ],
-    DefaultFuzzyValue = 1,
-    )
-
-# PET
+    RawValues = [22,24,31],
+    FuzzyValues = [-1,-1,-1],
+    DefaultFuzzyValue = 1
+)
 PotentialEvapoTrans = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/pet_west.nc,
-    InFieldName = pet,
-    )
-
+    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/netcdf/CASiteSensitivity.nc,
+    InFieldName = PotentialEvapoTrans
+)
 HighPotentialEvapoTransFz = CvtToFuzzy(
     InFieldName = PotentialEvapoTrans,
     TrueThreshold = 1700,
-    FalseThreshold = 1400,
-    )
-
-HighSoilErodibilityFz = FuzzyOr(
-    InFieldNames = [
-        HighWindErodibilityFz,
-        HighWaterErodibilityFz
-    ],
+    FalseThreshold = 1400
 )
-
+HighSoilErodibilityFz = FuzzyOr(
+    InFieldNames = [HighWindErodibilityFz,HighWaterErodibilityFz]
+)
 HighSoilSensitivityFz = FuzzyOr(
-    InFieldNames = [
-        HighSoilErodibilityFz,
-        ExtremeSoilpHFz,
-        LowDepthToBedrockFz,
-        HighSalinityFz
-        ],
-    )
-
+    InFieldNames = [HighSoilErodibilityFz,ExtremeSoilpHFz,LowDepthToBedrockFz,HighSalinityFz]
+)
 LowSoilWaterFz = FuzzyUnion(
-    InFieldNames = [
-        HighPotentialEvapoTransFz,
-        LowAvailableWaterCapacityFz
-        ],
-    )
-
+    InFieldNames = [HighPotentialEvapoTransFz,LowAvailableWaterCapacityFz]
+)
 HighPotentialSiteSensitivityFz = FuzzyUnion(
-    InFieldNames = [
-        LowSoilWaterFz,
-        HighSoilSensitivityFz
-        ],
-    )
-
-HighSiteSensitivityFz = FuzzyAnd(
-    InFieldNames = [
-        HighPotentialSiteSensitivityFz,
-        IsNotBarrenFz
-        ],
-    )
+    InFieldNames = [LowSoilWaterFz,HighSoilSensitivityFz]
+)
+HighSiteSensitivityFz = FuzzyUnion(
+    InFieldNames = [IsNotBarrenFz,HighPotentialSiteSensitivityFz]
+)
+AvailableWaterCapacity_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/AvailableWaterCapacity.png,
+    InFieldName = AvailableWaterCapacity
+)
+LowAvailableWaterCapacityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/LowAvailableWaterCapacityFz.png,
+    InFieldName = LowAvailableWaterCapacityFz
+)
+WaterErodibilityIndex_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/WaterErodibilityIndex.png,
+    InFieldName = WaterErodibilityIndex
+)
+HighWaterErodibilityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighWaterErodibilityFz.png,
+    InFieldName = HighWaterErodibilityFz
+)
+WindErodibilityGroup_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/WindErodibilityGroup.png,
+    InFieldName = WindErodibilityGroup
+)
+HighWindErodibilityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighWindErodibilityFz.png,
+    InFieldName = HighWindErodibilityFz
+)
+DepthToBedrock_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/DepthToBedrock.png,
+    InFieldName = DepthToBedrock
+)
+LowDepthToBedrockFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/LowDepthToBedrockFz.png,
+    InFieldName = LowDepthToBedrockFz
+)
+SoilpH_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/SoilpH.png,
+    InFieldName = SoilpH
+)
+ExtremeSoilpHFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/ExtremeSoilpHFz.png,
+    InFieldName = ExtremeSoilpHFz
+)
+Salinity_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/Salinity.png,
+    InFieldName = Salinity
+)
+HighSalinityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighSalinityFz.png,
+    InFieldName = HighSalinityFz
+)
+NLCDClass_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/NLCDClass.png,
+    InFieldName = NLCDClass
+)
+IsNotBarrenFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/IsNotBarrenFz.png,
+    InFieldName = IsNotBarrenFz
+)
+PotentialEvapoTrans_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/PotentialEvapoTrans.png,
+    InFieldName = PotentialEvapoTrans
+)
+HighPotentialEvapoTransFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighPotentialEvapoTransFz.png,
+    InFieldName = HighPotentialEvapoTransFz
+)
+HighSoilErodibilityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighSoilErodibilityFz.png,
+    InFieldName = HighSoilErodibilityFz
+)
+HighSoilSensitivityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighSoilSensitivityFz.png,
+    InFieldName = HighSoilSensitivityFz
+)
+LowSoilWaterFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/LowSoilWaterFz.png,
+    InFieldName = LowSoilWaterFz
+)
+HighPotentialSiteSensitivityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighPotentialSiteSensitivityFz.png,
+    InFieldName = HighPotentialSiteSensitivityFz
+)
+HighSiteSensitivityFz_RenderDone = RenderLayer(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/overlay/png/HighSiteSensitivityFz.png,
+    InFieldName = HighSiteSensitivityFz
+)
+Tst_AvailableWaterCapacity_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/AvailableWaterCapacity.png,
+    InFieldName = AvailableWaterCapacity
+)
+Tst_LowAvailableWaterCapacityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/LowAvailableWaterCapacityFz.png,
+    InFieldName = LowAvailableWaterCapacityFz
+)
+Tst_WaterErodibilityIndex_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/WaterErodibilityIndex.png,
+    InFieldName = WaterErodibilityIndex
+)
+Tst_HighWaterErodibilityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighWaterErodibilityFz.png,
+    InFieldName = HighWaterErodibilityFz
+)
+Tst_WindErodibilityGroup_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/WindErodibilityGroup.png,
+    InFieldName = WindErodibilityGroup
+)
+Tst_HighWindErodibilityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighWindErodibilityFz.png,
+    InFieldName = HighWindErodibilityFz
+)
+Tst_DepthToBedrock_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/DepthToBedrock.png,
+    InFieldName = DepthToBedrock
+)
+Tst_LowDepthToBedrockFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/LowDepthToBedrockFz.png,
+    InFieldName = LowDepthToBedrockFz
+)
+Tst_SoilpH_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/SoilpH.png,
+    InFieldName = SoilpH
+)
+Tst_ExtremeSoilpHFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/ExtremeSoilpHFz.png,
+    InFieldName = ExtremeSoilpHFz
+)
+Tst_Salinity_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/Salinity.png,
+    InFieldName = Salinity
+)
+Tst_HighSalinityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighSalinityFz.png,
+    InFieldName = HighSalinityFz
+)
+Tst_NLCDClass_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/NLCDClass.png,
+    InFieldName = NLCDClass
+)
+Tst_IsNotBarrenFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/IsNotBarrenFz.png,
+    InFieldName = IsNotBarrenFz
+)
+Tst_PotentialEvapoTrans_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/PotentialEvapoTrans.png,
+    InFieldName = PotentialEvapoTrans
+)
+Tst_HighPotentialEvapoTransFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighPotentialEvapoTransFz.png,
+    InFieldName = HighPotentialEvapoTransFz
+)
+Tst_HighSoilErodibilityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighSoilErodibilityFz.png,
+    InFieldName = HighSoilErodibilityFz
+)
+Tst_HighSoilSensitivityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighSoilSensitivityFz.png,
+    InFieldName = HighSoilSensitivityFz
+)
+Tst_LowSoilWaterFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/LowSoilWaterFz.png,
+    InFieldName = LowSoilWaterFz
+)
+Tst_HighPotentialSiteSensitivityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighPotentialSiteSensitivityFz.png,
+    InFieldName = HighPotentialSiteSensitivityFz
+)
+Tst_HighSiteSensitivityFz_HistoDist = HistoDist(
+    OutFileName = F:\Projects2\EEMS_Online\tasks\web_applications\eems_online_django\eems_online_project/eems_online_app/static/eems/models/1/histogram/HighSiteSensitivityFz.png,
+    InFieldName = HighSiteSensitivityFz
+)
