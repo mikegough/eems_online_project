@@ -91,7 +91,8 @@ class MPilotWorker(mpprog.MPilotProgram):
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
-            outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
+            outfile = self.outputBaseDir + 'overlay/gcs/' + rsltNm + '.png'
+
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
                 'OutFileName':outfile

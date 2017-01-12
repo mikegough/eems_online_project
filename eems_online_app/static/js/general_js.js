@@ -134,14 +134,15 @@ function run_eems() {
             'eems_model_modified_id': eems_model_modified_id,
             'eems_operator_changes_string': eems_operator_changes_string
         },
-
         // handle a successful response
         success: function (response) {
-            eems_model_modified_id = response
+            eems_model_modified_id = response;
             alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
-            console.log("EEMS Model ID: " + eems_model_modified_id)
+            console.log("EEMS Model ID: " + eems_model_modified_id);
             console.log("EEMS Command Modifications: ");
-            console.log(JSON.stringify(eems_bundled_commands, null, 2))
+            console.log(JSON.stringify(eems_bundled_commands, null, 2));
+            swapImageOverlay(last_layer_clicked);
+            swapLegend(last_layer_clicked)
         },
 
         // handle a non-successful response
