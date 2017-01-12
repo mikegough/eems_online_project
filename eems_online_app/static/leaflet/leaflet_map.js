@@ -50,8 +50,11 @@ function swapImageOverlay(layerName) {
     if (typeof image_overlay != "undefined") {
         map.removeLayer(image_overlay);
     }
-
-    var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/png/" + layerName + ".png";
+    if (eems_model_modified_id != "") {
+        var image_overlay_url = "static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + ".png";
+    } else {
+        var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/" + layerName + ".png";
+    }
     image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds);
     image_overlay.addTo(map);
     image_overlay.bringToBack();
@@ -60,7 +63,14 @@ function swapImageOverlay(layerName) {
 }
 
 function swapLegend(layerName){
-    document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
-              "<img style='float:left' src='static/eems/models/" + eems_model_id + "/overlay/legend/" + layerName + "_legend.png'>" +
-              "<div class='legendLabels'>"
+    if (eems_model_modified_id != "") {
+        document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
+            "<img class='legend_png'  src='static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + "_key.png'>" +
+            "<div class='legendLabels'>"
+    } else {
+
+        document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
+            "<img class='legend_png' src='static/eems/models/" + eems_model_id + "/overlay/" + layerName + "_key.png'>" +
+            "<div class='legendLabels'>"
+    }
 }

@@ -72,11 +72,10 @@ class MPilotWorker(mpprog.MPilotProgram):
         parsedCmd = {}
         parsedCmd['rsltNm'] = '{}_OutputDone'.format(self.id)
         parsedCmd['cmd'] = 'EEMSWrite'
-        outfile = self.outputBaseDir + 'data/nc/Results.nc'
+        outfile = self.outputBaseDir + 'data/Results.nc'
         parsedCmd['params'] = {
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
             'OutFileName':outfile,
-            'OutFileName':'{}.nc'.format('Tst'),
             'DimensionFileName':dimFileNm,
             'DimensionFieldName':dimFieldNm
             }
@@ -92,7 +91,7 @@ class MPilotWorker(mpprog.MPilotProgram):
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
-            outfile = self.outputBaseDir + 'overlay/png/' + rsltNm + '.png'
+            outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
                 'OutFileName':outfile

@@ -124,8 +124,6 @@ $("#run_eems_button").click(function(){run_eems(eems_model_id)});
 // Send the user defined changes to the back end and run EEMS.
 function run_eems() {
 
-    eems_bundled_commands["cmds"].push({"action": "RunProg"});
-
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
 
     $.ajax({

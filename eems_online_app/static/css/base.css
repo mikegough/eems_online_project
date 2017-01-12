@@ -429,4 +429,9 @@ li a.active {
     max-width:700px;
 }
 
+.legend_png {
+ 	float:left;
+	width:500px;
+}
+
 

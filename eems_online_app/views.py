@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
+import os
+import shutil
 
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
@@ -117,11 +119,16 @@ def run_eems(request):
     eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
     eems_operator_changes_dict = json.loads(eems_operator_changes_string)
 
+    eems_operator_changes_dict["cmds"].append({"action": "RunProg"})
+
     print json.dumps(eems_operator_changes_dict,indent=2)
 
+    print "Model ID", eems_model_id
     print eems_model_modified_id
 
     cursor = connection.cursor()
+
+    original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
 
     # If this is the first run, make a copy of the model and store it in the user models database with a unique ID.
     if eems_model_modified_id == '':
@@ -136,6 +143,19 @@ def run_eems(request):
         pdata = pickle.dumps(eems_model, pickle.HIGHEST_PROTOCOL)
 
         cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_modified_id, eems_model_name, sqlite3.Binary(pdata)))
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/netcdf' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
+
+        print original_mpt_file
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+        shutil.copyfile(original_mpt_file,mpt_file_copy)
+    else:
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+
 
     # Get the current state of the model out of the database
     query = "SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % eems_model_modified_id
@@ -144,11 +164,10 @@ def run_eems(request):
     for row in cursor:
         modified_eems_model = pickle.loads(str(row[0]))
 
-    src_program_name = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
-    output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_id)
+    output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst('1', src_program_name, eems_operator_changes_string, output_base_dir, True, True, True)
+    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, True, False, True)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
