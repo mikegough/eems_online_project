@@ -2,11 +2,13 @@ from __future__ import division
 import MPilotEEMSFxnParent as mpefp
 import numpy as np
 import copy as cp
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 import tempfile as tf
 import os
 import re
+import gc
 
 class HistoDist(mpefp._MPilotEEMSFxnParent):
 
@@ -51,7 +53,7 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
-        
+
         dataObj = executedObjects[self.ValFromParamByNm('InFieldName')]
         self._ValidateIsDataLayer(dataObj)
 
@@ -155,7 +157,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
-        
+
         dataObj = executedObjects[self.ValFromParamByNm('InFieldName')]
         self._ValidateIsDataLayer(dataObj)
 
@@ -174,9 +176,9 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         cmap = self.ValFromParamByNm('ColorMap')
         if cmap is None: cmap = 'RdYlBu'
-        
+
         origin = self.ParamByNm('Origin') if self.ParamByNm('Origin') is not None else 'lower'
-                
+
         myImg = ax1.imshow(
             dataObj.ExecRslt(),
             aspect='auto',
@@ -188,7 +190,8 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         plt.gca().invert_yaxis()
         plt.savefig(outFNm, transparent=True)
-        plt.close(fig)
+        plt.close()
+        gc.collect()
 
         # now the key
         fig = plt.figure(figsize=(8,1))
@@ -205,7 +208,8 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         outFNm = re.sub(r'(\.[^\.]+)$',r'_key\1',outFNm)
         
         plt.savefig(outFNm)
-        plt.close(fig)
+        plt.close()
+        gc.collect()
 
         # ax1 = fig.add_subplot(111)
 
@@ -262,7 +266,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         # plt.close(fig) # fig must be closed to get it out of memory
 
     # def Exec(self,executedObjects):
-    
+
 # class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
 class ScatterXY(mpefp._MPilotEEMSFxnParent):
