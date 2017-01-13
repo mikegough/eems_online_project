@@ -79,13 +79,18 @@
         <div id="user_defined_model"></div>
       </div>
       <div id="disable_div" title="No changes have been made"></div>
+      <label title="Click to download data for this model"  class="alertify-button alertify-button-ok" id="download_label">
+            Download Results <img id="download_file" src="{% static '/img/download.svg' %}">
+      </label>
       <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
       <!--
       <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
       -->
+      <!-- COMMENT OUT BROWSE BUTTON FOR NOW
       <label for="files" class="alertify-button alertify-button-ok" id="files_label">
         Browse <img id="open_file" src="{% static '/img/open.svg' %}">
       </label>
+      -->
       <input type="file" id="files" name="file" style="display:none"/>
 
     </div>

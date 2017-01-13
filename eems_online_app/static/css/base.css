@@ -312,6 +312,14 @@ li a.active {
 	position: relative;
 	float: right;
 	margin-left: 30px;
+	height:26px;
+}
+
+#download_label {
+	position: relative;
+	float: right;
+	height: 26px;
+	display:none;
 }
 
 .alertify-button-ok{
@@ -327,6 +335,14 @@ li a.active {
 	color: #7d7d7d;
 	font-size: .9em;
 	padding-bottom: 3px;
+}
+
+#download_file {
+	width: 25px;
+	position: relative;
+	display: inline;
+	float:right;
+	left: 5px;
 }
 
 #open_file {
@@ -462,3 +478,22 @@ li a.active {
 	top: 165px;
 	left: 11px;
 }
+
+#download_div {
+	color: #464646;
+	width: 50px;
+	z-index: 9999;
+	position: absolute;
+	left: -70px;
+	top: 0px;
+	height: 82px;
+	font-size: .75em;
+	text-align: center;
+}
+
+#download_img {
+	width: 50px;
+	position: relative;
+	top: 0px;
+}
+

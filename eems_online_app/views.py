@@ -147,7 +147,6 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/netcdf' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
 
         print original_mpt_file

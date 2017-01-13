@@ -145,6 +145,7 @@ function run_eems() {
             swapImageOverlay(last_layer_clicked);
             swapLegend(last_layer_clicked)
             $("#spinner_div").hide()
+            $("#download_label").show()
         },
 
         // handle a non-successful response
@@ -373,4 +374,9 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands["cmds"] = [];
     eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
+
+$('#download_label').click(function(e) {
+    e.preventDefault();  //stop the browser from following
+    window.location.href = "static/eems/models/" + eems_model_modified_id + "/data/Results.nc";
+});
 
