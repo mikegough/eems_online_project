@@ -84,6 +84,6 @@ LowSoilWaterFz = FuzzyUnion(
 HighPotentialSiteSensitivityFz = FuzzyUnion(
     InFieldNames = [LowSoilWaterFz,HighSoilSensitivityFz]
 )
-HighSiteSensitivityFz = FuzzyOr(
+HighSiteSensitivityFz = FuzzyAnd(
     InFieldNames = [IsNotBarrenFz,HighPotentialSiteSensitivityFz]
 )
