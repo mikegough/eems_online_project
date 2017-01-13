@@ -200,7 +200,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         ax1.axis('off')
 
         cmap = self.ValFromParamByNm('ColorMap')
-        if cmap is None: cmap = 'RdYlBu'
+        if cmap is None: cmap = 'RdYlBu_r'
 
         origin = self.ParamByNm('Origin') if self.ParamByNm('Origin') is not None else 'lower'
 
