@@ -125,6 +125,7 @@ $("#run_eems_button").click(function(){run_eems(eems_model_id)});
 function run_eems() {
 
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
+    $("#spinner_div").show()
 
     $.ajax({
         url: "/run_eems", // the endpoint
@@ -143,6 +144,7 @@ function run_eems() {
             console.log(JSON.stringify(eems_bundled_commands, null, 2));
             swapImageOverlay(last_layer_clicked);
             swapLegend(last_layer_clicked)
+            $("#spinner_div").hide()
         },
 
         // handle a non-successful response
@@ -150,6 +152,7 @@ function run_eems() {
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                 " <a href='#' class='close'>&times;</a></div>");
             console.log(xhr.status + ": " + xhr.responseText);
+            $("#spinner_div").hide()
         }
     });
 }

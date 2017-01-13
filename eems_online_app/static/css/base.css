@@ -434,4 +434,31 @@ li a.active {
 	width:500px;
 }
 
+#spinner_div {
+	display: none;
+	background-color: rgba(255,255,255,1);
+	height: calc(100% + 50px);
+	width: calc(100% + 50px);
+	float: left;
+	position: absolute;
+	z-index: 999;
+	left: -25px;
+	top: -25px;
+	text-align:center;
+	cursor:default;
+}
 
+#spinner_img {
+	position: relative;
+	height: 200px;
+	top: 200px;
+}
+
+#spinner_text {
+	position: relative;
+	color: #7E7E7E;
+	font-size: 1.5em;
+	font-family: tahoma;
+	top: 165px;
+	left: 11px;
+}
