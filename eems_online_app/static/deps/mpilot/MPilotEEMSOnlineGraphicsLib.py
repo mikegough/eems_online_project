@@ -157,6 +157,29 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         return rtrn
     
     # def DependencyNms(self):
+
+    def Project(self, outFNm):
+
+            input_basename = outFNm.replace('.png','')
+            trans_tiff = input_basename + "_trans.tiff"
+            warp_tiff = input_basename + "_warp.tiff"
+            output_png = input_basename + ".png"
+
+            extent = "-124.4041682295505 42.01249803975221 -114.12309789053886 32.534715526793306"
+
+            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + outFNm + " " + trans_tiff )
+
+            os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
+
+            src_ds = gdal.Open(warp_tiff)
+
+            # Overwrite Matplotlib png
+            driver.CreateCopy(output_png, src_ds,0)
+
+            src_ds = None
+
+            os.remove(trans_tiff)
+            os.remove(warp_tiff)
         
     def Exec(self,executedObjects):
 
@@ -195,27 +218,8 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         plt.close()
         gc.collect()
 
-        # Project Matplotlib png to Web Mercator
-        input_basename = outFNm.replace('.png','')
-        trans_tiff = input_basename + "_trans.tiff"
-        warp_tiff = input_basename + "_warp.tiff"
-        output_png = input_basename + ".png"
-
-        extent = "-124.4041682295505 42.01249803975221 -114.12309789053886 32.534715526793306"
-
-        os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + outFNm + " " + trans_tiff )
-
-        os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
-
-        src_ds = gdal.Open(warp_tiff)
-
-        # Overwrite Matplotlib png
-        driver.CreateCopy(output_png, src_ds,0)
-
-        src_ds = None
-
-        os.remove(trans_tiff)
-        os.remove(warp_tiff)
+        # Project MatPlotLib png to Web Mercator
+        self.Project(outFNm)
 
         # now the key
         fig = plt.figure(figsize=(8,1))
@@ -292,6 +296,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
     # def Exec(self,executedObjects):
 
 # class RenderLayer(mpefp._MPilotEEMSFxnParent):
+
 
 class ScatterXY(mpefp._MPilotEEMSFxnParent):
 

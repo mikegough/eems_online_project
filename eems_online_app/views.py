@@ -22,8 +22,7 @@ from django.utils.crypto import get_random_string
     # Also need to add the following lines to activate.bat if running this app from a virtual environment:
         #set TCL_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tcl8.5
         #set TK_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tk8.5
-
-
+    # GDAL for projecting
 
 from MPilotOnlineWorker import *
 
