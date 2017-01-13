@@ -248,6 +248,7 @@ function init(json, eems_file_name){
                 delete adj.data.$lineWidth;
             }
         }
+
     });
     //load json data
     st.loadJSON(json);
@@ -257,6 +258,10 @@ function init(json, eems_file_name){
     //st.geom.translate(new $jit.Complex(-200, 0), "current");
     //emulate a click on the root node.
     st.onClick(st.root);
+
+    // Load root node image overlay on MEEMSE creation.
+    swapImageOverlay(st.root)
+    swapLegend(st.root);
 
     //end
     //Add event handlers to switch spacetree orientation.

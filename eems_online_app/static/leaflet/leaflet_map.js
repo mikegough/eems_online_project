@@ -1,7 +1,7 @@
 var map = L.map('map', {
         zoomControl: false
     }
-).setView([39,-96], 5);
+).setView([36,-111], 6);
 
 // Basemaps
 gray=L.esri.basemapLayer("Gray").addTo(map);
