@@ -53,9 +53,9 @@ function swapImageOverlay(layerName) {
         map.removeLayer(image_overlay);
     }
     if (eems_model_modified_id != "") {
-        var image_overlay_url = "static/eems/models/" + eems_model_modified_id + "/overlay/web_mercator/" + layerName + ".png?" + new Date().getTime();
+        var image_overlay_url = "static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + ".png?" + new Date().getTime();
     } else {
-        var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/web_mercator/" + layerName + ".png?" + new Date().getTime();
+        var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/" + layerName + ".png?" + new Date().getTime();
     }
     image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds);
     image_overlay.addTo(map);
@@ -67,12 +67,12 @@ function swapImageOverlay(layerName) {
 function swapLegend(layerName){
     if (eems_model_modified_id != "") {
         document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
-            "<img class='legend_png'  src='static/eems/models/" + eems_model_modified_id + "/overlay/gcs/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
+            "<img class='legend_png'  src='static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
             "<div class='legendLabels'>"
     } else {
 
         document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
-            "<img class='legend_png' src='static/eems/models/" + eems_model_id + "/overlay/gcs/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
+            "<img class='legend_png' src='static/eems/models/" + eems_model_id + "/overlay/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
             "<div class='legendLabels'>"
     }
 }

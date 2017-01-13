@@ -150,15 +150,12 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/netcdf' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay/gcs' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay/web_mercator' % eems_model_modified_id)
 
         print original_mpt_file
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
         shutil.copyfile(original_mpt_file,mpt_file_copy)
     else:
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
-
 
     # Get the current state of the model out of the database
     query = "SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % eems_model_modified_id
@@ -172,34 +169,6 @@ def run_eems(request):
     my_mpilot_worker = MPilotWorker()
     my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, True, False, True)
 
-    driver = gdal.GetDriverByName("PNG")
-
-    png_dir_gcs = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay/gcs' % eems_model_modified_id
-    png_dir_web_mercator = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay/web_mercator' % eems_model_modified_id
-
-    for file in os.listdir(png_dir_gcs):
-
-       if "_key.png"  not in file:
-
-           print file
-
-           input_png =  png_dir_gcs + os.sep + file
-           input_basename = input_png.replace('.png','')
-
-           trans_tiff = input_basename + "_trans.tiff"
-           warp_tiff = input_basename + "_warp.tiff"
-           output_png = input_basename + ".png"
-
-           extent = "-124.4041682295505 42.01249803975221 -114.12309789053886 32.534715526793306"
-
-           os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + input_png + " " + trans_tiff )
-
-           os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
-
-           src_ds = gdal.Open(warp_tiff)
-
-           output_png = png_dir_web_mercator + os.sep + file
-           driver.CreateCopy(output_png, src_ds,0)
 
     # ToDo: Apply changes in the eems_operator_changes_dict to the EEMS model stored in modified_eems_model
     # ToDo: Run EEMS on the new model
