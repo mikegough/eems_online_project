@@ -158,6 +158,34 @@ function run_eems() {
     });
 }
 
+
+function download(e) {
+
+    $("#download_file").attr("src","static/img/spinner.gif");
+
+    $.ajax({
+        url: "/download", // the endpoint
+        type: "POST", // http method
+        data: {
+            'eems_model_modified_id': eems_model_modified_id,
+        },
+        // handle a successful response
+        success: function (response) {
+            e.preventDefault();  //stop the browser from following
+            window.location.href = "static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip";
+            $("#download_file").attr("src","static/img/download.png");
+        },
+
+        // handle a non-successful response
+        error: function (xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>");
+            console.log(xhr.status + ": " + xhr.responseText);
+            $("#spinner_div").hide()
+        }
+    });
+}
+
 var eems_operator_changes={};
 var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 var changed_params_list=[];
@@ -376,7 +404,7 @@ function reset_eems_bundled_commands(){
 }
 
 $('#download_label').click(function(e) {
-    e.preventDefault();  //stop the browser from following
-    window.location.href = "static/eems/models/" + eems_model_modified_id + "/data/Results.nc";
+    download(e)
+
 });
 

@@ -177,3 +177,15 @@ def run_eems(request):
     #print modified_eems_model
 
     return HttpResponse(eems_model_modified_id)
+
+@csrf_exempt
+def download(request):
+    eems_model_modified_id = request.POST.get('eems_model_modified_id')
+    print "Preparing file for download: " + eems_model_modified_id
+    base_dir = settings.BASE_DIR + "/eems_online_app/static/eems/models"
+    dir_name = base_dir + os.sep + eems_model_modified_id
+    zip_name = base_dir + os.sep + "zip" + os.sep + "EEMS_Online_Model_Results_" + eems_model_modified_id
+    shutil.make_archive(zip_name, 'zip', dir_name)
+
+    return HttpResponse("File is ready for download")
+
