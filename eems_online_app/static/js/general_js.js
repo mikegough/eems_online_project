@@ -135,7 +135,6 @@ function run_eems() {
             'eems_model_modified_id': eems_model_modified_id,
             'eems_operator_changes_string': eems_operator_changes_string
         },
-        // handle a successful response
         success: function (response) {
             eems_model_modified_id = response;
             alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
@@ -144,15 +143,14 @@ function run_eems() {
             console.log(JSON.stringify(eems_bundled_commands, null, 2));
             swapImageOverlay(last_layer_clicked);
             swapLegend(last_layer_clicked)
-            $("#spinner_div").hide()
             $("#download_label").show()
         },
-
-        // handle a non-successful response
         error: function (xhr, errmsg, err) {
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                 " <a href='#' class='close'>&times;</a></div>");
             console.log(xhr.status + ": " + xhr.responseText);
+        },
+        complete: function(){
             $("#spinner_div").hide()
         }
     });
@@ -169,20 +167,20 @@ function download(e) {
         data: {
             'eems_model_modified_id': eems_model_modified_id,
         },
-        // handle a successful response
         success: function (response) {
             e.preventDefault();  //stop the browser from following
-            window.location.href = "static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip";
-            $("#download_file").attr("src","static/img/download.png");
+            // window.open with "_parent" instead of window.location to fix spinner freezing.
+            window.open("static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip", "_parent")
         },
-
-        // handle a non-successful response
         error: function (xhr, errmsg, err) {
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                 " <a href='#' class='close'>&times;</a></div>");
             console.log(xhr.status + ": " + xhr.responseText);
-            $("#spinner_div").hide()
+        },
+        complete: function(){
+            $("#download_file").attr("src","static/img/download.png");
         }
+
     });
 }
 

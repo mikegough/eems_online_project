@@ -345,6 +345,14 @@ li a.active {
 	left: 5px;
 }
 
+#download_spinner {
+	display:none;
+	width: 25px;
+	position: relative;
+	float:right;
+	left: 5px;
+}
+
 #open_file {
 	width: 25px;
 	position: relative;
