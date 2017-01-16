@@ -157,7 +157,7 @@ function run_eems() {
 }
 
 
-function download(e) {
+$('#download_label').click(function(e) {
 
     $("#download_file").attr("src","static/img/spinner.gif");
 
@@ -182,7 +182,7 @@ function download(e) {
         }
 
     });
-}
+});
 
 var eems_operator_changes={};
 var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
@@ -205,7 +205,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
             $.each(json_eems_commands, function (index, operator) {
                 if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
-                    form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
+                    form_string += "<option cmdName='" + operator['Name'] + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                 }
             });
         }
@@ -215,7 +215,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             if (node_original_operator.indexOf("Fuzzy") != -1) {
                 $.each(json_eems_commands, function (index, operator) {
                     if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
-                        form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
+                        form_string += "<option cmdName='" + operator['Name'] + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                     }
                 });
             }
@@ -224,7 +224,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             else {
                 $.each(json_eems_commands, function (index, operator) {
                     if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
-                        form_string += "<option value='" + index + "'>" + operator["Name"] + "</option>"
+                        form_string += "<option cmdName='" + operator['Name']  + "' value='" + operator["Name"] + "'>" + operator["DisplayName"] + "</option>"
                     }
                 });
             }
@@ -240,7 +240,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     // Create and open the tool dialog box. On confirm store the new operator data in a dictionary.
     alertify.confirm(form_string, function (e, str) {
         if (e) {
-            var new_operator = $("#new_operator_select option:selected").text();
+            var new_operator = $("#new_operator_select option:selected").attr("cmdName");
+            var new_operator_name = $("#new_operator_select option:selected").text();
             var $inputs = $('#eems_operator_params :input');
 
             // Get the user entered required parameters.
@@ -265,7 +266,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
 
             // Call function to store new eems operator and options in a dictionary
-            updateEEMSOperator(node_id, alias, new_operator, required_params);
+            updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name);
             $("#run_eems_button").removeClass("disabled");
             $("#disable_div").hide();
 
@@ -358,7 +359,9 @@ function bind_params(node_id, children_array, node_original_operator, original_a
     });
 }
 
-function updateEEMSOperator(node_id, alias, new_operator, required_params){
+function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name){
+
+    // Update. Pass in new_operator_name for setting the display name.
 
     var update_cmd_dict = {};
 
@@ -369,17 +372,27 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
     update_cmd_dict["cmd"]["params"] = {};
 
     // MPilot needs the list of InFieldNames as a string within brackets. A list won't work.
-    update_cmd_dict["cmd"]["params"]["InFieldNames"] = '[';
+    if (new_operator.toLowerCase().indexOf("cvttofuzzy") == -1) {
+        update_cmd_dict["cmd"]["params"]["InFieldNames"] = '[';
+        $.each(eems_children_dict[node_id], function(count, value) {
+            // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+            var child_name=value.split(":")[0];
+            update_cmd_dict["cmd"]["params"]["InFieldNames"] += child_name + ",";
+        });
+        // Remove the trailing comma.
+        update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
 
-    $.each(eems_children_dict[node_id], function(count, value) {
-        // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
-        var child_name=value.split(":")[0];
-        update_cmd_dict["cmd"]["params"]["InFieldNames"] += child_name + ",";
-    });
+        if (new_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
+            update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
+        }
+    }
+    else {
+        $.each(eems_children_dict[node_id], function(count, value) {
+            var child_name=value.split(":")[0];
+            update_cmd_dict["cmd"]["params"]["InFieldName"] = child_name;
+        });
 
-    // Remove the trailing comma.
-    update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
-    update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
+    }
 
     $.each(required_params, function(param, value) {
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
@@ -389,7 +402,7 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params){
 
     eems_bundled_commands["cmds"].push(update_cmd_dict);
 
-    $("#" + node_id + "_current_operator").html(new_operator);
+    $("#" + node_id + "_current_operator").html(new_operator_name);
     $("#" + node_id + "_current_operator").addClass("eems_changed_node_style");
 }
 
@@ -400,9 +413,4 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands["cmds"] = [];
     eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
-
-$('#download_label').click(function(e) {
-    download(e)
-
-});
 
