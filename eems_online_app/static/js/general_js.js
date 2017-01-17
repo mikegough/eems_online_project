@@ -311,6 +311,10 @@ function bind_params(node_id, children_array, node_original_operator, original_a
            current_arguments_dict[node_id] = {}
         }
 
+        // Split the argument string on the arbitrary deliniater specified in spacetree.js
+        // Move outside the loop below, so that the original arguments can be written out to the form.
+        current_arguments_parsed = original_arguments.split('**##**');
+
         // If the user hasn't clicked on this settings icon before, set the default arguments to the original arguments
         if (! (new_operator in current_arguments_dict[node_id]) ) {
 
@@ -318,8 +322,6 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
             // If the new operator is the same as the original operator, get the arguments from the original Spacetree node arguments.
             if (new_operator_name.toLowerCase() == node_original_operator.toLowerCase()) {
-                // Split the argument string on the arbitrary deliniater specified in spacetree.js
-                current_arguments_parsed = original_arguments.split('**##**');
 
                 // Make a dictionary out of the arguments
                 $.each(current_arguments_parsed, function (index, kv_pair) {
@@ -347,7 +349,10 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             $("#eems_operator_params").append("<p><b>Optional Parameters:</b><br>");
             $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
             $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
+
+            $("#eems_operator_params").append("<div class='original_operator'><b>Original input values: </b>" + current_arguments_parsed + "</div>")
         }
+
 
         // Get the list of required params for the selected operator ....
         var required_params = json_eems_commands[this.value]["ReqParams"];
@@ -363,8 +368,11 @@ function bind_params(node_id, children_array, node_original_operator, original_a
                 }
                     $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][new_operator][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
+            $("#eems_operator_params").append("<div class='original_operator'><b>Original input values: </b>" + current_arguments_parsed + "</div>")
         }
+
     });
+
 }
 
 function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name){
