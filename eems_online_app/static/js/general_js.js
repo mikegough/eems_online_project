@@ -260,6 +260,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             var new_operator_name = $("#new_operator_select option:selected").text();
             var $inputs = $('#eems_operator_params :input');
 
+            var new_operator_id = $("#new_operator_select option:selected").val();
+
             // Get the user entered required parameters.
             required_params = {};
             $inputs.each(function (index) {
@@ -282,7 +284,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
 
             // Call function to store new eems operator and options in a dictionary
-            updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name);
+            updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
             $("#run_eems_button").removeClass("disabled");
             $("#disable_div").hide();
 
@@ -384,7 +386,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
 }
 
-function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name){
+function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id){
 
     // Update. Pass in new_operator_name for setting the display name.
 
@@ -419,8 +421,15 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
 
     $.each(required_params, function(param, value) {
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
+        value = value.replace(/ /g,"");
         var child_name=value.split(":")[0];
-        update_cmd_dict["cmd"]["params"][param]=value;
+        // Check the required parameter type stored in json_eems_commands. If it's a list, add the brackets.
+        if (typeof json_eems_commands[new_operator_id]["ReqParams"][param][0] != "undefined" && (json_eems_commands[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
+            update_cmd_dict["cmd"]["params"][param] = "[" + value + "]";
+        }
+        else {
+            update_cmd_dict["cmd"]["params"][param] = value;
+        }
     });
 
     eems_bundled_commands["cmds"].push(update_cmd_dict);
