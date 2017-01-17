@@ -202,7 +202,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     var children_array = children_string.split(',');
 
     // Create the form...
-    form_string =  "<div id='form_div'><b>Operator: </b>";
+    form_string =  "<table id='form_table'><tr><td>";
+    form_string +=  "<div id='form_div'><b>Operator: </b>";
     form_string += "<select id='new_operator_select'>";
 
         //Add the compatible EEMS operators to the dropdown.
@@ -242,7 +243,10 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     }
     //Create an empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
+    form_string += "</td><td>"
+    form_string +=  "<div class='histogram_div'><img class='histogram_img' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
     form_string += "</div>";
+    form_string += "</td></tr></table>"
 
     // Create and open the tool dialog box. On confirm store the new operator data in a dictionary.
     alertify.confirm(form_string, function (e, str) {
@@ -350,7 +354,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             $("#eems_operator_params").append("TrueThreshold: <input id='TrueThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['TrueThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
             $("#eems_operator_params").append("FalseThreshold <input id='FalseThreshold' type='text' value='" + current_arguments_dict[node_id][new_operator]['FalseThreshold'] +"'><img title='Float' src='static/img/info.png'><br>");
 
-            $("#eems_operator_params").append("<div class='original_operator'><b>Original input values: </b>" + current_arguments_parsed + "</div>")
+            $("#form_table").append("<tr><td colspan='2'><div class='original_params'><b>Original input values: </b>" + current_arguments_parsed + "</td></tr></div>")
         }
 
 
@@ -368,7 +372,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
                 }
                     $("#eems_operator_params").append(key + ": " + "<input id='" + key + "'type='text' value='" + current_arguments_dict[node_id][new_operator][key] + "'>" + "<img title='" + value + "' src='static/img/info.png'><br>");
             });
-            $("#eems_operator_params").append("<div class='original_operator'><b>Original input values: </b>" + current_arguments_parsed + "</div>")
+            $("#eems_operator_params").append("<div class='original_params'><b>Original input values: </b>" + current_arguments_parsed + "</div>")
         }
 
     });
