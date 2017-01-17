@@ -406,11 +406,9 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
         });
         // Remove the trailing comma.
         update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
-
-        if (new_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
-            update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
-        }
+        update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
     }
+    // For Convert To Fuzzy operators, the key is "InFieldName" (singular), and it is not a list.
     else {
         $.each(eems_children_dict[node_id], function(count, value) {
             var child_name=value.split(":")[0];
