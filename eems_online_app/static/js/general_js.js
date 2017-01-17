@@ -304,7 +304,8 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         $("#eems_operator_params").empty();
 
         // Get the new operator from the dropdown.
-        var new_operator=$(this).find("option:selected").text();
+        var new_operator = $("#new_operator_select option:selected").attr("cmdName");
+        var new_operator_name = $("#new_operator_select option:selected").text();
 
         if (typeof current_arguments_dict[node_id] == "undefined") {
            current_arguments_dict[node_id] = {}
@@ -316,7 +317,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             current_arguments_dict[node_id][new_operator]={};
 
             // If the new operator is the same as the original operator, get the arguments from the original Spacetree node arguments.
-            if (new_operator.toLowerCase() == node_original_operator.toLowerCase()) {
+            if (new_operator_name.toLowerCase() == node_original_operator.toLowerCase()) {
                 // Split the argument string on the arbitrary deliniater specified in spacetree.js
                 current_arguments_parsed = original_arguments.split('**##**');
 
