@@ -170,7 +170,7 @@ function init(json, eems_file_name){
                 st.onClick(node.id, { Move: m });
                 st.setRoot(node.id, 'animate');
 
-                swapImageOverlay(node.id)
+                swapImageOverlay(node.id,eems_model_id_for_map_display)
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
                // DELETED //
@@ -260,8 +260,7 @@ function init(json, eems_file_name){
     st.onClick(st.root);
 
     // Load root node image overlay on MEEMSE creation.
-    swapImageOverlay(st.root)
-    swapLegend(st.root);
+    swapImageOverlay(st.root,eems_model_id_for_map_display)
 
     //end
     //Add event handlers to switch spacetree orientation.

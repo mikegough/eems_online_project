@@ -69,9 +69,16 @@
     </div>
 
     <div id="map_container">
+        <div id="button_div">
+            <ul id="button_list" class="buttons" data-persist="false">
+                <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id)">Original</a></li>
+                <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id)">Modified</a></li>
+            </ul>
+        </div>
         <div id="map"></div>
     </div>
     <div id="file_upload_controls">
+
       <div id="current_file"><b>Current Model:</b>
         <select id="eems_model_dropdown" name="eems_model_dropdown">
           <option value="0"></option>

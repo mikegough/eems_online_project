@@ -17,6 +17,8 @@ $( document ).ready(function() {
 
     eems_model_id = initial_eems_model_json[0][0];
 
+    eems_model_id_for_map_display = eems_model_id
+
     $('#eems_model_dropdown option').eq(eems_model_id).prop('selected', true).trigger('change');
 
     init_eems_file_name = initial_eems_model_json[0][1][1];
@@ -141,9 +143,12 @@ function run_eems() {
             console.log("EEMS Model ID: " + eems_model_modified_id);
             console.log("EEMS Command Modifications: ");
             console.log(JSON.stringify(eems_bundled_commands, null, 2));
-            swapImageOverlay(last_layer_clicked);
-            swapLegend(last_layer_clicked)
-            $("#download_label").show()
+            $("#download_label").show();
+            $("#button_div").show();
+            eems_model_id_for_map_display = eems_model_modified_id;
+            swapImageOverlay(last_layer_clicked,eems_model_id_for_map_display);
+
+
         },
         error: function (xhr, errmsg, err) {
             $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
@@ -197,7 +202,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     var children_array = children_string.split(',');
 
     // Create the form...
-    form_string = "<div id='form_div'><b>Operator: </b>";
+    form_string =  "<div id='form_div'><b>Operator: </b>";
     form_string += "<select id='new_operator_select'>";
 
         //Add the compatible EEMS operators to the dropdown.
@@ -232,7 +237,9 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
     form_string += "</select>";
     form_string += "<span id='eems_operator_info'><img src='static/img/info.png'></span>";
-
+    if (current_operator.replace(/\s+/g, '') != node_original_operator.replace(/\s+/g, '')) {
+        form_string += "<div class='original_operator'><b>Original Operator: </b>" + node_original_operator + "</div>"
+    }
     //Create an empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</div>";
@@ -413,4 +420,19 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands["cmds"] = [];
     eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
+
+$('#map_original_button').on('click', function () {
+    swapImageOverlay(last_layer_clicked,eems_model_id)
+    eems_model_id_for_map_display = eems_model_id
+    $("#map_original_button").addClass('selected');
+    $("#map_modified_button").removeClass('selected');
+});
+
+$('#map_modified_button').on('click', function () {
+    swapImageOverlay(last_layer_clicked,eems_model_modified_id)
+    eems_model_id_for_map_display = eems_model_modified_id
+    $("#map_modified_button").addClass('selected');
+    $("#map_original_button").removeClass('selected');
+});
+
 

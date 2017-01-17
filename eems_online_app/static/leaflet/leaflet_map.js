@@ -45,34 +45,23 @@ dynamic_legend.addTo(map)
 var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topleft'};
 L.control.groupedLayers("", groupedOverlays, options).addTo(map);
 
-function swapImageOverlay(layerName) {
+function swapImageOverlay(layer_name, eems_model_id) {
 
-    last_layer_clicked=layerName
+    last_layer_clicked=layer_name
 
     if (typeof image_overlay != "undefined") {
         map.removeLayer(image_overlay);
     }
-    if (eems_model_modified_id != "") {
-        var image_overlay_url = "static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + ".png?" + new Date().getTime();
-    } else {
-        var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/" + layerName + ".png?" + new Date().getTime();
-    }
+    var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/" + layer_name + ".png?" + new Date().getTime();
     image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds);
     image_overlay.addTo(map);
     image_overlay.bringToBack();
 
-    swapLegend(layerName)
+    swapLegend(layer_name, eems_model_id)
 }
 
-function swapLegend(layerName){
-    if (eems_model_modified_id != "") {
-        document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
-            "<img class='legend_png'  src='static/eems/models/" + eems_model_modified_id + "/overlay/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
-            "<div class='legendLabels'>"
-    } else {
-
-        document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layerName + "</div>" +
-            "<img class='legend_png' src='static/eems/models/" + eems_model_id + "/overlay/" + layerName + "_key.png?" + new Date().getTime() +"'>" +
-            "<div class='legendLabels'>"
-    }
+function swapLegend(layer_name, eems_model_id){
+    document.getElementsByClassName('info')[0].innerHTML = "<div id='LegendHeader'>" + layer_name + "</div>" +
+        "<img class='legend_png'  src='static/eems/models/" + eems_model_id + "/overlay/" + layer_name + "_key.png?" + new Date().getTime() +"'>" +
+        "<div class='legendLabels'>"
 }

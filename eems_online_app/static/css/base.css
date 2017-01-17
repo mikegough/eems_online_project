@@ -261,7 +261,7 @@ a {
 	left: 0px;
 }
 
-ul {
+#nav_bar ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
@@ -505,3 +505,93 @@ li a.active {
 	top: 0px;
 }
 
+#button_text{
+	display:inline;
+	float:left
+}
+
+#button_list {
+	font-size: 0;
+}
+
+#button_div {
+	position: absolute;
+	z-index: 999;
+	left:15%;
+	top: 0px;
+	display: none;
+	width: 230px;
+	height: 30px;
+	color: #464646;
+	padding: 6px 8px;
+	border-radius: 5px;
+}
+
+a {
+	cursor:pointer
+}
+
+ul.buttons {
+}
+
+ul.buttons li
+{
+    display: inline;
+}
+
+ul.buttons li a {
+	font: 12px Verdana;
+	font-weight:bold;
+	position: relative;
+	color: #878787;
+	outline: none;
+	background-color: #c4c4c4;
+	box-shadow: inset 1px 2px 3px rgba(245,255,255,0.5);
+	border:1px solid #C4C4C4;
+}
+
+ul.buttons li:first-child a {
+	border-radius: 5px;
+}
+
+ul.buttons li:last-child a {
+	margin-left:2px;
+	border-radius: 5px;
+}
+
+ul.buttons li a:hover
+{
+    background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+    background-image: -moz-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+    background-image: -ms-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+    background-image: -o-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+    background-image: linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+}
+
+ul.buttons li.selected a, ul.buttons li.selected a:hover {
+	position: relative;
+	top: 0px;
+	font-weight: bold;
+	background: #0092D1;
+	color: white;
+	box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
+	border:0px;
+}
+
+ul.buttons li.selected a:hover
+{
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+	background-image: linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+}
+
+
+.original_operator {
+	background-color: orange;
+	font-size: .75em;
+	margin: 5px 10px 0px 0px;
+	padding: 3px;
+	border-radius: 3px;
+}
