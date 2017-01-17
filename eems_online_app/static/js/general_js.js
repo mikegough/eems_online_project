@@ -424,7 +424,7 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
         value = value.replace(/ /g,"");
         var child_name=value.split(":")[0];
         // Check the required parameter type stored in json_eems_commands. If it's a list, add the brackets.
-        if (typeof json_eems_commands[new_operator_id]["ReqParams"][param][0] != "undefined" && (json_eems_commands[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
+        if (typeof json_eems_commands[new_operator_id]["ReqParams"][param] != "undefined" && (json_eems_commands[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
             update_cmd_dict["cmd"]["params"][param] = "[" + value + "]";
         }
         else {
