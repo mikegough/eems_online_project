@@ -611,6 +611,12 @@ ul.buttons li.selected a:hover
 }
 
 .histogram_div {
+	text-align: center;
+}
+.histogram_img_read {
+	width: 500px;
+	top: -17px;
+	position: relative;
 }
 
 .histogram_img {

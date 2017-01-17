@@ -189,6 +189,11 @@ $('#download_label').click(function(e) {
     });
 });
 
+function showHistogram(node_id, alias) {
+        form_string =  "<div class='histogram_div' ><img class='histogram_img_read' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
+        alertify.alert(form_string)
+}
+
 var eems_operator_changes={};
 var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot"];
 var changed_params_list=[];
