@@ -92,10 +92,12 @@ class MPilotWorker(mpprog.MPilotProgram):
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
             outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
+            extent = self.extent
 
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':outfile
+                'OutFileName':outfile,
+                'Extent': extent
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -317,6 +319,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         srcProgNm,
         rqst,
         outputBaseDir,
+        extent,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
@@ -324,6 +327,7 @@ class MPilotWorker(mpprog.MPilotProgram):
 
         self.outputBaseDir = outputBaseDir
         self.id = id
+        self.extent = extent
 
         rtrn = None
 

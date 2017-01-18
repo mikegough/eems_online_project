@@ -121,12 +121,20 @@ def run_eems(request):
 
     eems_operator_changes_dict["cmds"].append({"action": "RunProg"})
 
-    print "Original Model ID: ", eems_model_id
-    print "Modified Model ID: ", eems_model_modified_id
-
-    print "Changes: " + json.dumps(eems_operator_changes_dict,indent=2)
+    print "Original Model ID: " + eems_model_id
+    print "Modified Model ID: " + eems_model_modified_id
+    print "Changes: " + json.dumps(eems_operator_changes_dict, indent=2)
 
     original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_id)
+
+    cursor = connection.cursor()
+    query="SELECT EXTENT FROM EEMS_ONLINE_MODELS where ID = %s" % (eems_model_id)
+    cursor.execute(query)
+    extent = cursor.fetchone()[0]
+    extent_list = extent.replace('[','').replace(']','').split(' ')
+    extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
+
+    print extent_for_gdal
 
     # If this is the first run, create the output directories.
     if eems_model_modified_id == '':
@@ -144,7 +152,7 @@ def run_eems(request):
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, True, False, True)
+    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
 
     return HttpResponse(eems_model_modified_id)
 
@@ -158,4 +166,3 @@ def download(request):
     shutil.make_archive(zip_name, 'zip', dir_name)
 
     return HttpResponse("File is ready for download")
-

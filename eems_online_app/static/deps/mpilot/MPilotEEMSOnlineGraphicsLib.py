@@ -165,7 +165,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             warp_tiff = input_basename + "_warp.tiff"
             output_png = input_basename + ".png"
 
-            extent = "-124.4041682295505 42.01249803975221 -114.12309789053886 32.534715526793306"
+            extent = self.ParamByNm('Extent')
 
             os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + outFNm + " " + trans_tiff )
 
