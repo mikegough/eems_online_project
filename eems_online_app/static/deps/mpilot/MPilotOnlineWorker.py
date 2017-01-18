@@ -333,16 +333,13 @@ class MPilotWorker(mpprog.MPilotProgram):
             
         if os.path.isfile(srcProgNm) and doFileLoad:
             print "Loading MptFile (LoadMptFile):  " + srcProgNm
-            #MG For now, make a copy, since the mpt file gets modified.
-            mptFileCopy = os.path.dirname(srcProgNm) + "/model_copy.mpt"
-            shutil.copy(srcProgNm,mptFileCopy)
-            self.LoadMptFile(mptFileCopy)
+            self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 
         rtrn = self._ProcessRqst(rqst)
 
-        with open(mptFileCopy,'w') as outF:
+        with open(srcProgNm,'w') as outF:
             outF.write(self.ProgAsText())
             
         if reset:
