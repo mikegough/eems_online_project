@@ -37,7 +37,6 @@ $( document ).ready(function() {
     eems_bundled_commands = {};
     eems_bundled_commands["action"] = "ProcessCmds";
     eems_bundled_commands["cmds"] = [];
-    eems_bundled_commands["cmds"].push({"action": "LoadProg", "progNm": eems_online_model_name});
     eems_children_dict = {}
 
 });
