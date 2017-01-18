@@ -174,10 +174,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         print "\nProcessing Commands (_ProcessCmds)", rqstCmds
 
         for rqstCmd in rqstCmds:
-            print rqstCmd
-            #MG. Fails without this.
-            if rqstCmd['action'] != 'LoadProg':
-                self._ProcessRqst(rqstCmd)
+            self._ProcessRqst(rqstCmd)
             
         return self.ProgAsText()
     
