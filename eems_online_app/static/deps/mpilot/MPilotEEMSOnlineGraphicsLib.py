@@ -169,7 +169,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
             os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + outFNm + " " + trans_tiff )
 
-            os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
+            os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
 
             src_ds = gdal.Open(warp_tiff)
 
