@@ -132,7 +132,7 @@ class MPilotWorker(mpprog.MPilotProgram):
     def _DelOutputLayerCmds(self):
 
         for cmdNm,cmd in self.UnorderedCmds().items():
-            if cmd.FxnNm() == 'EEMSWrite':
+            if cmd.FxnNm() == 'RenderLayer':
                 self.DelCmdByRsltNm(cmdNm)
         
     # def _DelOutputLayerCmds(self,rsltNms):
@@ -140,7 +140,7 @@ class MPilotWorker(mpprog.MPilotProgram):
     def _DelOutputDistributionCmds(self):
         
         for cmdNm,cmd in self.UnorderedCmds().items():
-            if cmd.FxnNm() == 'EEMSWrite':
+            if cmd.FxnNm() == 'HistoDist':
                 self.DelCmdByRsltNm(cmdNm)        
         
     # def _DelOutputDistributionCmds(self,rsltNms):
