@@ -37,7 +37,7 @@ def index(request):
         # Get initial EEMS model (default to ID=1)
         initial_eems_model = request.GET.get('model', 1)
 
-        query="SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model)
+        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model)
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -50,8 +50,8 @@ def index(request):
         initial_eems_model_json = json.dumps(initial_eems_model)
 
         # GET all available EEMS Models
-        eems_online_models={}
-        query="SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS"
+        eems_online_models = {}
+        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS"
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
@@ -69,47 +69,6 @@ def index(request):
         }
 
         return render(request, template, context)
-
-@csrf_exempt
-def load_eems_user_model(request):
-
-        #  For user uploaded EEMS file
-
-        #  User passes back a serialized EEMS command file.
-        eems_model_id = get_random_string(length=32)
-        eems_model_name = request.POST.get('eems_filename').split('.')[0]
-        eems_file_contents = request.POST.get('eems_file_contents')
-
-        # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
-        pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
-
-        # Connect to the database
-        cursor = connection.cursor()
-
-        # Load EEMS data into database (model as binary)
-        cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_id, eems_model_name, sqlite3.Binary(pdata)))
-
-        # Retreive EEMS data from Database
-        query="SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % (eems_model_id)
-
-        cursor.execute(query)
-        for row in cursor:
-            eems_model_contents = pickle.loads(str(row[0]))
-        print (eems_model_contents)
-
-        # ToDO: Convert EEMS file to JSON
-
-        # ToDO: Get list of available EEMS commands from MPilot EEMS
-
-        # ToDO: Create New PNG files from EEMS output
-
-        # ToDo: Get List of available actions from EEMS
-
-        context = {
-            "eems_model_id" : eems_model_id,
-        }
-
-        return HttpResponse(json.dumps(context))
 
 @csrf_exempt
 def run_eems(request):
@@ -167,3 +126,45 @@ def download(request):
     shutil.make_archive(zip_name, 'zip', dir_name)
 
     return HttpResponse("File is ready for download")
+
+@csrf_exempt
+def load_eems_user_model(request):
+
+    #  For user uploaded EEMS file
+
+    #  User passes back a serialized EEMS command file.
+    eems_model_id = get_random_string(length=32)
+    eems_model_name = request.POST.get('eems_filename').split('.')[0]
+    eems_file_contents = request.POST.get('eems_file_contents')
+
+    # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
+    pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
+
+    # Connect to the database
+    cursor = connection.cursor()
+
+    # Load EEMS data into database (model as binary)
+    cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_id, eems_model_name, sqlite3.Binary(pdata)))
+
+    # Retreive EEMS data from Database
+    query="SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % (eems_model_id)
+
+    cursor.execute(query)
+    for row in cursor:
+        eems_model_contents = pickle.loads(str(row[0]))
+    print (eems_model_contents)
+
+    # ToDO: Convert EEMS file to JSON
+
+    # ToDO: Get list of available EEMS commands from MPilot EEMS
+
+    # ToDO: Create New PNG files from EEMS output
+
+    # ToDo: Get List of available actions from EEMS
+
+    context = {
+        "eems_model_id" : eems_model_id,
+    }
+
+    return HttpResponse(json.dumps(context))
+
