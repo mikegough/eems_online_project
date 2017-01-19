@@ -34,6 +34,12 @@ except:
 @csrf_exempt
 def index(request):
 
+        # Get a json file of all the EEMS commands
+        eems_rqst_dict = {}
+        eems_rqst_dict["action"] = 'GetAllCmdInfo'
+        my_mpilot_worker = MPilotWorker()
+        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", False, False, True)
+
         # Get initial EEMS model (default to ID=1)
         initial_eems_model = request.GET.get('model', 1)
 
@@ -66,6 +72,7 @@ def index(request):
             #'eems_available_commands_dict': eems_available_commands,
             'initial_eems_model_json': initial_eems_model_json,
             'eems_online_models_json': eems_online_models_json,
+            'eems_available_commands_json': eems_available_commands_json,
         }
 
         return render(request, template, context)

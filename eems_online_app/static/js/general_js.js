@@ -213,7 +213,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         //Add the compatible EEMS operators to the dropdown.
         // Convert to Fuzzy Options
         if (node_original_operator.toLowerCase().indexOf("convert to fuzzy") != -1) {
-            $.each(json_eems_commands, function (index, operator) {
+            $.each(eems_available_commands_json, function (index, operator) {
                 if (operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") != -1) {
                     form_string += "<option cmdName='" + operator['Name'] + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                 }
@@ -223,7 +223,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
         // Fuzzy Options
         else {
             if (node_original_operator.indexOf("Fuzzy") != -1) {
-                $.each(json_eems_commands, function (index, operator) {
+                $.each(eems_available_commands_json, function (index, operator) {
                     if ($.inArray(operator["Name"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("convert to fuzzy") == -1 && operator["DisplayName"].indexOf("Fuzzy") != -1) {
                         form_string += "<option cmdName='" + operator['Name'] + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                     }
@@ -232,7 +232,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
             // Non-Fuzzy Options
             else {
-                $.each(json_eems_commands, function (index, operator) {
+                $.each(eems_available_commands_json, function (index, operator) {
                     if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
                         form_string += "<option cmdName='" + operator['Name']  + "' value='" + operator["Name"] + "'>" + operator["DisplayName"] + "</option>"
                     }
@@ -341,7 +341,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
             }
         }
 
-        $("#eems_operator_info").prop('title', json_eems_commands[this.value]["ShortDesc"]);
+        $("#eems_operator_info").prop('title', eems_available_commands_json[this.value]["ShortDesc"]);
 
         $("#eems_operator_params").html("<p><b>Input Nodes:</b><br>");
         $.each(children_array, function(index,child) {
@@ -349,7 +349,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
         });
 
         // Have to handle "Convert to Fuzzy" differently since the arguments we need are OPTIONAL parameters.
-        if (json_eems_commands[this.value]["Name"] == 'CvtToFuzzy'){
+        if (eems_available_commands_json[this.value]["Name"] == 'CvtToFuzzy'){
 
             if (typeof current_arguments_dict[node_id][new_operator]['TrueThreshold'] == "undefined") {
                     current_arguments_dict[node_id][new_operator]["TrueThreshold"] = "";
@@ -365,7 +365,7 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
 
         // Get the list of required params for the selected operator ....
-        var required_params = json_eems_commands[this.value]["ReqParams"];
+        var required_params = eems_available_commands_json[this.value]["ReqParams"];
         delete required_params["InFieldNames"];
         delete required_params["InFieldName"];
 
@@ -422,8 +422,8 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
         // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
         value = value.replace(/ /g,"");
         var child_name=value.split(":")[0];
-        // Check the required parameter type stored in json_eems_commands. If it's a list, add the brackets.
-        if (typeof json_eems_commands[new_operator_id]["ReqParams"][param] != "undefined" && (json_eems_commands[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
+        // Check the required parameter type stored in eems_available_commands_json. If it's a list, add the brackets.
+        if (typeof eems_available_commands_json[new_operator_id]["ReqParams"][param] != "undefined" && (eems_available_commands_json[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
             update_cmd_dict["cmd"]["params"][param] = "[" + value + "]";
         }
         else {
