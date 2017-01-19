@@ -65,8 +65,6 @@ def index(request):
 
         eems_online_models_json=json.dumps(eems_online_models)
 
-        # ToDo: Get EEMS Commands from eems
-
         template = 'index.html'
         context = {
             #'eems_available_commands_dict': eems_available_commands,
@@ -94,7 +92,7 @@ def run_eems(request):
 
     # Get the extent of the original EEMS model. Used to project PNG in GDAL.
     cursor = connection.cursor()
-    query="SELECT EXTENT FROM EEMS_ONLINE_MODELS where ID = %s" % (eems_model_id)
+    query="SELECT EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
     cursor.execute(query)
     extent = cursor.fetchone()[0]
     extent_list = extent.replace('[','').replace(']','').split(' ')
@@ -104,6 +102,18 @@ def run_eems(request):
     # If this is the first run, create the user output directories.
     if eems_model_modified_id == '':
         eems_model_modified_id = get_random_string(length=32)
+
+        query = "SELECT NAME, MODEL, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+        cursor.execute(query)
+        for row in cursor:
+            eems_model_name = row[0]
+            eems_model = row[1]
+            eems_json_file_name = row[2]
+            eems_extent = str(row[3])
+
+        #pdata = pickle.dumps(eems_model, pickle.HIGHEST_PROTOCOL)
+        #cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s)", (eems_model_modified_id, eems_model_name, sqlite3.Binary(pdata), eems_json_file_name, eems_extent))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name, eems_model, eems_json_file_name, eems_extent))
 
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
@@ -120,6 +130,8 @@ def run_eems(request):
     # Send model information to MPilot to run EEMS.
     my_mpilot_worker = MPilotWorker()
     my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+
+    shutil.copyfile(original_mpt_file,mpt_file_copy)
 
     return HttpResponse(eems_model_modified_id)
 

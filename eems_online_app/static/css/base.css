@@ -315,6 +315,17 @@ li a.active {
 	height:26px;
 }
 
+#link_label {
+	position: relative;
+	float: right;
+	height: 26px;
+	display:none;
+}
+
+#link_text {
+	margin:0px 0px 0px 15px;
+}
+
 #download_label {
 	position: relative;
 	float: right;
@@ -337,6 +348,15 @@ li a.active {
 	padding-bottom: 3px;
 }
 
+#link_img {
+	width: 22px;
+	position: relative;
+	display: inline;
+	float: right;
+	left: 6px;
+	top: 2px;
+}
+
 #download_file {
 	width: 25px;
 	position: relative;
@@ -344,6 +364,7 @@ li a.active {
 	float:right;
 	left: 5px;
 }
+
 
 #download_spinner {
 	display:none;

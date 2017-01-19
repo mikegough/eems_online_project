@@ -19,7 +19,7 @@ $( document ).ready(function() {
 
     eems_model_id_for_map_display = eems_model_id;
 
-    $('#eems_model_dropdown option').eq(eems_model_id).prop('selected', true).trigger('change');
+    $('#eems_model_dropdown option').val(eems_model_id).prop('selected', true).trigger('change');
 
     init_eems_file_name = initial_eems_model_json[0][1][1];
     init_eems_file = "static/eems/json_models/" + init_eems_file_name;
@@ -143,6 +143,7 @@ function run_eems() {
             console.log("EEMS Command Modifications: ");
             console.log(JSON.stringify(eems_bundled_commands, null, 2));
             $("#download_label").show();
+            $("#link_label").show();
             $("#button_div").show();
             eems_model_id_for_map_display = eems_model_modified_id;
             swapImageOverlay(last_layer_clicked,eems_model_id_for_map_display);
@@ -186,6 +187,11 @@ $('#download_label').click(function(e) {
         }
 
     });
+});
+
+$('#link_label').click(function(e) {
+    alertify.alert("<div id='link_text'> Copy the link below to access this model run at a later time: <p><a href='http://127.0.0.1:8000?model=" + eems_model_modified_id + "'>http://127.0.0.1:8000?model=" + eems_model_modified_id + "</a></div>")
+
 });
 
 function showHistogram(node_id, alias) {
