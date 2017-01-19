@@ -118,7 +118,6 @@ def run_eems(request):
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
     eems_operator_changes_string = request.POST.get('eems_operator_changes_string')
     eems_operator_changes_dict = json.loads(eems_operator_changes_string)
-
     eems_operator_changes_dict["cmds"].append({"action": "RunProg"})
 
     print "Original Model ID: " + eems_model_id
@@ -127,16 +126,16 @@ def run_eems(request):
 
     original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_id)
 
+    # Get the extent of the original EEMS model. Used to project PNG in GDAL.
     cursor = connection.cursor()
     query="SELECT EXTENT FROM EEMS_ONLINE_MODELS where ID = %s" % (eems_model_id)
     cursor.execute(query)
     extent = cursor.fetchone()[0]
     extent_list = extent.replace('[','').replace(']','').split(' ')
     extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
-
     print extent_for_gdal
 
-    # If this is the first run, create the output directories.
+    # If this is the first run, create the user output directories.
     if eems_model_modified_id == '':
         eems_model_modified_id = get_random_string(length=32)
 
@@ -146,11 +145,13 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
 
+    # Copy the mpt file to the user output directory
     mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
     shutil.copyfile(original_mpt_file,mpt_file_copy)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
+    # Send model information to MPilot to run EEMS.
     my_mpilot_worker = MPilotWorker()
     my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
 

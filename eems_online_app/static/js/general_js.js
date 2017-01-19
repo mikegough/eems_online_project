@@ -17,7 +17,7 @@ $( document ).ready(function() {
 
     eems_model_id = initial_eems_model_json[0][0];
 
-    eems_model_id_for_map_display = eems_model_id
+    eems_model_id_for_map_display = eems_model_id;
 
     $('#eems_model_dropdown option').eq(eems_model_id).prop('selected', true).trigger('change');
 
