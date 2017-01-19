@@ -41,9 +41,9 @@ def index(request):
         eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", False, False, True)
 
         # Get initial EEMS model (default to ID=1)
-        initial_eems_model = request.GET.get('model', 1)
+        initial_eems_model_id = request.GET.get('model', 1)
 
-        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model)
+        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -57,7 +57,8 @@ def index(request):
 
         # GET all available EEMS Models
         eems_online_models = {}
-        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS"
+        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
+        print query;
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
@@ -149,7 +150,11 @@ def link(request):
         eems_json_file_name = row[2]
         eems_extent = str(row[3])
 
-    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name, eems_model, eems_json_file_name, eems_extent))
+    eems_model_name_user = eems_model_name.replace(" (Modified)", "") + " (Modified)"
+
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT, OWNER) values (%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_model, eems_json_file_name, eems_extent, "USER"))
+
+    return HttpResponse("Link is ready")
 
 
 @csrf_exempt

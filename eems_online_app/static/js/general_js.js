@@ -19,7 +19,7 @@ $( document ).ready(function() {
 
     eems_model_id_for_map_display = eems_model_id;
 
-    $('#eems_model_dropdown option').val(eems_model_id).prop('selected', true).trigger('change');
+    $("#eems_model_dropdown option[value=" + eems_model_id + "]").attr('selected', 'selected').trigger("change")
 
     init_eems_file_name = initial_eems_model_json[0][1][1];
     init_eems_file = "static/eems/json_models/" + init_eems_file_name;
@@ -62,6 +62,8 @@ $('#eems_model_dropdown').change(function(){
             eems_online_model_name = eems_online_models_json[this.value][0][0];
 
             eems_model_id = this.value;
+
+            eems_model_id_for_map_display = this.value;
 
             $.get(path_to_json_file, function (results) {
                 var json_model = JSON.parse(results);
