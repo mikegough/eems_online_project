@@ -40,6 +40,8 @@ def index(request):
         my_mpilot_worker = MPilotWorker()
         eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", False, False, True)
 
+        json.dumps(eems_available_commands_json)
+
         # Get initial EEMS model (default to ID=1)
         initial_eems_model_id = request.GET.get('model', 1)
 
@@ -109,18 +111,20 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_modified_id)
 
-    # Copy the mpt file to the user output directory
-    mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
-    shutil.copyfile(original_mpt_file,mpt_file_copy)
+        # Copy the mpt file to the user output directory
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
+        shutil.copyfile(original_mpt_file,mpt_file_copy)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     # Send model information to MPilot to run EEMS.
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+    modified_model = my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
 
-    shutil.copyfile(original_mpt_file,mpt_file_copy)
+    modified_mpt_file =  open(mpt_file_copy,"w")
+    modified_mpt_file.write(modified_model)
 
     return HttpResponse(eems_model_modified_id)
 
@@ -139,6 +143,19 @@ def download(request):
 def link(request):
     eems_model_id = request.POST.get('eems_model_id')
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
+
+    eems_model_modified_src_program = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
+
+    # Get a json file of all the EEMS commands
+    eems_rqst_dict = {}
+    eems_rqst_dict["action"] = 'GetMEEMSETrees'
+    my_mpilot_worker = MPilotWorker()
+    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", True, False, True)[1:-1])
+    print eems_meemse_tree_json
+
+    eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)
+    with open(eems_meemse_tree_file, 'w') as outfile:
+        json.dump(eems_meemse_tree_json, outfile)
 
     cursor = connection.cursor()
 
