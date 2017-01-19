@@ -190,7 +190,27 @@ $('#download_label').click(function(e) {
 });
 
 $('#link_label').click(function(e) {
+
     alertify.alert("<div id='link_text'> Copy the link below to access this model run at a later time: <p><a href='http://127.0.0.1:8000?model=" + eems_model_modified_id + "'>http://127.0.0.1:8000?model=" + eems_model_modified_id + "</a></div>")
+
+    $.ajax({
+        url: "/link", // the endpoint
+        type: "POST", // http method
+        data: {
+            'eems_model_id': eems_model_id,
+            'eems_model_modified_id': eems_model_modified_id,
+        },
+        success: function (response) {
+        },
+        error: function (xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>");
+            console.log(xhr.status + ": " + xhr.responseText);
+        },
+        complete: function(){
+        }
+
+    });
 
 });
 

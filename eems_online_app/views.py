@@ -103,18 +103,6 @@ def run_eems(request):
     if eems_model_modified_id == '':
         eems_model_modified_id = get_random_string(length=32)
 
-        query = "SELECT NAME, MODEL, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
-        cursor.execute(query)
-        for row in cursor:
-            eems_model_name = row[0]
-            eems_model = row[1]
-            eems_json_file_name = row[2]
-            eems_extent = str(row[3])
-
-        #pdata = pickle.dumps(eems_model, pickle.HIGHEST_PROTOCOL)
-        #cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s)", (eems_model_modified_id, eems_model_name, sqlite3.Binary(pdata), eems_json_file_name, eems_extent))
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name, eems_model, eems_json_file_name, eems_extent))
-
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
@@ -145,6 +133,24 @@ def download(request):
     shutil.make_archive(zip_name, 'zip', dir_name)
 
     return HttpResponse("File is ready for download")
+
+@csrf_exempt
+def link(request):
+    eems_model_id = request.POST.get('eems_model_id')
+    eems_model_modified_id = request.POST.get('eems_model_modified_id')
+
+    cursor = connection.cursor()
+
+    query = "SELECT NAME, MODEL, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+    cursor.execute(query)
+    for row in cursor:
+        eems_model_name = row[0]
+        eems_model = row[1]
+        eems_json_file_name = row[2]
+        eems_extent = str(row[3])
+
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT) values (%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name, eems_model, eems_json_file_name, eems_extent))
+
 
 @csrf_exempt
 def load_eems_user_model(request):
