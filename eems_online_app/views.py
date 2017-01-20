@@ -136,9 +136,13 @@ def download(request):
     base_dir = settings.BASE_DIR + "/eems_online_app/static/eems/models"
     dir_name = base_dir + os.sep + eems_model_modified_id
     zip_name = base_dir + os.sep + "zip" + os.sep + "EEMS_Online_Model_Results_" + eems_model_modified_id
-    shutil.make_archive(zip_name, 'zip', dir_name)
+    try:
+        shutil.make_archive(zip_name, 'zip', dir_name)
+        return HttpResponse("File is ready for download")
+    except:
+        return HttpResponse("Error. Please try again.")
 
-    return HttpResponse("File is ready for download")
+
 
 @csrf_exempt
 def link(request):
