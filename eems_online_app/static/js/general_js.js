@@ -482,7 +482,6 @@ function reset_eems_bundled_commands(){
     eems_bundled_commands = {};
     eems_bundled_commands["action"] = "ProcessCmds";
     eems_bundled_commands["cmds"] = [];
-    eems_bundled_commands["cmds"].push({"action": "LoadPog", "progNm": eems_online_model_name});
 }
 
 $('#map_original_button').on('click', function () {
