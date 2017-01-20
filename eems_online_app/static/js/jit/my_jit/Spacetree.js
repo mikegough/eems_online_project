@@ -154,7 +154,7 @@ function init(json, eems_file_name){
                 argument_string += '**##**';
             });
 
-            if (node.data.operation != "Read") {
+            if (node.data.operation != "Read" && node.data.operation != "EEMSRead") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
                 label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
 
