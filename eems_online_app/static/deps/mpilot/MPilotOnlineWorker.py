@@ -146,12 +146,11 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _DelOutputDistributionCmds(self,rsltNms):
         
     def _RunProg(self):
-
         # first we save the mpt script represented by the mpt program:
 
-        outfile = self.outputBaseDir + 'eemssrc/model.mpt'
-        with open(outfile,'w') as outF:
-            outF.write(self.ProgAsText())
+        #outfile = self.outputBaseDir + 'eemssrc/model.mpt'
+        #with open(outfile,'w') as outF:
+         #   outF.write(self.ProgAsText())
 
         ########################################
 

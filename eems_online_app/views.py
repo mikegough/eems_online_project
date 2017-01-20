@@ -102,6 +102,7 @@ def run_eems(request):
     extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
     print extent_for_gdal
 
+
     # If this is the first run, create the user output directories.
     if eems_model_modified_id == '':
         eems_model_modified_id = get_random_string(length=32)
@@ -114,14 +115,17 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_modified_id)
 
         # Copy the mpt file to the user output directory
-        #mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
-        #shutil.copyfile(original_mpt_file,mpt_file_copy)
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+        shutil.copyfile(original_mpt_file,mpt_file_copy)
+
+    else:
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     # Send model information to MPilot to run EEMS.
     my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst(eems_model_modified_id, original_mpt_file, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
 
     return HttpResponse(eems_model_modified_id)
 
