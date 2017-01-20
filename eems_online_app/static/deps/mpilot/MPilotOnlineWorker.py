@@ -147,6 +147,14 @@ class MPilotWorker(mpprog.MPilotProgram):
         
     def _RunProg(self):
 
+        # first we save the mpt script represented by the mpt program:
+
+        outfile = self.outputBaseDir + 'eemssrc/model.mpt'
+        with open(outfile,'w') as outF:
+            outF.write(self.ProgAsText())
+
+        ########################################
+
         # Since we want to produce an outputfile as well
         # as a map image and a distribution 
         # distribution for each node in the model, we need
