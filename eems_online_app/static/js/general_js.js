@@ -193,26 +193,41 @@ $('#download_label').click(function(e) {
 
 $('#link_label').click(function(e) {
 
-    alertify.alert("<div id='link_text'> Copy the link below to access this model run at a later time: <p><a href='http://127.0.0.1:8000?model=" + eems_model_modified_id + "'>http://127.0.0.1:8000?model=" + eems_model_modified_id + "</a></div>")
+    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='http://127.0.0.1:8000?model=" + eems_model_modified_id + "'>http://127.0.0.1:8000?model=" + eems_model_modified_id + "</textarea></div>")
+    var textBox = document.getElementById("link");
+    textBox.onfocus = function() {
+        textBox.select();
 
-    $.ajax({
-        url: "/link", // the endpoint
-        type: "POST", // http method
-        data: {
-            'eems_model_id': eems_model_id,
-            'eems_model_modified_id': eems_model_modified_id,
-        },
-        success: function (response) {
-        },
-        error: function (xhr, errmsg, err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                " <a href='#' class='close'>&times;</a></div>");
-            console.log(xhr.status + ": " + xhr.responseText);
-        },
-        complete: function(){
-        }
+        // Work around Chrome's little problem
+        textBox.onmouseup = function() {
+            // Prevent further mouseup intervention
+            textBox.onmouseup = null;
+            return false;
+        };
+    };
 
-    });
+    if (typeof link_already_generated == 'undefined') {
+        $.ajax({
+            url: "/link", // the endpoint
+            type: "POST", // http method
+            data: {
+                'eems_model_id': eems_model_id,
+                'eems_model_modified_id': eems_model_modified_id,
+            },
+            success: function (response) {
+            },
+            error: function (xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>");
+                console.log(xhr.status + ": " + xhr.responseText);
+            },
+            complete: function () {
+            }
+
+        });
+    }
+
+    link_already_generated = true
 
 });
 

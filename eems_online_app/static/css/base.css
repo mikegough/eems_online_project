@@ -646,3 +646,15 @@ ul.buttons li.selected a:hover
 .leaflet-image-layer {
   display: none;
 }
+
+#link {
+	width: 650px !important;
+	cursor: default;
+	resize: none;
+	color: #4360ff;
+	border: none;
+	font-size: 1.2em;
+	font-weight: bold;
+	height: 20px;
+}
+
