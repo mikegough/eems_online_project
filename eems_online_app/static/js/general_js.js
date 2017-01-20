@@ -259,6 +259,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
                     form_string += "<option cmdName='" + operator['Name'] + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                 }
             });
+            var histogram_toggle = true
         }
 
         // Fuzzy Options
@@ -279,6 +280,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
                     }
                 });
             }
+
+            var histogram_toggle = false
         }
 
     form_string += "</select>";
@@ -288,8 +291,14 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     }
     //Create an empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
-    form_string += "</td><td>"
-    form_string +=  "<div class='histogram_div'><img class='histogram_img' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
+    form_string += "</td><td>";
+    if (histogram_toggle){
+        form_string += "<div id='histogram_to_show_div'>"
+        form_string += "<input checked name='histogram_to_show' type='radio' value='" + node_id + "'>This Node";
+        form_string += "<input name='histogram_to_show' type='radio' value='" + children_array[0] + "'>Input Node";
+        form_string += "</div>";
+    }
+    form_string +=  "<div class='histogram_div'><img id='histogram_img' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
     form_string += "</div>";
     form_string += "</td></tr></table>"
 
@@ -329,6 +338,13 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
         }
     });
+
+    // ON Convert to Fuzzy operators, allow the user to toggle the histogram between the current node and the input node.
+    $('input[type=radio][name=histogram_to_show]').change(function() {
+        node_id_to_show_on_histogram = $('input[name=histogram_to_show]:checked').val()
+        $("#histogram_img").attr("src", "static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id_to_show_on_histogram + ".png")
+    })
+
 
     // Pick appropriate operators to show & bind change event
     bind_params(node_id, children_array, node_original_operator, original_arguments);

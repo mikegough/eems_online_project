@@ -621,21 +621,24 @@ ul.buttons li.selected a:hover
 	padding: 3px;
 	width: 650px;
 	margin-top: 40px;
+	z-index: 9999
 }
 
 .histogram_div {
 	text-align: center;
 }
+
 .histogram_img_read {
 	width: 500px;
 	top: -17px;
 	position: relative;
 }
 
-.histogram_img {
+#histogram_img {
 	width: 330px;
-	top: -17px;
+	top: -10px;
 	position: relative;
+	z-index: -1;
 }
 
 .alertify-buttons {
@@ -656,5 +659,14 @@ ul.buttons li.selected a:hover
 	font-size: 1.2em;
 	font-weight: bold;
 	height: 20px;
+}
+
+#histogram_to_show_div {
+	position: absolute;
+	top: 10px;
+	text-align: center;
+	width: 330px;
+	font-size: .9em;
+	z-index: 999;
 }
 
