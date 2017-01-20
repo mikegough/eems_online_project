@@ -55,14 +55,12 @@ $('#eems_model_dropdown').change(function(){
 
             $("#user_defined_model").html("")
 
-            var eems_online_json_file_name = eems_online_models_json[this.value][0][1];
+            eems_model_id = this.value;
+            eems_model_id_for_map_display = this.value;
+
             var path_to_json_file = "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
-
-            eems_model_id = this.value;
-
-            eems_model_id_for_map_display = this.value;
 
             $.get(path_to_json_file, function (results) {
                 var json_model = JSON.parse(results);
