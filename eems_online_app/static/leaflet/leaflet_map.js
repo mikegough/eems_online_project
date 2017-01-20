@@ -45,17 +45,22 @@ dynamic_legend.addTo(map)
 var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topleft'};
 L.control.groupedLayers("", groupedOverlays, options).addTo(map);
 
-function swapImageOverlay(layer_name, eems_model_id) {
+function swapImageOverlay(layer_name, eems_model_id, delay_speed) {
 
     last_layer_clicked=layer_name
 
     if (typeof image_overlay != "undefined") {
-        map.removeLayer(image_overlay);
+        old_image_overlay = image_overlay
+        $(old_image_overlay._image).fadeOut(delay_speed, function () {
+            map.removeLayer(old_image_overlay);
+        });
     }
+
     var image_overlay_url = "static/eems/models/" + eems_model_id + "/overlay/" + layer_name + ".png?" + new Date().getTime();
-    image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds);
-    image_overlay.addTo(map);
-    image_overlay.bringToBack();
+    image_overlay = L.imageOverlay(image_overlay_url, overlay_bounds).addTo(map);
+    $(image_overlay._image).fadeIn(delay_speed);
+
+    //image_overlay.bringToBack();
 
     swapLegend(layer_name, eems_model_id)
 }

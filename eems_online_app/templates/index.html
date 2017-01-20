@@ -69,8 +69,8 @@
     <div id="map_container">
         <div id="button_div">
             <ul id="button_list" class="buttons" data-persist="false">
-                <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id)">Original</a></li>
-                <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id)">Modified</a></li>
+                <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000)">Original</a></li>
+                <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000)">Modified</a></li>
             </ul>
         </div>
         <div id="map"></div>
@@ -88,7 +88,7 @@
             Get Link <img id="link_img" src="{% static '/img/link.png' %}">
         </label>
       <label title="Click to download data for this model"  class="alertify-button alertify-button-ok" id="download_label">
-            Download Results <img id="download_file" src="{% static '/img/download.svg' %}">
+            Download Results <img id="download_file" src="{% static '/img/download.png' %}">
       </label>
       <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
       <!--

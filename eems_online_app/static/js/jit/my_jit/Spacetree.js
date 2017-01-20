@@ -173,7 +173,7 @@ function init(json, eems_file_name){
                 st.onClick(node.id, { Move: m });
                 st.setRoot(node.id, 'animate');
 
-                swapImageOverlay(node.id,eems_model_id_for_map_display)
+                swapImageOverlay(node.id,eems_model_id_for_map_display,0)
 
                //Code for expanding/contracting nodes (toggle) Not working correctly
                // DELETED //

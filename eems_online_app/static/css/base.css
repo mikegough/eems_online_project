@@ -349,7 +349,7 @@ li a.active {
 }
 
 #link_img {
-	width: 22px;
+	width: 21px;
 	position: relative;
 	display: inline;
 	float: right;
@@ -649,4 +649,8 @@ ul.buttons li.selected a:hover
 .alertify-buttons {
 	bottom: 0px;
 	width: 650px;
+}
+
+.leaflet-image-layer {
+  display: none;
 }
