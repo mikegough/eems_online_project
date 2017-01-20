@@ -114,17 +114,14 @@ def run_eems(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_modified_id)
 
         # Copy the mpt file to the user output directory
-        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
-        shutil.copyfile(original_mpt_file,mpt_file_copy)
+        #mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
+        #shutil.copyfile(original_mpt_file,mpt_file_copy)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     # Send model information to MPilot to run EEMS.
     my_mpilot_worker = MPilotWorker()
-    modified_model = my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
-
-    modified_mpt_file =  open(mpt_file_copy,"w")
-    modified_mpt_file.write(modified_model)
+    my_mpilot_worker.HandleRqst(eems_model_modified_id, original_mpt_file, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
 
     return HttpResponse(eems_model_modified_id)
 
