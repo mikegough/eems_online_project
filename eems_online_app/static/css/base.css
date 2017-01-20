@@ -397,15 +397,7 @@ li a.active {
 
 .disabled {
 	background-color: #ccc !important;
-}
-
-#disable_div {
-	width: 100px;
-	height: 40px;
-	float: right;
-	/* background: white; */
-	position: absolute;
-	right: 20px;
+	pointer-events: none;
 }
 
 #modify_eems_button{

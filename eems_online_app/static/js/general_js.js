@@ -52,7 +52,6 @@ $('#eems_model_dropdown').change(function(){
         if ($('#eems_model_dropdown option:selected').text() != "") {
 
             $("#run_eems_button").addClass("disabled");
-            $("#disable_div").show();
 
             $("#user_defined_model").html("")
 
@@ -127,6 +126,8 @@ $("#run_eems_button").click(function(){run_eems(eems_model_id)});
 // Send the user defined changes to the back end and run EEMS.
 function run_eems() {
 
+    $("#run_eems_button").addClass("disabled");
+
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
     $("#spinner_div").show()
 
@@ -149,7 +150,6 @@ function run_eems() {
             $("#button_div").show();
             eems_model_id_for_map_display = eems_model_modified_id;
             swapImageOverlay(last_layer_clicked,eems_model_id_for_map_display);
-
 
         },
         error: function (xhr, errmsg, err) {
@@ -313,7 +313,6 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
             $("#run_eems_button").removeClass("disabled");
-            $("#disable_div").hide();
 
         }
     });
