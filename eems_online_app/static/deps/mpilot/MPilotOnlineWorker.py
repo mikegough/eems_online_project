@@ -8,6 +8,7 @@ import os
 import uuid # to make a unique file name
 import time # sleep for lock timing
 from collections import OrderedDict
+import re
 
 class MPilotWorker(mpprog.MPilotProgram):
 
