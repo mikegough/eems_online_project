@@ -91,7 +91,7 @@ def run_eems(request):
     print "Modified Model ID: " + eems_model_modified_id
     print "Changes: " + json.dumps(eems_operator_changes_dict, indent=2)
 
-    original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_id)
+    original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
 
     # Get the extent of the original EEMS model. Used to project PNG in GDAL.
     cursor = connection.cursor()
@@ -149,7 +149,7 @@ def link(request):
     eems_model_id = request.POST.get('eems_model_id')
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
 
-    eems_model_modified_src_program = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/Model.mpt'.format(eems_model_modified_id)
+    eems_model_modified_src_program = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
 
     # Get a json file of all the EEMS commands
     eems_rqst_dict = {}
