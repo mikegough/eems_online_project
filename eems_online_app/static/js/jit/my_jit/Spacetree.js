@@ -100,7 +100,14 @@ function init(json, eems_file_name){
         },
         
         onAfterCompute: function(){
-            Log.write("Click the boxes to map the data and show the input nodes");
+            //log_text = "<img class='node_icon' src='static/img/node.png'> Click to map the data and show the input nodes</p>" +
+            //log_text = "Click on a box <img class='node_icon' src='static/img/node.png'> to map the data and show the inputs. Click on a gear icon <img class='modify_icon_class' src='static/img/gear_icon.svg'>  to modify the operator"
+            /*
+            log_text = "<img class='node_icon' src='static/img/node.png'> Click on a box to map the data and show the inputs<br>" +
+                "<span class='log_text_second_line'><img class='node_and_gear' src='static/img/node_and_gear.png'> Click on a gear icon to modify the operator</span>"
+            Log.write(log_text)
+            */
+            Log.write("")
             // Remove logic to show eems value in top node
         },
 
@@ -156,10 +163,10 @@ function init(json, eems_file_name){
 
             if (node.data.operation != "Read" && node.data.operation != "EEMSRead") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
-                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
 
             } else {
-                label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
             label.onclick = function(){

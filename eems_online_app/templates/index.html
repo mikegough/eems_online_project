@@ -76,21 +76,32 @@
         <div id="map"></div>
     </div>
     <div id="file_upload_controls">
-
-      <div id="current_file"><b>Current Model:</b>
+      <div id="current_file" class="eems_controls">
+        <div class="introjs-helperNumberLayer" title="Select a model">1</div><b>Model:</b>
         <select id="eems_model_dropdown" name="eems_model_dropdown">
-          <option value="0"></option>
+          <!--<option value="0"></option>-->
         </select>
         <div id="user_defined_model"></div>
       </div>
-      <div id="disable_div" title="No changes have been made"></div>
-        <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok" id="link_label">
+      <div id="getting_started" class="eems_controls">
+          <div class="introjs-helperNumberLayer" title="Explore the model and make changes to the model">2</div>
+          <img class='node_and_gear' src='static/img/node_and_gear.png'>
+          Click on a node to map the data and show the inputs<br>
+          Click on the gear icon to modify the operator
+      </div>
+      <div id="save_eems_div" class="eems_controls">
+          <div id="run_the_model_number3" class="introjs-helperNumberLayer" title="Run the model">3</div>
+          <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok" id="link_label">
             Get Link <img id="link_img" src="{% static '/img/link.png' %}">
-        </label>
-      <label title="Click to download data for this model"  class="alertify-button alertify-button-ok" id="download_label">
-            Download Results <img id="download_file" src="{% static '/img/download.png' %}">
-      </label>
-      <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
+          </label>
+          <label title="Click to download data for this model"  class="alertify-button alertify-button-ok" id="download_label">
+                Download <img id="download_file" src="{% static '/img/download.png' %}">
+          </label>
+      </div>
+      <div id="run_eems_div" class="eems_controls">
+        <div class="introjs-helperNumberLayer" title="Run the model">3</div>
+        <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
+      </div>
       <!--
       <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
       -->

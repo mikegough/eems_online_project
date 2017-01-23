@@ -148,6 +148,8 @@ function run_eems() {
             $("#button_div").show();
             eems_model_id_for_map_display = eems_model_modified_id;
             swapImageOverlay(last_layer_clicked,eems_model_id_for_map_display);
+            $("#run_eems_div").hide();
+            $("#save_eems_div").show();
 
         },
         error: function (xhr, errmsg, err) {
@@ -335,6 +337,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
             $("#run_eems_button").removeClass("disabled");
+            $("#run_eems_div").show();
+            $("#save_eems_div").hide();
 
         }
     });
