@@ -12,6 +12,7 @@ Tst.nc
 */static/data/*
 */static/Leaflet/myPNG/*
 Archive/
+Updates/
 */static/docs/*
 */static/eems/models/*
 *.sqlite3

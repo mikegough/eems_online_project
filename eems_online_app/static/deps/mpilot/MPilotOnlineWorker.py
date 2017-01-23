@@ -200,17 +200,27 @@ class MPilotWorker(mpprog.MPilotProgram):
         mptCmd = self.CmdByNm(rsltNm)
         cmdData = OrderedDict()
         meemseSubtree = OrderedDict()
-        
+
         meemseSubtree['id'] = rsltNm
         meemseSubtree['name'] = rsltNm
         meemseSubtree['data'] = OrderedDict()
-        
+
+        meemseSubtree['data']['arguments'] = []
+        if mptCmd.Params() is not None:
+            for paramNm in mptCmd.Params():
+                meemseSubtree['data']['arguments'].append(
+                    '{}:{}'.format(
+                        paramNm,
+                        re.sub(r'(.*)\]$',r'\1',re.sub(r'^\[(.*)$',r'\1',mptCmd.ParamByNm(paramNm)))
+                        )
+                    )
+
         meemseSubtree['data']['is_fuzzy'] = False
         if mptCmd.FxnReturnType() == 'Fuzzy':
             meemseSubtree['data']['is_fuzzy'] = True
         elif mptCmd.ParamByNm('DataType') == 'Fuzzy':
             meemseSubtree['data']['is_fuzzy'] = True
-            
+
         meemseSubtree['data']['raw_operation'] = mptCmd.FxnNm()
         meemseSubtree['data']['short_desc'] = mptCmd.FxnShortDesc()
         meemseSubtree['data']['operation'] = mptCmd.FxnDisplayName()
@@ -222,7 +232,7 @@ class MPilotWorker(mpprog.MPilotProgram):
                 meemseSubtree['children'].append(self._MakeMEEMSESubtree(childRsltNm))
 
         return meemseSubtree
-        
+
     # def _MakeMEEMSENodeDef(self,cmdNm):
 
     def _MakeMEEMSETrees(self):
