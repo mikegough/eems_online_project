@@ -116,7 +116,7 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
 
         rtrn = None
         param = self.ParamByNm(paramNm)
-        
+
         if param is None: return None
 
         # Get the legal param types for this parameter
@@ -145,6 +145,8 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
         # From the choices it is allowed to be, find out
         # the most restrictive type that fits. Note,
         # order of checking matters here.
+
+        paramType = None
         
         if not isinstance(legalParamTypes, list):
             
@@ -171,8 +173,25 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                     # is it this?
                     if self._IsParamType(param,simplestParamType):
                         paramType = simplestParamType
+                        break
 
         # if not isinstance(paramTypes, list):
+
+        if paramType is None:
+            raise Exception(
+                '{}{}{}{}{}{}{}'.format(
+                    '\n********************ERROR********************\n',
+                    'Illegal parameter value(s): \n'.format(legalParamTypes),
+                    '  Parameter name: {}\n'.format(paramNm),
+                    '  Must be (one of): {}\n'.format(legalParamTypes),
+                    '  Value is: {}\n'.format(param),
+                    'File: {}  Line number: {}\n'.format(
+                        self.mptCmdStruct['cmdFileNm'],
+                        self.mptCmdStruct['lineNo']
+                        ),
+                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                    )
+                )
 
         # List of the paramter values in string form
         paramVals = param.replace('[','').replace(']','').split(',')
