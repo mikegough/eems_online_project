@@ -72,7 +72,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         parsedCmd = {}
         parsedCmd['rsltNm'] = '{}_OutputDone'.format(self.id)
         parsedCmd['cmd'] = 'EEMSWrite'
-        outfile = self.outputBaseDir + 'data/Results.nc'
+        outfile = self.outputBaseDir + 'data/results.nc'
         parsedCmd['params'] = {
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
             'OutFileName':outfile,
