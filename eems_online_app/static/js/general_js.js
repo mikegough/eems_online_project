@@ -44,6 +44,8 @@ $( document ).ready(function() {
 // Change model (drop-down)
 $('#eems_model_dropdown').change(function(){
 
+        $("#button_div").hide();
+
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
 
         eems_model_modified_id = '';
@@ -76,6 +78,7 @@ $('#eems_model_dropdown').change(function(){
 
 // File upload button
 $('input:file').change(function(e){
+
         var filename=e.target.files[0].name;
         $("#user_defined_model").html(filename.replace('.json','').replace('.JSON',''));
         $('#eems_model_dropdown option').eq(0).prop('selected', true).trigger('change');
