@@ -159,9 +159,7 @@ function run_eems() {
 
         },
         error: function (xhr, errmsg, err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                " <a href='#' class='close'>&times;</a></div>");
-            console.log(xhr.status + ": " + xhr.responseText);
+            alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
         },
         complete: function(){
             $("#spinner_div").hide()
@@ -186,9 +184,7 @@ $('#download_label').click(function(e) {
             window.open("static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip", "_parent")
         },
         error: function (xhr, errmsg, err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                " <a href='#' class='close'>&times;</a></div>");
-            console.log(xhr.status + ": " + xhr.responseText);
+            alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
         },
         complete: function(){
             $("#download_file").attr("src","static/img/download.png");
@@ -223,9 +219,7 @@ $('#link_label').click(function(e) {
             success: function (response) {
             },
             error: function (xhr, errmsg, err) {
-                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
-                    " <a href='#' class='close'>&times;</a></div>");
-                console.log(xhr.status + ": " + xhr.responseText);
+                alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
             },
             complete: function () {
             }
