@@ -335,6 +335,7 @@ li a.active {
 
 #link_label {
 	top: 36px;
+	position:absolute;
 }
 
 #link_text {
@@ -343,6 +344,7 @@ li a.active {
 
 #download_label {
 	top: 5px;
+	position:absolute;
 }
 
 .alertify-button-ok{
@@ -436,7 +438,7 @@ li a.active {
 .node_and_gear {
 	position: relative;
 	top: 7px;
-	box-shadow: 1px 1px 2px #333232E6;
+	box-shadow: 1px 1px 2px #363535;
 	opacity: .8;
 	float: left;
 	margin-right: 10px;
@@ -787,5 +789,9 @@ ul.buttons li.selected a:hover
 .alertify-button:focus {
 	outline: none;
 	box-shadow: 0 0 0px #2B72D5 !important;
+}
+
+.alertify-button, .alertify-button:hover, .alertify-button:active, .alertify-button:visited {
+	margin-left: unset;
 }
 
