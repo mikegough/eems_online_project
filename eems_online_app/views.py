@@ -102,7 +102,6 @@ def run_eems(request):
     extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
     print extent_for_gdal
 
-
     # If this is the first run, create the user output directories.
     if eems_model_modified_id == '':
         eems_model_modified_id = get_random_string(length=32)
@@ -138,8 +137,12 @@ def download(request):
     zip_name = base_dir + os.sep + "zip" + os.sep + "EEMS_Online_Model_Results_" + eems_model_modified_id
     try:
         shutil.make_archive(zip_name, 'zip', dir_name)
+        current_dir = os.getcwd()
+        print current_dir
         return HttpResponse("File is ready for download")
     except:
+        current_dir = os.getcwd()
+        print current_dir
         return HttpResponse("Error. Please try again.")
 
 
