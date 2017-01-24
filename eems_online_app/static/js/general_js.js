@@ -45,6 +45,9 @@ $( document ).ready(function() {
 $('#eems_model_dropdown').change(function(){
 
         $("#button_div").hide();
+        $("#run_eems_button").addClass("disabled");
+        $("#run_eems_div").show();
+        $("#save_eems_div").hide();
 
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
 
