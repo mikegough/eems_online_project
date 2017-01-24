@@ -440,8 +440,8 @@ li a.active {
 	top: 7px;
 	box-shadow: 1px 1px 2px #363535;
 	opacity: .8;
-	float: left;
-	margin-right: 10px;
+	float: right;
+	margin-right: 12px;
 }
 
 #run_eems_div {
