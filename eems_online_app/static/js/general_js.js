@@ -143,23 +143,31 @@ function run_eems() {
             'eems_model_modified_id': eems_model_modified_id,
             'eems_operator_changes_string': eems_operator_changes_string
         },
-        success: function (response) {
-            eems_model_modified_id = response;
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
-            console.log("EEMS Model ID: " + eems_model_modified_id);
-            console.log("EEMS Command Modifications: ");
-            console.log(JSON.stringify(eems_bundled_commands, null, 2));
-            $("#download_label").show();
-            $("#link_label").show();
-            $("#button_div").show();
-            eems_model_id_for_map_display = eems_model_modified_id;
-            swapImageOverlay(last_layer_clicked,eems_model_id_for_map_display);
-            $("#run_eems_div").hide();
-            $("#save_eems_div").show();
-
+        success: function (json_response) {
+            var response = JSON.parse(json_response);
+            eems_model_modified_id = response.eems_model_modified_id;
+            if (response.error_code == '1'){
+                var error_message = response.error_message;
+                alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div id='error_alert_text'>Error: " + error_message + "</div></div>")
+            }
+            else {
+                alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
+                console.log("EEMS Model ID: " + eems_model_modified_id);
+                console.log("EEMS Command Modifications: ");
+                console.log(JSON.stringify(eems_bundled_commands, null, 2));
+                $("#download_label").show();
+                $("#link_label").show();
+                $("#button_div").show();
+                eems_model_id_for_map_display = eems_model_modified_id;
+                swapImageOverlay(last_layer_clicked, eems_model_id_for_map_display);
+                $("#run_eems_div").hide();
+                $("#save_eems_div").show();
+            }
         },
         error: function (xhr, errmsg, err) {
-            alertify.alert("<div class='error_message'>There was an error in processing your request. Please try again.<br>If the problem persists, please reload the page.<p>Status: " + xhr.status + "<br>Error: " + err + "</div>")
+            var error_message = xhr.responseText;
+            //var eems_error =  error_message.split("\n")[1]
+            alertify.alert("<div class='error_message_context'>There was an error processing your request. If the problem persists, please reload the page.<div class='error_message'>Error: " + error_message + "</div></div>")
         },
         complete: function(){
             $("#spinner_div").hide()

@@ -123,10 +123,23 @@ def run_eems(request):
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
 
     # Send model information to MPilot to run EEMS.
-    my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+    try:
+        my_mpilot_worker = MPilotWorker()
+        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+        error_code = 0
+        error_message = None
 
-    return HttpResponse(eems_model_modified_id)
+    except Exception as e:
+        error_code = 1
+        error_message = str(e)
+
+    context={
+        "eems_model_modified_id": eems_model_modified_id,
+        "error_code": error_code ,
+        "error_message": error_message
+    }
+
+    return HttpResponse(json.dumps(context))
 
 @csrf_exempt
 def download(request):
