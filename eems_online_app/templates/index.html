@@ -77,30 +77,34 @@
     </div>
     <div id="control_panel">
       <div id="current_file" class="eems_controls">
-        <div class="introjs-helperNumberLayer" title="Select a model">1</div><b>Model:</b>
+        <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
         <select id="eems_model_dropdown" name="eems_model_dropdown">
           <!--<option value="0"></option>-->
         </select>
         <div id="user_defined_model"></div>
       </div>
       <div id="getting_started" class="eems_controls">
-          <div class="introjs-helperNumberLayer" title="Explore the model and make changes to the model">2</div>
-          <img class='node_and_gear' src='static/img/node_and_gear.png'>
+          Explore and modify the model
+          <!--
           Click on a box to map the data and show the inputs<br>
           Click on the gear icon to modify the operator
+          -->
+          <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
+          <img class='node_and_gear' src='static/img/node_and_gear.png'>
       </div>
       <div id="save_eems_div" class="eems_controls">
           <div id="run_the_model_number3" class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">3</div>
-          <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok" id="link_label">
+
+          <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
             Get Link <img id="link_img" src="{% static '/img/link.png' %}">
           </label>
-          <label title="Click to download data the model results"  class="alertify-button alertify-button-ok" id="download_label">
+          <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
                 Download <img id="download_file" src="{% static '/img/download.png' %}">
           </label>
       </div>
       <div id="run_eems_div" class="eems_controls">
-        <div class="introjs-helperNumberLayer" title="Run the model">3</div>
-        <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run</button>
+        <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
+        <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
       </div>
       <!--
       <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>

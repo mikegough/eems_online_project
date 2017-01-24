@@ -107,6 +107,8 @@ function init(json, eems_file_name){
                 "<span class='log_text_second_line'><img class='node_and_gear' src='static/img/node_and_gear.png'> Click on a gear icon to modify the operator</span>"
             Log.write(log_text)
             */
+            //log_text = "Click on a box to map the data and show the inputs. Click the gear icon to modify the operator."
+            //log_text = "Click a box to map the data and show the inputs. &nbsp Click the gear icon to make changes to the operator."
             Log.write("")
             // Remove logic to show eems value in top node
         },
@@ -163,7 +165,7 @@ function init(json, eems_file_name){
 
             if (node.data.operation != "Read" && node.data.operation != "EEMSRead") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
-                label.innerHTML += "<span id='modify_span' title='Click to change the EEMS operations'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
 
             } else {
                 label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"

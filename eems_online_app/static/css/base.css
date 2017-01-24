@@ -148,9 +148,9 @@ a {
 }
 
 #meemse_container {
-	top: 195px;
+	top: 205px;
 	width: 50%;
-	height: calc(100% - 265px);
+	height: calc(100% - 275px);
 	margin: 0 auto;
 	margin-bottom: 0;
 	position: absolute;
@@ -212,7 +212,7 @@ a {
 	font-size: 1.0em;
 	font-weight: bold;
 	color: #23A4FF;
-	height: 40px;
+	height: 20px;
 }
 
 .log_text_second_line {
@@ -247,7 +247,7 @@ a {
 }
 
 .alertify {
-	top: 198px !important;
+	top: 210px !important;
 	width: 680px !important;
 	right: 100px !important;
 	left: unset !important;
@@ -309,7 +309,7 @@ li a.active {
 	background-color: rgba(255,255,255,.7);
 	padding: 15px 25px 15px 25px;
 	width: 50%;
-	min-width: 750px;
+	min-width: 788px;
 	z-index: 999;
 	font-family: tahoma;
 	font-size: 16px;
@@ -322,17 +322,19 @@ li a.active {
 	height:26px;
 }
 
-#link_label {
+.save_label {
 	position: absolute;
 	float: right;
 	display: none;
-	top: 31px;
-	width: 83px;
-	right: 0px;
-	font-size: .95em;
-	padding: 0px 10px;
-	margin-right: 8px;
-	height: 22px;
+	right: 12px;
+	font-size: .95em !important;
+	width: 95px;
+	height: 18px;
+	line-height: 17px !important;
+}
+
+#link_label {
+	top: 36px;
 }
 
 #link_text {
@@ -340,15 +342,7 @@ li a.active {
 }
 
 #download_label {
-	position: absolute;
-	float: right;
-	display: none;
 	top: 5px;
-	right: 0px;
-	font-size: .95em !important;
-	padding: 0px 10px;
-	margin-right: 8px;
-	height: 22px;
 }
 
 .alertify-button-ok{
@@ -361,7 +355,6 @@ li a.active {
 	display: inline;
 	bottom: 0px;
 	left: 80px;
-	color: #7d7d7d;
 	font-size: .9em;
 	padding-bottom: 3px;
 }
@@ -372,7 +365,7 @@ li a.active {
 	display: inline;
 	float: right;
 	left: 4px;
-	top: 2px;
+	top: 0px;
 	height: 18px;
 }
 
@@ -382,6 +375,7 @@ li a.active {
 	display: inline;
 	float: right;
 	left: 5px;
+    top: -2px;
 }
 
 #download_spinner {
@@ -401,11 +395,12 @@ li a.active {
 }
 
 .eems_controls {
-	position:relative;
-	height: 40px;
+	position: relative;
+	height: 48px;
 	border: 0;
 	background-color: #ece9e9;
-	color: #595858;
+	color: #506C9C;
+	font-weight: bold;
 	border-radius: 5px;
 	padding: 10px;
 	font-size: .95em;
@@ -413,7 +408,7 @@ li a.active {
 
 #current_file {
 	float: left;
-	line-height: 33px;
+	line-height: 43px;
 	margin-right: 13px;
 	left: -5px;
 }
@@ -421,7 +416,13 @@ li a.active {
 #getting_started {
 	position: relative;
 	float: left;
-	padding-left:18px;
+	padding-left: 18px;
+	line-height: 43px;
+	font-size: .95em;
+	padding-right: 2px;
+	width: 290px;
+	max-width: 290px;
+	min-width: 290px;
 }
 
 .node_icon {
@@ -434,8 +435,8 @@ li a.active {
 
 .node_and_gear {
 	position: relative;
-	top: 5px;
-	box-shadow: 1px 1px 2px #69676799;
+	top: 7px;
+	box-shadow: 1px 1px 2px #333232E6;
 	opacity: .8;
 	float: left;
 	margin-right: 10px;
@@ -443,29 +444,34 @@ li a.active {
 
 #run_eems_div {
 	float: right;
-	width: 119px;
+	width: 169px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	line-height:47px;
 	right: -8px;
 }
 
 #save_eems_div {
 	display:none;
 	float: right;
-	width: 113px;
+	width: 169px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
 	right: -8px;
 }
 
-#run_eems_button{
+#run_eems_button {
+	position: relative;
+	left: 5px;
 }
 
 .disabled {
 	background-color: #ccc !important;
 	pointer-events: none;
+	color: #8A8A8A !important;
+	text-shadow: unset !important;
 }
 
 #modify_eems_button{
