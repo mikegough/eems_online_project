@@ -795,3 +795,6 @@ ul.buttons li.selected a:hover
 	margin-left: unset;
 }
 
+.error_message {
+	margin:0px 20px;
+}

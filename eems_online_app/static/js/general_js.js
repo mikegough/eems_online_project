@@ -159,7 +159,7 @@ function run_eems() {
 
         },
         error: function (xhr, errmsg, err) {
-            alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
+            alertify.alert("<div class='error_message'>There was an error in processing your request. Please try again.<br>If the problem persists, please reload the page.<p>Status: " + xhr.status + "<br>Error: " + err + "</div>")
         },
         complete: function(){
             $("#spinner_div").hide()
