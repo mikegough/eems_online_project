@@ -203,7 +203,7 @@ $('#download_label').click(function(e) {
 
 $('#link_label').click(function(e) {
 
-    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='http://127.0.0.1:8000?model=" + eems_model_modified_id + "'>http://127.0.0.1:8000?model=" + eems_model_modified_id + "</textarea></div>")
+    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='http://redwood:8000?model=" + eems_model_modified_id + "'>http://redwood:8000?model=" + eems_model_modified_id + "</textarea></div>")
     var textBox = document.getElementById("link");
     textBox.onfocus = function() {
         textBox.select();
