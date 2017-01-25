@@ -192,9 +192,7 @@ function init(json, eems_file_name){
                     offsetX:st.canvas.translateOffsetX,
                     offsetY:st.canvas.translateOffsetY + 130
                 };
-
-                st.onClick(node.id, { Move: m });
-                st.setRoot(node.id, 'animate');
+                 st.onClick(node.id, { Move: m });
 
                 swapImageOverlay(node.id,eems_model_id_for_map_display,0)
 
