@@ -59,7 +59,7 @@ function init(json, eems_file_name){
         offsetY:200,
         //To Show all nodes. Set to false. modify LevelsToShow.
         constrained:true,
-        levelsToShow: 4,
+        levelsToShow: 40,
         //set duration for the animation
         duration: 800,
         //set animation transition type
@@ -109,7 +109,21 @@ function init(json, eems_file_name){
             */
             //log_text = "Click on a box to map the data and show the inputs. Click the gear icon to modify the operator."
             //log_text = "Click a box to map the data and show the inputs. &nbsp Click the gear icon to make changes to the operator."
-            Log.write("")
+            Log.write("<div class='expand_collapse_meemse_button' id='expand_meemse_button'>Expand Nodes</div><div class='expand_collapse_meemse_button' id='collapse_meemse_button'>Collapse Nodes</div>");
+
+            $("#expand_meemse_button").click(function(){
+                st.controller.constrained=false;
+                st.refresh();
+                $("#expand_meemse_button").hide();
+                $("#collapse_meemse_button").show();
+            });
+            $("#collapse_meemse_button").click(function(){
+                st.controller.constrained=true;
+                st.refresh();
+                $("#expand_meemse_button").show();
+                $("#collapse_meemse_button").hide();
+            });
+
             // Remove logic to show eems value in top node
         },
 
