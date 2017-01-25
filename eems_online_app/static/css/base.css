@@ -273,8 +273,9 @@ a {
 	padding: 0;
 	overflow: hidden;
 	border-width: 1px 0px 1px 0px;
-    border-color: #e7e7e7;
+	border-color: #e7e7e7;
 	background-color: #444;
+	height: 36px;
 }
 
 li {
@@ -283,10 +284,9 @@ li {
 
 li a {
 	display: block;
-	/* color: #e0e0e0; */
-    color: #d7d7d7;
+	color: #d7d7d7;
 	text-align: center;
-	padding: 8px 16px;
+	padding: 9px 16px;
 	text-decoration: none;
 }
 
@@ -413,18 +413,15 @@ li a.active {
 	line-height: 43px;
 	margin-right: 13px;
 	left: -5px;
+	width: 269px;
 }
 
 #getting_started {
 	position: relative;
 	float: left;
-	padding-left: 18px;
 	line-height: 43px;
 	font-size: .95em;
-	padding-right: 2px;
-	width: 290px;
-	max-width: 290px;
-	min-width: 290px;
+	width: calc(100% - 520px);
 }
 
 .node_icon {
@@ -436,12 +433,13 @@ li a.active {
 }
 
 .node_and_gear {
-	position: relative;
-	top: 7px;
+	position: absolute;
+	top: 19px;
 	box-shadow: 1px 1px 2px #363535;
 	opacity: .8;
 	float: right;
-	margin-right: 12px;
+	height: 25px;
+	right: 9px;
 }
 
 #run_eems_div {
@@ -821,4 +819,14 @@ ul.buttons li.selected a:hover
 	margin-left: unset;
 }
 
+.expand_collapse_meemse_button {
+	cursor:pointer;
+}
+
+#expand_meemse_button {
+}
+
+#collapse_meemse_button {
+	display:none;
+}
 
