@@ -89,12 +89,12 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
             faceColor = self.ValFromParamByNm('Color')
         else:
             faceColor = 'grey'
-                
-        hist = plt.hist(
-            dataObj.ExecRslt().ravel(),
-            bins=50,
-            range=(xMin,xMax),
-            facecolor = faceColor,
+
+            hist = plt.hist(
+                dataObj.ExecRslt().ravel().compressed(),
+                bins=50,
+                range=(xMin,xMax),
+                facecolor = faceColor,
             )
         ax1.set_xlabel('Value')
         ax1.set_ylabel('Count')
