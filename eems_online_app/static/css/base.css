@@ -830,3 +830,45 @@ ul.buttons li.selected a:hover
 	display:none;
 }
 
+#canvas_controls{
+	position: absolute;
+	float: left;
+	z-index: 9999;
+	top: 105px;
+	left: 5px;
+}
+
+#expand_div {
+	position: absolute;
+	width: 15px;
+	top: 1px;
+}
+
+#expand_icon{
+	width: 16px;
+	cursor: pointer;
+}
+
+#collapse_div {
+	position: absolute;
+	width: 15px;
+	top: 1px;
+	display: none;
+}
+
+#collapse_icon{
+	width: 16px;
+	cursor: pointer;
+}
+
+#save_div{
+	position: absolute;
+	left: 20px;
+}
+
+#save_icon{
+	width: 20px;
+	cursor: pointer;
+}
+
+

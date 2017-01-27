@@ -56,7 +56,7 @@ function init(json, eems_file_name){
         orientation:"top",
         //Higher numbers = higher on the page
         //offsetY:120,
-        offsetY:200,
+        offsetY:300,
         //To Show all nodes. Set to false. modify LevelsToShow.
         constrained:true,
         levelsToShow: 40,
@@ -109,7 +109,8 @@ function init(json, eems_file_name){
             */
             //log_text = "Click on a box to map the data and show the inputs. Click the gear icon to modify the operator."
             //log_text = "Click a box to map the data and show the inputs. &nbsp Click the gear icon to make changes to the operator."
-            Log.write("<div class='expand_collapse_meemse_button' id='expand_meemse_button'>Expand Nodes</div><div class='expand_collapse_meemse_button' id='collapse_meemse_button'>Collapse Nodes</div>");
+            //Log.write("<div class='expand_collapse_meemse_button' id='expand_meemse_button'>Expand Nodes</div><div class='expand_collapse_meemse_button' id='collapse_meemse_button'>Collapse Nodes</div>");
+            /*
 
             $("#expand_meemse_button").click(function(){
                 st.controller.constrained=false;
@@ -123,8 +124,10 @@ function init(json, eems_file_name){
                 $("#expand_meemse_button").show();
                 $("#collapse_meemse_button").hide();
             });
+            */
 
             // Remove logic to show eems value in top node
+            Log.write("")
         },
 
         onPlaceLabel: function(label, node, controllers){

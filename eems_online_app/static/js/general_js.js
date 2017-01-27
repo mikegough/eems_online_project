@@ -52,6 +52,7 @@ $('#eems_model_dropdown').change(function(){
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
 
         eems_model_modified_id = '';
+        eems_model_current_model = $("#eems_model_dropdown option:selected").text()
 
         // Get the JSON file and render the model
         if ($('#eems_model_dropdown option:selected').text() != "") {
@@ -526,4 +527,42 @@ $('#map_modified_button').on('click', function () {
     $("#map_original_button").removeClass('selected');
 });
 
+$("#save_icon").on('click', function() {
+        html2canvas(document.getElementById("meemse_container"), {
+            onrendered: function (canvas) {
+                var img = canvas.toDataURL();
+                var link = document.createElement('a');
+                link.href = img;
+                link.download = "eems_model_diagram_" + eems_model_current_model + "_" + eems_model_id + ".jpg";
+                document.body.appendChild(link);
+                link.click();
+            }
+        });
+});
 
+$("#expand_icon").on('click', function(){
+    st.onClick(st.root);
+    $("#meemse_container").css("top",'105px');
+    $("#meemse_container").css("background-color",'white');
+    $("#meemse_container").css("opacity",'1');
+    $("#meemse_container").height("calc(100% - 155px)");
+    $("#meemse_container").width("100%");
+    $("#infovis").width("100%");
+    $("#infovis-canvaswidget").width("100%");
+    st.canvas.resize(screen.width,$("#meemse_container").height());
+    st.controller.constrained=false;
+    $("#expand_div").hide();
+    $("#collapse_div").show();
+});
+
+$("#collapse_icon").on('click', function(){
+    $("#meemse_container").css("top",'205px');
+    $("#meemse_container").css("background-color",'');
+    $("#meemse_container").height("calc(100% - 275px)");
+    $("#meemse_container").width("50%");
+    $("#infovis-canvaswidget").width("50%");
+    st.controller.constrained=true;
+    $("#expand_div").show();
+    $("#collapse_div").hide();
+    st.canvas.resize(800,800);
+});
