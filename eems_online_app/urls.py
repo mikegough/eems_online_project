@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from eems_online_app.views import index, load_eems_user_model, run_eems, download, link
+from eems_online_app.views import index, load_eems_user_model, run_eems, download, link, upload
 
 urlpatterns = [
     url(r'^$', index, name='index'),
@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^run_eems$', run_eems, name='run_eems'),
     url(r'^download$', download, name='download'),
     url(r'^link$', link, name='link'),
+    url(r'^upload$', upload, name='upload'),
 ]
 

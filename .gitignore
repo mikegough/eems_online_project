@@ -15,6 +15,7 @@ Archive/
 Updates/
 */static/docs/*
 */static/eems/models/*
+*/static/eems/uploads/*
 *.sqlite3
 overlay/
 histogram/

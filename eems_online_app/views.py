@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.conf import settings
 import os
 import shutil
+import glob
 import gdal
+import re
 
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
@@ -30,6 +32,8 @@ try:
    import cPickle as pickle
 except:
    import pickle
+
+import fileinput
 
 @csrf_exempt
 def index(request):
@@ -235,4 +239,71 @@ def load_eems_user_model(request):
     }
 
     return HttpResponse(json.dumps(context))
+
+@csrf_exempt
+def upload(request):
+
+        eems_model_name = request.GET.get('name')
+        extent_list = str(request.GET.get('extent'))
+        owner = "CBI"
+
+        extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
+
+        # Create a new record in the datatabase for the new model
+        cursor = connection.cursor()
+        query = "SELECT MAX(ID) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
+        cursor.execute(query)
+        max_id = cursor.fetchone()[0]
+        eems_model_id =  str(int(max_id) + 1)
+
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, JSON_FILE_NAME, EXTENT, OWNER) values (%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, "meemse_tree.json", extent_list, owner))
+
+        # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
+        input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
+
+        mpt_file = glob.glob(input_dir + "/*.mpt")[0]
+        mpt_file = mpt_file.replace("\\","/")
+
+        netCDF_file = glob.glob(input_dir + "/*.nc")[0]
+        netCDF_file = netCDF_file.replace("\\","/")
+
+        mpt_file_name = os.path.basename(mpt_file)
+        netCDF_file_name = os.path.basename(netCDF_file)
+
+        output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
+
+        # Make new directories
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_id)
+
+        # Copy input files to new directory
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc/%s' % (eems_model_id, mpt_file_name)
+        shutil.copy(mpt_file, mpt_file_copy)
+
+        netCDF_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data/%s' % (eems_model_id, netCDF_file_name)
+        shutil.copy(netCDF_file, netCDF_file_copy)
+
+        # Open the mpt file and replace the path to the netCDF file.
+        with open(mpt_file) as infile, open(mpt_file_copy, 'w') as outfile:
+            for line in infile:
+                if re.match("(.*)InFileName(.*)", line):
+                    line = "    InFileName = " + netCDF_file_copy.replace("\\","/") + ",\n"
+                    print line
+                outfile.write(line)
+
+        # Run EEMS to create the image overlays and the histograms
+        my_mpilot_worker = MPilotWorker()
+        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, True, False, True)
+
+        # Create the MEEMSE tree
+        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", True, False, True)[1:-1])
+        eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
+        with open(eems_meemse_tree_file, 'w') as outfile:
+            json.dump(eems_meemse_tree_json, outfile)
+
+        return HttpResponse("Model uploaded successsfully")
 
