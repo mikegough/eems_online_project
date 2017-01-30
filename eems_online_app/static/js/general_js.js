@@ -68,7 +68,11 @@ $('#eems_model_dropdown').change(function(){
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
             eems_online_model_description = eems_online_models_json[this.value][0][3];
-            $("#model_info_contents").html(eems_online_model_description)
+            $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more..</span>")
+
+            $("#model_info_more").on("click", function(){
+                get_additional_info(eems_model_id)
+            });
 
             $.get(path_to_json_file, function (results) {
                 var json_model = JSON.parse(results);
@@ -561,11 +565,30 @@ $("#collapse_icon").on('click', function(){
     $("#meemse_container").css("top",'262px');
     $("#meemse_container").css("background-color",'');
     $("#meemse_container").height("calc(100% - 330px)");
-    $("#meemse_container").width("50%");
-    $("#infovis-canvaswidget").width("50%");
+    $("#meemse_container").width("52.5%");
+    $("#infovis-canvaswidget").width("52.5%");
     st.controller.constrained=true;
     $("#expand_div").show();
     $("#collapse_div").hide();
     st.canvas.resize(800,800);
 });
 
+function get_additional_info(eems_model_id){
+
+    $.ajax({
+        url: "/get_additional_info", // the endpoint
+        type: "POST", // http method
+        data: {
+            'eems_model_id': eems_model_id,
+        },
+
+        // handle a successful response
+        success: function (response) {
+            alertify.alert("<div class='long_description'>" + response + "</div>");
+        },
+
+        // handle a non-successful response
+        error: function (xhr, errmsg, err) {
+        }
+    });
+}

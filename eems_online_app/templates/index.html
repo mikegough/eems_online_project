@@ -74,17 +74,18 @@
         <div id="map"></div>
     </div>
     <div id="control_panel">
-      <div id="canvas_controls">
-        <div id="expand_div" title="Maximize the model diagram">
-            <img id='expand_icon' src='static/img/expand.png'>
+        <div id="canvas_controls">
+            <div id="expand_div" title="Maximize the model diagram">
+                <img id='expand_icon' src='static/img/expand.png'>
+            </div>
+            <div id="collapse_div" title="Shrink the model diagram">
+                <img id='collapse_icon' src='static/img/collapse.png'>
+            </div>
+            <div id="save_div">
+                <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
+            </div>
         </div>
-        <div id="collapse_div" title="Shrink the model diagram">
-              <img id='collapse_icon' src='static/img/collapse.png'>
-        </div>
-        <div id="save_div">
-            <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
-        </div>
-      </div>
+
       <div id="current_file" class="eems_controls">
         <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
         <select id="eems_model_dropdown" name="eems_model_dropdown">

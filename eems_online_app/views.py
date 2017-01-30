@@ -307,3 +307,18 @@ def upload(request):
 
         return HttpResponse("Model uploaded successsfully")
 
+@csrf_exempt
+def get_additional_info(request):
+
+    eems_model_id = request.POST.get('eems_model_id')
+
+    print eems_model_id
+
+    cursor = connection.cursor()
+
+    query="SELECT LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+
+    cursor.execute(query)
+    long_description = cursor.fetchone()[0]
+
+    return HttpResponse(long_description)
