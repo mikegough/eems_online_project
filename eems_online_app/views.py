@@ -63,12 +63,12 @@ def index(request):
 
         # GET all available EEMS Models
         eems_online_models = {}
-        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
+        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
         print query;
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
-            eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
+            eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
 
         eems_online_models_json=json.dumps(eems_online_models)
 

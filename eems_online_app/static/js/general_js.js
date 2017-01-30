@@ -67,6 +67,8 @@ $('#eems_model_dropdown').change(function(){
             var path_to_json_file = "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
+            eems_online_model_description = eems_online_models_json[this.value][0][3];
+            $("#model_info_contents").html(eems_online_model_description)
 
             $.get(path_to_json_file, function (results) {
                 var json_model = JSON.parse(results);
@@ -556,9 +558,9 @@ $("#expand_icon").on('click', function(){
 });
 
 $("#collapse_icon").on('click', function(){
-    $("#meemse_container").css("top",'205px');
+    $("#meemse_container").css("top",'262px');
     $("#meemse_container").css("background-color",'');
-    $("#meemse_container").height("calc(100% - 275px)");
+    $("#meemse_container").height("calc(100% - 330px)");
     $("#meemse_container").width("50%");
     $("#infovis-canvaswidget").width("50%");
     st.controller.constrained=true;
@@ -566,3 +568,4 @@ $("#collapse_icon").on('click', function(){
     $("#collapse_div").hide();
     st.canvas.resize(800,800);
 });
+
