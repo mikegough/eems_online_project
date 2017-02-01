@@ -6,6 +6,7 @@ import shutil
 import glob
 import gdal
 import re
+import time
 
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
@@ -49,7 +50,7 @@ def index(request):
         # Get initial EEMS model (default to ID=1)
         initial_eems_model_id = request.GET.get('model', 1)
 
-        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
+        query = "SELECT ID, NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -57,18 +58,18 @@ def index(request):
         initial_eems_model=[]
 
         for row in cursor:
-            initial_eems_model.append([str(row[0]),[row[1], row[2], row[3]]])
+            initial_eems_model.append([str(row[0]),[row[1], row[2]]])
 
         initial_eems_model_json = json.dumps(initial_eems_model)
 
         # GET all available EEMS Models
         eems_online_models = {}
-        query = "SELECT ID, NAME, JSON_FILE_NAME, EXTENT, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
+        query = "SELECT ID, NAME, EXTENT, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
         print query;
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
-            eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
+            eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
 
         eems_online_models_json=json.dumps(eems_online_models)
 
@@ -166,6 +167,7 @@ def download(request):
 
 @csrf_exempt
 def link(request):
+
     eems_model_id = request.POST.get('eems_model_id')
     eems_model_modified_id = request.POST.get('eems_model_modified_id')
 
@@ -184,19 +186,20 @@ def link(request):
 
     cursor = connection.cursor()
 
-    query = "SELECT NAME, MODEL, JSON_FILE_NAME, EXTENT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+    query = "SELECT NAME, EXTENT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
     cursor.execute(query)
     for row in cursor:
         eems_model_name = row[0]
-        eems_model = row[1]
-        eems_json_file_name = row[2]
-        eems_extent = str(row[3])
+        eems_extent = str(row[1])
 
     eems_model_name_user = eems_model_name.replace(" (Modified)", "") + " (Modified)"
+    user = "USER"
+    short_description = "User modified version of <a title='click to access the original model' href=?model=" + eems_model_id + ">" + eems_model_name + "</a>."
+    long_description = "This model is a user modified version of the original " + eems_model_name + " model, created on " + time.strftime("%d/%m/%Y") + " at " + time.strftime("%H:%M") + ". To access the original model, click the link below.<p><a title='click to access the original model' href=?model=" + str(eems_model_id) + ">" + eems_model_name + "</a>"
 
-    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, MODEL, JSON_FILE_NAME, EXTENT, OWNER) values (%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_model, eems_json_file_name, eems_extent, "USER"))
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION) values (%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, user, short_description, long_description))
 
-    return HttpResponse("Link is ready")
+    return HttpResponse(eems_model_modified_id)
 
 
 @csrf_exempt
@@ -244,10 +247,12 @@ def load_eems_user_model(request):
 def upload(request):
 
         eems_model_name = request.GET.get('name')
-        extent_list = str(request.GET.get('extent'))
+        extent = str(request.GET.get('extent'))
+        extent_list = extent.replace('[','').replace(']','').split(' ')
         owner = "CBI"
 
         extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
+        print extent_for_gdal
 
         # Create a new record in the datatabase for the new model
         cursor = connection.cursor()
@@ -256,7 +261,7 @@ def upload(request):
         max_id = cursor.fetchone()[0]
         eems_model_id =  str(int(max_id) + 1)
 
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, JSON_FILE_NAME, EXTENT, OWNER) values (%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, "meemse_tree.json", extent_list, owner))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER) values (%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner))
 
         # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
         input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'

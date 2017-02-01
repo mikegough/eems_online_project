@@ -7,7 +7,7 @@ $( document ).ready(function() {
 
         $.each(object, function(id,array){
             var available_eems_online_model_name =  array[0];
-            var available_eems_online_model_extent =  array[2];
+            var available_eems_online_model_extent =  array[1];
             $("#eems_model_dropdown").append("<option extent='" + available_eems_online_model_extent + "' value='" + index + "'>" + available_eems_online_model_name + "</option>");
         })
     });
@@ -67,7 +67,7 @@ $('#eems_model_dropdown').change(function(){
             var path_to_json_file = "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
-            eems_online_model_description = eems_online_models_json[this.value][0][3];
+            eems_online_model_description = eems_online_models_json[this.value][0][2];
             $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more..</span>")
 
             $("#model_info_more").on("click", function(){

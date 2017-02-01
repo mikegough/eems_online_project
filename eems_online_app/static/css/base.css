@@ -638,7 +638,7 @@ li a.active {
 
 #button_div {
 	position: absolute;
-	z-index: 999;
+	z-index: 2;
 	left:15%;
 	top: 0px;
 	display: none;
@@ -879,6 +879,7 @@ ul.buttons li.selected a:hover
 #model_info_div {
 	font-size: .8em;
 	color: #4e4e4e;
+	height: 126px;
 }
 
 #model_info_header {
