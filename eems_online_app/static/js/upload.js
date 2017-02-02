@@ -6,13 +6,13 @@ $("#submit").click(function(e) {
     var xmax = $("#xmax").val();
     var ymax = $("#ymax").val();
 
-    var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
+    var extent = "[[" + xmin +  "," + ymin + "],["  + xmax + "," + ymax + "]]";
     var short_description = $("#short_description").val();
     var long_description = $("#long_description").val();
     var owner = $("#owner").val();
 
     $.ajax({
-        url: "/submit", // the endpoint
+        url: "/upload_submit", // the endpoint
         type: "POST", // http method
         data: {
             'name': name,

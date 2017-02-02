@@ -1,30 +1,45 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <head>
+    <!-- CSS -->
+    <link href="{% static 'css/upload.css' %}" rel="stylesheet" />
+
     <!-- Jquery NEEDS to be unique for each app. Get new CND link here @ https://code.jquery.com/ -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 
-
 </head>
-<body>
-
-    Model Name <input id="name" type="text">
-    <br>
-    Xmin <input id="xmin" type="text" >
-    <br>
-    Ymin <input id="ymin" type="text">
-    <br>
-    Xmax <input id="xmax" type="text">
-    <br>
-    Ymax <input id="ymax" type="text">
-    <br>
-    Short Description <textarea id="short_description"></textarea>
-    <br>
-    Long Description <textarea id="long_description"></textarea>
-    <br>
-    Owner <input id="owner" type="text" value="CBI" readonly>
-
-    <input type="button" class="button" name="submit" value="submit" id="submit" />
+    <table id="upload_table">
+        <tr>
+            <td colspan="2" id="table_header"> EEMS Model Upload </td>
+        </tr>
+        <tr>
+            <td> User </td><td><input id="owner" type="text" value="CBI" readonly></td>
+        </tr>
+        <tr>
+            <td>Model Name </td><td><input id="name" type="text"></td>
+        </tr>
+        <tr>
+            <td>Xmin </td><td><input id="xmin" type="text" ></td>
+        </tr>
+        <tr>
+            <td>Ymin </td><td><input id="ymin" type="text"></td>
+        </tr>
+        <tr>
+            <td>Xmax </td><td><input id="xmax" type="text"></td>
+        </tr>
+        <tr>
+            <td>Ymax </td><td><input id="ymax" type="text"></td>
+        </tr>
+        <tr>
+            <td>Short Description </td><td><textarea  maxlength="365" id="short_description"></textarea></td>
+        </tr>
+        <tr>
+            <td>Long Description </td><td><textarea id="long_description"></textarea></td>
+        </tr>
+        <tr>
+            <td colspan="2"> <input type="button" class="button" name="submit" value="submit" id="submit" /></td>
+        </tr>
+    </table>
 
     <!-- Upload function -->
     <script src="{% static 'js/upload.js' %}"></script>

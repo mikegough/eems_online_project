@@ -256,7 +256,7 @@ def upload_form(request):
         return render(request, template, context)
 
 @csrf_exempt
-def submit(request):
+def upload_submit(request):
 
         eems_model_name = request.POST.get('name')
         extent = str(request.POST.get('extent'))

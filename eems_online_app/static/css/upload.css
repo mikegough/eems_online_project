@@ -1,0 +1,40 @@
+
+#upload_table {
+	font-family: tahoma;
+	border: 1px solid gray;
+}
+
+#table_header {
+	text-align: center !important;
+	background-color: #343F57 !important;
+	color: white !important;
+	font-family: arial;
+	height: 30px;
+	line-height: 30px;
+	letter-spacing: 1px;
+}
+
+#upload_table td:first-child {
+	text-align: right;
+	background-color: #dbe3e7;
+	color: #506C9C;
+	font-weight: bold;
+}
+
+#upload_table td {
+	text-align: left;
+	padding: 6px;
+	vertical-align: top;
+}
+
+#short_description {
+	width: 600px;
+	height: 100px;
+}
+
+#long_description {
+	width: 600px;
+	height: 400px;
+
+}
+
