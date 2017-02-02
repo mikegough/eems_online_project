@@ -1,3 +1,7 @@
+$( function() {
+    $( "#date" ).datepicker();
+} );
+
 $("#submit").click(function(e) {
 
     var name = $("#name").val();
