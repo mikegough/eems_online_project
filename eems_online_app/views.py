@@ -243,13 +243,27 @@ def load_eems_user_model(request):
 
     return HttpResponse(json.dumps(context))
 
-@csrf_exempt
-def upload(request):
 
-        eems_model_name = request.GET.get('name')
-        extent = str(request.GET.get('extent'))
-        extent_list = extent.replace('[','').replace(']','').split(' ')
-        owner = "CBI"
+@csrf_exempt
+def upload_form(request):
+
+        template = 'upload.html'
+
+        context = {
+            'eems_online_models_json': 'test',
+        }
+
+        return render(request, template, context)
+
+@csrf_exempt
+def submit(request):
+
+        eems_model_name = request.POST.get('name')
+        extent = str(request.POST.get('extent'))
+        extent_list = extent.replace('[','').replace(']','').split(',')
+        owner = str(request.POST.get('owner'))
+        short_description = str(request.POST.get('short_description'))
+        long_description = str(request.POST.get('long_description'))
 
         extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
         print extent_for_gdal
@@ -261,7 +275,7 @@ def upload(request):
         max_id = cursor.fetchone()[0]
         eems_model_id =  str(int(max_id) + 1)
 
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER) values (%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION) values (%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner, short_description, long_description))
 
         # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
         input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
@@ -311,6 +325,7 @@ def upload(request):
             json.dump(eems_meemse_tree_json, outfile)
 
         return HttpResponse("Model uploaded successsfully")
+
 
 @csrf_exempt
 def get_additional_info(request):

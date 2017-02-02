@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+    <!-- Jquery NEEDS to be unique for each app. Get new CND link here @ https://code.jquery.com/ -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+
+    Model Name <input id="name" type="text">
+    <br>
+    Xmin <input id="xmin" type="text" >
+    <br>
+    Ymin <input id="ymin" type="text">
+    <br>
+    Xmax <input id="xmax" type="text">
+    <br>
+    Ymax <input id="ymax" type="text">
+    <br>
+    Short Description <textarea id="short_description"></textarea>
+    <br>
+    Long Description <textarea id="long_description"></textarea>
+    <br>
+    Owner <input id="owner" type="text" value="CBI" readonly>
+
+    <input type="button" class="button" name="submit" value="submit" id="submit" />
+
+    <!-- Upload function -->
+    <script src="{% static 'js/upload.js' %}"></script>
+
+</body>
+</html>

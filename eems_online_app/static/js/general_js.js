@@ -592,3 +592,5 @@ function get_additional_info(eems_model_id){
         }
     });
 }
+
+
