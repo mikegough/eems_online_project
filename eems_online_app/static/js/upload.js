@@ -1,40 +1,6 @@
 $( function() {
-    $( "#date" ).datepicker();
+    $( "#creation_date" ).datepicker();
 } );
-
-function promptForPassword() {
-    alertify.prompt("Enter the password", function (e, str) {
-        if (e) {
-            $.ajax({
-
-                url: "/check_pass", // the endpoint
-                type: "POST", // http method
-                data: {
-                    'user_pass': str,
-                },
-
-                success: function (response) {
-                    if (response == "yes") {
-                        $("#upload_form").show()
-                    }
-                    else {
-                        alertify.alert("Invalid Password. Please try again.", function () { promptForPassword()});
-                    }
-                },
-                error: function (xhr, errmsg, err) {
-                    console.log(xhr)
-                }
-            });
-
-        }
-        else {
-              document.location.href="/";
-        }
-    });
-    $('#alertify-text').attr('type','password');
-}
-
-promptForPassword();
 
 $("#submit").click(function(e) {
 
@@ -50,12 +16,12 @@ $("#submit").click(function(e) {
     var xmax = $("#xmax").val();
     var ymax = $("#ymax").val();
 
-    var extent = "[[" + xmin +  "," + ymin + "],["  + xmax + "," + ymax + "]]";
+    var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
     var short_description = $("#short_description").val();
     var long_description = $("#long_description").val();
 
     $.ajax({
-        url: "/upload_submit", // the endpoint
+        url: "/upload_form", // the endpoint
         type: "POST", // http method
         data: {
             'owner': owner,

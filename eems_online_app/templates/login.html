@@ -1,0 +1,38 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+
+    <link href="{% static 'css/login.css' %}" rel="stylesheet" />
+
+     <!-- Jquery NEEDS to be unique for each app. Get new CND link here @ https://code.jquery.com/ -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+</head>
+<body>
+
+    <form action="upload" method="post">
+        <table id="login">
+            <tr><td>Username </td><td><input id="username" name="username" type="text"></td></tr>
+            <tr><td>Password </td><td><input id="password" name="password" type="text"></td></tr>
+            <td colspan="2"> <input type="submit" class="button" name="submit" value="submit" id="submit" /></td>
+        </table>
+    </form>
+    <div id="invalid_login">Invalid username or password. Please try again</div>
+
+</body>
+
+<!-- Upload function -->
+<script src="{% static 'js/login.js' %}"></script>
+
+<script>
+    auth_code = {{ auth_code }};
+    if (auth_code == 0) {
+        $("#invalid_login").show()
+    }
+</script>
+
+</html>
+

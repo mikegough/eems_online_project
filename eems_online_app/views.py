@@ -1,6 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.conf import settings
+from django.template.loader import render_to_string
+
 import os
 import shutil
 import glob
@@ -247,32 +249,35 @@ def load_eems_user_model(request):
 
 
 @csrf_exempt
+def login(request):
+
+    auth_code = request.GET.get('auth')
+    print auth_code
+
+    context = {
+        "auth_code" : auth_code,
+    }
+
+    template = "login.html"
+    return render(request, template, context)
+
+@csrf_exempt
+def upload(request):
+
+        password = settings.UPLOAD_PASS
+        username = settings.UPLOAD_USERNAME
+
+        user_password = request.POST.get('password')
+        user_username = request.POST.get('username')
+
+        if user_password == password and user_username == username:
+            print "Password verified"
+            return render(request, "upload.html")
+        else:
+            return redirect(reverse(login)+"?auth=0")
+
+@csrf_exempt
 def upload_form(request):
-
-        template = 'upload.html'
-
-        context = {
-            'pass': 'cbieemsonline',
-        }
-
-        return render(request, template, context)
-
-@csrf_exempt
-def check_pass(request):
-    password = settings.UPLOAD_PASS
-    user_pass = request.POST.get('user_pass')
-    print user_pass
-
-    if user_pass == password:
-        response = "yes"
-    else:
-        response = "no"
-
-    print response
-    return HttpResponse(response)
-
-@csrf_exempt
-def upload_submit(request):
 
         owner = str(request.POST.get('owner'))
         eems_model_name = request.POST.get('model_name')
