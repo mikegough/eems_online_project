@@ -194,10 +194,12 @@ def link(request):
 
     eems_model_name_user = eems_model_name.replace(" (Modified)", "") + " (Modified)"
     user = "USER"
+    author = "USER"
     short_description = "User modified version of <a title='click to access the original model' href=?model=" + eems_model_id + ">" + eems_model_name + "</a>."
     long_description = "This model is a user modified version of the original " + eems_model_name + " model, created on " + time.strftime("%d/%m/%Y") + " at " + time.strftime("%H:%M") + ". To access the original model, click the link below.<p><a title='click to access the original model' href=?model=" + str(eems_model_id) + ">" + eems_model_name + "</a>"
+    todays_date = time.strftime("%d/%m/%Y")
 
-    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION) values (%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, user, short_description, long_description))
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE)  values (%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, user, short_description, long_description, author, todays_date))
 
     return HttpResponse(eems_model_modified_id)
 
