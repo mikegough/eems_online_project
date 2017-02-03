@@ -38,3 +38,82 @@
 
 }
 
+.alertify {
+	top: 210px !important;
+}
+
+#model_run_complete_alert {
+}
+
+#model_run_complete_alert_text{
+    color: #666565;
+	position: absolute;
+	font-size: 20px;
+	margin-left: 25px;
+}
+
+#check_icon {
+	height: 40px;
+	margin-left: 30px;
+	top: -10px;
+	position: relative;
+}
+
+#alert_icon_div {
+	position:relative;
+	float: left;
+}
+
+#alert_icon {
+	width: 75px;
+	position: relative;
+	top: -25px;
+	left: -10px;
+}
+
+#error_alert {
+	color: #666565;
+	font-size: 1.2em;
+	margin-left: 25px;
+	margin-top: 10px;
+	padding-right: 30px;
+}
+
+#error_alert_text {
+	color: red;
+	margin-top: 10px;
+	margin-left: 49px;
+}
+
+#spinner_div {
+	display: none;
+	background-color: rgba(255,255,255,1);
+	height: calc(100% + 50px);
+	width: calc(100% + 50px);
+	float: left;
+	position: absolute;
+	z-index: 999;
+	left: -25px;
+	top: -25px;
+	text-align:center;
+	cursor:default;
+}
+
+#spinner_img {
+	position: relative;
+	height: 200px;
+	top: 200px;
+}
+
+#spinner_text {
+	position: relative;
+	color: #7E7E7E;
+	font-size: 1.5em;
+	font-family: tahoma;
+	top: 165px;
+	left: 11px;
+}
+
+#upload_form {
+	display:none;
+}

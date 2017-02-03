@@ -250,18 +250,34 @@ def upload_form(request):
         template = 'upload.html'
 
         context = {
-            'eems_online_models_json': 'test',
+            'pass': 'cbieemsonline',
         }
 
         return render(request, template, context)
 
 @csrf_exempt
+def check_pass(request):
+    password = settings.UPLOAD_PASS
+    user_pass = request.POST.get('user_pass')
+    print user_pass
+
+    if user_pass == password:
+        response = "yes"
+    else:
+        response = "no"
+
+    print response
+    return HttpResponse(response)
+
+@csrf_exempt
 def upload_submit(request):
 
-        eems_model_name = request.POST.get('name')
+        owner = str(request.POST.get('owner'))
+        eems_model_name = request.POST.get('model_name')
+        author = str(request.POST.get('model_author'))
+        creation_date = str(request.POST.get('creation_date'))
         extent = str(request.POST.get('extent'))
         extent_list = extent.replace('[','').replace(']','').split(',')
-        owner = str(request.POST.get('owner'))
         short_description = str(request.POST.get('short_description'))
         long_description = str(request.POST.get('long_description'))
 
@@ -270,12 +286,12 @@ def upload_submit(request):
 
         # Create a new record in the datatabase for the new model
         cursor = connection.cursor()
-        query = "SELECT MAX(ID) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
+        query = "SELECT MAX(CAST(ID as integer)) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
         cursor.execute(query)
         max_id = cursor.fetchone()[0]
         eems_model_id =  str(int(max_id) + 1)
 
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION) values (%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner, short_description, long_description))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner, short_description, long_description, author, creation_date))
 
         # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
         input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
@@ -336,9 +352,22 @@ def get_additional_info(request):
 
     cursor = connection.cursor()
 
-    query="SELECT LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
 
     cursor.execute(query)
-    long_description = cursor.fetchone()[0]
 
-    return HttpResponse(long_description)
+    for row in cursor:
+        name = row[0]
+        author = row[1]
+        creation_date = row[2]
+        long_description = row[3]
+
+    context = {
+        "name": name,
+        "author": author,
+        "creation_date": creation_date,
+        "long_description": long_description,
+    }
+
+    return HttpResponse(json.dumps(context))
+

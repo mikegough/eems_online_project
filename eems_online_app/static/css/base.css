@@ -896,3 +896,8 @@ ul.buttons li.selected a:hover
 	margin: 0px 1px 0px 30px;
 	overflow-y: scroll;
 }
+
+.long_description_header {
+	display: inline;
+	font-weight: bold;
+}

@@ -10,7 +10,19 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+    <!-- Alertify  -->
+    <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.core.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.bootstrap.css' %}" rel="stylesheet" />
+    <script src="{% static 'deps/alertify/alertify.js-0.3.11/lib/alertify.min.js' %}"></script>
+
+
 </head>
+<body>
+<div id="upload_form">
+<div id="spinner_div">
+    <div><img id="spinner_img" src="{% static 'img/spinner.svg' %}"></div> <p/>
+    <div id="spinner_text">Uploading Model...</div>
+</div>
     <table id="upload_table">
         <tr>
             <td colspan="2" id="table_header"> EEMS Model Upload </td>
@@ -19,13 +31,13 @@
             <td> User </td><td><input id="owner" type="text" value="CBI" readonly></td>
         </tr>
         <tr>
-            <td>Model Name </td><td><input id="name" type="text"></td>
+            <td>Model Name </td><td><input id="model_name" type="text"></td>
         </tr>
         <tr>
-            <td>Model Author</td><td><input id="author" type="text"></td>
+            <td>Model Author</td><td><input id="model_author" type="text"></td>
         </tr>
         <tr>
-            <td>Creation Date </td><td><input id="date" placeholder="dd/mm/yyyy" type="text"></td>
+            <td>Creation Date </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
         </tr>
         <tr>
             <td>Xmin </td><td><input id="xmin" type="text" ></td>
@@ -49,6 +61,7 @@
             <td colspan="2"> <input type="button" class="button" name="submit" value="submit" id="submit" /></td>
         </tr>
     </table>
+</div>
 
     <!-- Upload function -->
     <script src="{% static 'js/upload.js' %}"></script>
