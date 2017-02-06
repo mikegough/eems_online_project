@@ -1,0 +1,1 @@
+Changed SPACE:32 to SPACE:999 to get prevent alertify from closing on space bar.
