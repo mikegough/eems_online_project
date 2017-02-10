@@ -57,91 +57,129 @@
     </div>
     <div id="nav_bar">
         <ul>
-            <li><a class="active" href="#home">Home</a></li>
+            <li><a id="home_link" class="active" href="#home">Home</a></li>
+            <!--
             <li><a href="">Downloads</a></li>
-            <li><a href="#about">About</a></li>
+            -->
+            <li><a id="about_link" href="#about">About</a></li>
             <li><a href="">Contact</a></li>
         </ul>
     </div>
 
-    <div id="map_container">
-        <div id="button_div">
-            <ul id="button_list" class="buttons" data-persist="false">
-                <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000)">Original</a></li>
-                <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000)">Modified</a></li>
-            </ul>
-        </div>
-        <div id="map"></div>
+    <div id="home">
+        <div id="map_container">
+                                   <div id="button_div">
+                                   <ul id="button_list" class="buttons" data-persist="false">
+                                   <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000)">Original</a></li>
+                                   <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000)">Modified</a></li>
+                                   </ul>
+                                   </div>
+                                   <div id="map"></div>
+                                   </div>
+        <div id="control_panel">
+                                   <div id="canvas_controls">
+                                   <div id="expand_div" title="Maximize the model diagram">
+                                   <img id='expand_icon' src='static/img/expand.png'>
+                                   </div>
+                                   <div id="collapse_div" title="Shrink the model diagram">
+                                   <img id='collapse_icon' src='static/img/collapse.png'>
+                                   </div>
+                                   <div id="save_div">
+                                   <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
+                                   </div>
+                                   </div>
+
+                                   <div id="current_file" class="eems_controls">
+                                   <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
+                                   <select id="eems_model_dropdown" name="eems_model_dropdown">
+                                   <!--<option value="0"></option>-->
+                                   </select>
+                                   <!--
+                                   <img id="info_icon" src="{% static '/img/info.svg' %}">
+                                   -->
+                                   </div>
+                                   <div id="getting_started" class="eems_controls">
+                                   Explore and modify the model
+                                   <!--
+                                   Click on a box to map the data and show the inputs<br>
+                                   Click on the gear icon to modify the operator
+                                   -->
+                                   <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
+                                   <!--
+                                   <img class='node_and_gear' src='static/img/node_and_gear.png'>
+                                   -->
+                                   </div>
+                                   <div id="save_eems_div" class="eems_controls">
+                                   <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">3</div>
+
+                                   <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
+                                   Get Link <img id="link_img" src="{% static '/img/link.png' %}">
+                                   </label>
+                                   <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
+                                   Download <img id="download_file" src="{% static '/img/download.png' %}">
+                                   </label>
+                                   </div>
+                                   <div id="run_eems_div" class="eems_controls">
+                                   <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
+                                   <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
+                                   </div>
+                                   <!--
+                                   <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
+                                   -->
+                                   <!-- COMMENT OUT BROWSE BUTTON FOR NOW
+                                   <label for="files" class="alertify-button alertify-button-ok" id="files_label">
+                                   Browse <img id="open_file" src="{% static '/img/open.svg' %}">
+                                   </label>
+                                   -->
+                                   <input type="file" id="files" name="file" style="display:none"/>
+                                   <div id="model_info_div"><div id="model_info_contents"></div></div>
+
+                                   </div>
+        <div id="meemse_container">
+                                      <div id="spinner_div">
+                                      <div><img id="spinner_img" src="{% static 'img/spinner.svg' %}"></div>
+                                      <p/>
+                                      <div id="spinner_text">Running EEMS...</div>
+                                      </div>
+                                      <div id="log"></div>
+                                      <div id="infovis"></div>
+                                      </div>
     </div>
-    <div id="control_panel">
-        <div id="canvas_controls">
-            <div id="expand_div" title="Maximize the model diagram">
-                <img id='expand_icon' src='static/img/expand.png'>
-            </div>
-            <div id="collapse_div" title="Shrink the model diagram">
-                <img id='collapse_icon' src='static/img/collapse.png'>
-            </div>
-            <div id="save_div">
-                <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
-            </div>
-        </div>
+    <div id="about">
+        <h2>About EEMS Online</h2>
+        EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="consbio.org">Conservation Biology Institute</a>. It is designed to allow the user to explore and modify models developed within the <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">Environmental Evaluation Modeling System (EEMS)</a>,
+        a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan, Ph.D.</a>, an ecological modeler at the Conservation Biology Institute.
 
-      <div id="current_file" class="eems_controls">
-        <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
-        <select id="eems_model_dropdown" name="eems_model_dropdown">
-          <!--<option value="0"></option>-->
-        </select>
-         <!--
-          <img id="info_icon" src="{% static '/img/info.svg' %}">
-          -->
-      </div>
-      <div id="getting_started" class="eems_controls">
-          Explore and modify the model
-          <!--
-          Click on a box to map the data and show the inputs<br>
-          Click on the gear icon to modify the operator
-          -->
-          <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
-          <!--
-          <img class='node_and_gear' src='static/img/node_and_gear.png'>
-          -->
-      </div>
-      <div id="save_eems_div" class="eems_controls">
-          <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">3</div>
-
-          <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
-            Get Link <img id="link_img" src="{% static '/img/link.png' %}">
-          </label>
-          <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
-                Download <img id="download_file" src="{% static '/img/download.png' %}">
-          </label>
-      </div>
-      <div id="run_eems_div" class="eems_controls">
-        <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
-        <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
-      </div>
-      <!--
-      <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
-      -->
-      <!-- COMMENT OUT BROWSE BUTTON FOR NOW
-      <label for="files" class="alertify-button alertify-button-ok" id="files_label">
-        Browse <img id="open_file" src="{% static '/img/open.svg' %}">
-      </label>
-      -->
-      <input type="file" id="files" name="file" style="display:none"/>
-      <div id="model_info_div"><div id="model_info_contents"></div></div>
+        For more information about EEMS and Fuzzy Logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>.
+        <p>
+        To get started with EEMS Online, select an EEMS model from the dropdown menu (labeled #1 in the control panel shown below). A short description provides some basic background information about the model. Click on the "Learn more"
+            link for additional information.
+            <figure>
+                <img id="screen_capture_1" class="screen_capture" src="/static/img/screen_capture_1.png">
+                <figcaption>Fig.1 - The EEMS Online Control Panel.</figcaption>
+            </figure>
+        Once you have selected a model, you can use the interactive diagram on the right-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
+        the map and expand the node to show any input variables. Clicking the gear icon on any node brings up a dialog box that allows you to make changes to the operator, or change the operator to a different operator. In the screen capture shown below, the user has the option to change operator on the <i>High Soil Sensitivity</i> node from a <i>Fuzzy Or</i> to one of the other available operators.
+        The histogram to the right of the operator selection menu shows the distribution of data for the current node. The Y-Axis indicates the number of reporting units that have the corresonding value on the X-Axis.
+        The available options will vary depending on the node's current operator.
+            <figure>
+                <img id="screen_capture_2" class="screen_capture" src="/static/img/screen_capture_2.png">
+                <figcaption>Fig.2 - Clicking the gear icon on any node allows you to make changes to the operator.</figcaption>
+            </figure>
+        You may specify any number of changes to the model. Operators that have been modified will be highlighted in yellow. Once you are satisfied with your changes, click the "Run the model" button labeled #3 on the EEMS Online Control Panel. The model run may take anywhere from several seconds to several minutes
+        to complete, depending on the complexity of the model and the spatial extent and resolution of the input data.
+        <p>
+        Once the model run is complete, the changes will be reflected in the map. The buttons above the map allow you to change the map display between the original version and the modified version (shown below).
+        <figure>
+            <img id="screen_capture_3" class="screen_capture" src="/static/img/screen_capture_3.png">
+            <figcaption>Fig.3 - Use the buttons highlighted above to switch between the original and modified versions of a model run.</figcaption>
+        </figure>
+        Once you have conducted a model run, you have the option of either making additional changes to the model and rerunning it, or, if you are satisfied with the results, you can click the Download button to download the output and associated model content, or push the Get Link button which will allow you to share the modified model or access the modified model through EEMS Online at a later time.
+        <br>
+        <br>
+        <br>
 
     </div>
-    <div id="meemse_container">
-        <div id="spinner_div">
-            <div><img id="spinner_img" src="{% static 'img/spinner.svg' %}"></div>
-            <p/>
-            <div id="spinner_text">Running EEMS...</div>
-        </div>
-        <div id="log"></div>
-        <div id="infovis"></div>
-    </div>
-
     <!-- Leaflet Map -->
     <script src="{% static 'leaflet/leaflet_map.js' %}"></script>
 

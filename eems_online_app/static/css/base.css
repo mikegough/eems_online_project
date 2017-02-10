@@ -2,6 +2,18 @@ body {
     margin:0px;
 }
 
+#about a {
+	color: #0F7DCB;
+}
+
+a{
+	text-decoration:none;
+}
+
+a:hover{
+	text-decoration:underline;
+}
+
 #header {
 	background-color: #445272;
 	position: absolute;
@@ -901,3 +913,29 @@ ul.buttons li.selected a:hover
 	display: inline;
 	font-weight: bold;
 }
+
+#home {
+}
+
+#about {
+	display:none
+	height: calc(100% - 160px);
+	position: absolute;
+	top: 106px;
+	padding: 20px 60px 100px 60px;
+	font-family: tahoma;
+	color: #3C3C3C;
+}
+
+figure {
+	margin: 30px 10px;
+}
+
+figcaption {
+	font-size:.8em
+}
+
+.screen_capture{
+	box-shadow:2px 2px 5px 1px gray;
+}
+

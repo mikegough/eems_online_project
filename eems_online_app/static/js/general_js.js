@@ -598,4 +598,18 @@ function get_additional_info(eems_model_id){
     });
 }
 
+$("#about_link").on('click', function(){
+    $("#about").show();
+    $("#home").hide();
+    $("#about_link").addClass('active')
+    $("#home_link").removeClass('active')
 
+});
+
+$("#home_link").on('click', function(){
+    $("#about").hide();
+    $("#home").show();
+    $("#about_link").removeClass('active')
+    $("#home_link").addClass('active')
+
+});
