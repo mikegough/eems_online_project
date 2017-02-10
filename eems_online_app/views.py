@@ -45,7 +45,7 @@ def index(request):
         eems_rqst_dict = {}
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
-        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", False, False, True)
+        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", "none", False, False, True)
 
         json.dumps(eems_available_commands_json)
 
@@ -102,12 +102,15 @@ def run_eems(request):
 
     # Get the extent of the original EEMS model. Used to project PNG in GDAL.
     cursor = connection.cursor()
-    query="SELECT EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query="SELECT EXTENT, EPSG FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
     cursor.execute(query)
-    extent = cursor.fetchone()[0]
-    extent_list = extent.replace('[','').replace(']','').split(' ')
+    for row in cursor:
+            extent = row[0]
+            epsg = str(row[1])
+    extent_list = extent.replace('[','').replace(']','').split(',')
     extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
-    print extent_for_gdal
+    print "Extent: " + extent_for_gdal
+    print "EPSG: " + epsg
 
     # If this is the first run, create the user output directories.
     if eems_model_modified_id == '':
@@ -132,7 +135,7 @@ def run_eems(request):
     # Send model information to MPilot to run EEMS.
     try:
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, True, False, True)
+        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, True, False, True)
         error_code = 0
         error_message = None
 
@@ -179,7 +182,7 @@ def link(request):
     eems_rqst_dict = {}
     eems_rqst_dict["action"] = 'GetMEEMSETrees'
     my_mpilot_worker = MPilotWorker()
-    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", True, False, True)[1:-1])
+    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", "none", True, False, True)[1:-1])
     print eems_meemse_tree_json
 
     eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)
@@ -283,6 +286,7 @@ def upload_form(request):
         eems_model_name = request.POST.get('model_name')
         author = str(request.POST.get('model_author'))
         creation_date = str(request.POST.get('creation_date'))
+        epsg = str(request.POST.get('epsg'))
         extent = str(request.POST.get('extent'))
         extent_list = extent.replace('[','').replace(']','').split(',')
         short_description = str(request.POST.get('short_description'))
@@ -298,7 +302,7 @@ def upload_form(request):
         max_id = cursor.fetchone()[0]
         eems_model_id =  str(int(max_id) + 1)
 
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, extent, owner, short_description, long_description, author, creation_date))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, epsg, extent, owner, short_description, long_description, author, creation_date))
 
         # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
         input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
@@ -323,7 +327,7 @@ def upload_form(request):
         os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_id)
 
         # Copy input files to new directory
-        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc/%s' % (eems_model_id, mpt_file_name)
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc/model.mpt' % (eems_model_id)
         shutil.copy(mpt_file, mpt_file_copy)
 
         netCDF_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data/%s' % (eems_model_id, netCDF_file_name)
@@ -339,10 +343,10 @@ def upload_form(request):
 
         # Run EEMS to create the image overlays and the histograms
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, True, False, True)
+        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, epsg, True, False, True)
 
         # Create the MEEMSE tree
-        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", True, False, True)[1:-1])
+        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", True, False, True)[1:-1])
         eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile)

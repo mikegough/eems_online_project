@@ -11,11 +11,12 @@ $("#submit").click(function(e) {
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();
 
-    var xmin = $("#xmin").val();
-    var ymin = $("#ymin").val();
-    var xmax = $("#xmax").val();
-    var ymax = $("#ymax").val();
+    var xmin = $("#xmin").val().replace(/\s+/g, '');
+    var ymin = $("#ymin").val().replace(/\s+/g, '');
+    var xmax = $("#xmax").val().replace(/\s+/g, '');
+    var ymax = $("#ymax").val().replace(/\s+/g, '');
 
+    var epsg = $("#epsg").val();
     var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
     var short_description = $("#short_description").val();
     var long_description = $("#long_description").val();
@@ -28,6 +29,7 @@ $("#submit").click(function(e) {
             'model_name': model_name,
             'model_author': model_author,
             'creation_date': creation_date,
+            'epsg': epsg,
             'extent': extent,
             'short_description': short_description,
             'long_description': long_description,

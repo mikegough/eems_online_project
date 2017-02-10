@@ -166,10 +166,11 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             output_png = input_basename + ".png"
 
             extent = self.ParamByNm('Extent')
+            epsg = self.ParamByNm('EPSG')
 
-            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:4326 " + outFNm + " " + trans_tiff )
+            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
 
-            os.system("gdalwarp -s_srs EPSG:4326 -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
+            os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
 
             src_ds = gdal.Open(warp_tiff)
 
