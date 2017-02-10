@@ -918,7 +918,7 @@ ul.buttons li.selected a:hover
 }
 
 #about {
-	display:none
+	display:none;
 	height: calc(100% - 160px);
 	position: absolute;
 	top: 106px;
