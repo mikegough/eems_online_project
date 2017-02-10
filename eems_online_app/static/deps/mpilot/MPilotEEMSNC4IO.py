@@ -64,7 +64,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
     # def DependencyNms(self):
     
     def Exec(self,executedObjects):
-        print self.ParamByNm('InFileName')
+        
         with nc4.Dataset(self.ParamByNm('InFileName'),'r') as inDS:
             if self.ParamByNm('InFieldName') not in inDS.variables:
                 raise Exception(
@@ -84,8 +84,10 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
             
             if isinstance(inV[:],np.ma.core.MaskedArray):
                 newMask = cp.deepcopy(inV[:].mask)
+                newData = cp.deepcopy(inV[:].data)
             else:
                 newMask = False
+                newData = cp.deepcopy(inV[:])
 
             if self.dataType in ['Integer']:
                 newDType = np.int
@@ -96,13 +98,13 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
 
             if inV[:].dtype == np.float64 and newDType in [np.int,np.uint]:
                 self.execRslt = np.ma.array(
-                    inV[:].data + 0.5, # result rounds to nearest int
+                    newData + 0.5, # result rounds to nearest int
                     mask=newMask,
                     dtype=newDType,
                     )
             else:
                 self.execRslt = np.ma.array(
-                    cp.deepcopy(inV[:].data),
+                    newData,
                     mask=newMask,
                     dtype=newDType
                     )

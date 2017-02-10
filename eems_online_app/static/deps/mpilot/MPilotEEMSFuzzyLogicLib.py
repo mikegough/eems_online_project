@@ -280,6 +280,7 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
                 'Positive Float',
                 'Integer',
                 'Positive Integer',
+                'Fuzzy'
             ]
             )
         self._ValidateEqualListLens(['FuzzyValues','RawValues'])
