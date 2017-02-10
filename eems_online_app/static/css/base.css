@@ -927,6 +927,16 @@ ul.buttons li.selected a:hover
 	color: #3C3C3C;
 }
 
+#contact{
+	display:none;
+	height: calc(100% - 160px);
+	position: absolute;
+	top: 106px;
+	padding: 20px 60px 100px 60px;
+	font-family: tahoma;
+	color: #3C3C3C;
+}
+
 figure {
 	margin: 30px 10px;
 }
