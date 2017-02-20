@@ -25,8 +25,8 @@ $( document ).ready(function() {
     init_eems_file =  "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
     init_eems_model = init_eems_file_name.split(".")[0];
 
-    $.get(init_eems_file, function(results) {
-        json = JSON.parse(results);
+    $.getJSON(init_eems_file, function(results) {
+        json = results;
         init(json,init_eems_file_name);
     });
 
@@ -74,8 +74,8 @@ $('#eems_model_dropdown').change(function(){
                 get_additional_info(eems_model_id)
             });
 
-            $.get(path_to_json_file, function (results) {
-                var json_model = JSON.parse(results);
+            $.getJSON(path_to_json_file, function (results) {
+                var json_model = results;
                 init(json_model, eems_online_model_name);
             });
         }
