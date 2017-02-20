@@ -15,7 +15,6 @@ from django.db import connection
 import json
 import sys
 import subprocess
-import bitarray
 import sqlite3
 from django.utils.crypto import get_random_string
 
@@ -131,6 +130,13 @@ def run_eems(request):
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
+
+    print mpt_file_copy
+    print eems_operator_changes_dict
+    print output_base_dir
+    print extent_for_gdal
+    print epsg
+
 
     # Send model information to MPilot to run EEMS.
     try:
