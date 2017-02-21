@@ -132,23 +132,30 @@ function load_eems_user_model(eems_filename, eems_file_contents) {
 }
 
 // Run EEMS Button
-$("#run_eems_button").click(function(){run_eems(eems_model_id)});
+$("#run_eems_button").click(function(){run_eems(0)});
 
 // Send the user defined changes to the back end and run EEMS.
-function run_eems() {
+function run_eems(download) {
 
     $("#run_eems_button").addClass("disabled");
 
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
     $("#spinner_div").show()
+    if (! download ){
+        $("#spinner_text").html("Running EEMS...")
+    }
+    else {
+        $("#spinner_text").html("Preparing data for download....")
+    }
 
-    $.ajax({
+    return $.ajax({
         url: "/run_eems", // the endpoint
         type: "POST", // http method
         data: {
             'eems_model_id': eems_model_id,
             'eems_model_modified_id': eems_model_modified_id,
-            'eems_operator_changes_string': eems_operator_changes_string
+            'eems_operator_changes_string': eems_operator_changes_string,
+            'download': download
         },
         success: function (json_response) {
             var response = JSON.parse(json_response);
@@ -158,7 +165,9 @@ function run_eems() {
                 alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div id='error_alert_text'>Error: " + error_message + "</div></div>")
             }
             else {
-                alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
+                if (! download) {
+                    alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
+                }
                 console.log("EEMS Model ID: " + eems_model_modified_id);
                 console.log("EEMS Command Modifications: ");
                 console.log(JSON.stringify(eems_bundled_commands, null, 2));
@@ -185,26 +194,34 @@ function run_eems() {
 
 $('#download_label').click(function(e) {
 
-    $("#download_file").attr("src","static/img/spinner.gif");
+    $("#download_label").addClass("disabled");
+    $("#link_label").addClass("disabled");
 
-    $.ajax({
-        url: "/download", // the endpoint
-        type: "POST", // http method
-        data: {
-            'eems_model_modified_id': eems_model_modified_id,
-        },
-        success: function (response) {
-            e.preventDefault();  //stop the browser from following
-            // window.open with "_parent" instead of window.location to fix spinner freezing.
-            window.open("static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip", "_parent")
-        },
-        error: function (xhr, errmsg, err) {
-            alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
-        },
-        complete: function(){
-            $("#download_file").attr("src","static/img/download.png");
-        }
+    $.when(run_eems(1)).done(function(){
 
+        $("#download_file").attr("src", "static/img/spinner.gif");
+
+        $.ajax({
+            url: "/download", // the endpoint
+            type: "POST", // http method
+            data: {
+                'eems_model_modified_id': eems_model_modified_id,
+            },
+            success: function (response) {
+                e.preventDefault();  //stop the browser from following
+                // window.open with "_parent" instead of window.location to fix spinner freezing.
+                window.open("static/eems/models/zip/EEMS_Online_Model_Results_" + eems_model_modified_id + ".zip", "_parent")
+            },
+            error: function (xhr, errmsg, err) {
+                alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
+            },
+            complete: function () {
+                $("#download_file").attr("src", "static/img/download.png");
+                $("#download_label").removeClass("disabled");
+                $("#link_label").removeClass("disabled");
+            }
+
+        });
     });
 });
 

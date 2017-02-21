@@ -95,6 +95,9 @@ def run_eems(request):
     eems_operator_changes_dict = json.loads(eems_operator_changes_string)
     eems_operator_changes_dict["cmds"].append({"action": "RunProg"})
 
+    #if the user is downloading, don't delete the netCDF file until it's been zipped up.
+    download = int(request.POST.get('download'))
+
     print "Original Model ID: " + eems_model_id
     print "Modified Model ID: " + eems_model_modified_id
     print "Changes: " + json.dumps(eems_operator_changes_dict, indent=2)
@@ -132,6 +135,7 @@ def run_eems(request):
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
 
     output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
+    output_netcdf = output_base_dir + '/data/results.nc'
 
     print mpt_file_copy
     print eems_operator_changes_dict
@@ -146,6 +150,8 @@ def run_eems(request):
         my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, True, False, True)
         error_code = 0
         error_message = None
+        if not download:
+            os.remove(output_netcdf)
 
     except Exception as e:
         error_code = 1
@@ -166,17 +172,22 @@ def download(request):
     base_dir = settings.BASE_DIR + "/eems_online_app/static/eems/models"
     dir_name = base_dir + os.sep + eems_model_modified_id
     zip_name = base_dir + os.sep + "zip" + os.sep + "EEMS_Online_Model_Results_" + eems_model_modified_id
+
+    output_netcdf = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/data/results.nc'.format(eems_model_modified_id)
+
     try:
         shutil.make_archive(zip_name, 'zip', dir_name)
         current_dir = os.getcwd()
         print current_dir
-        return HttpResponse("File is ready for download")
+        return_message = "File is ready for download"
     except:
         current_dir = os.getcwd()
         print current_dir
-        return HttpResponse("Error. Please try again.")
+        return_message = "Error. Please try again."
 
-
+    os.remove(output_netcdf)
+    os.remove(zip_name)
+    return HttpResponse(return_message)
 
 @csrf_exempt
 def link(request):
