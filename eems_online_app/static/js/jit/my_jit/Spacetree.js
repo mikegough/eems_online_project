@@ -86,7 +86,11 @@ function init(json, eems_file_name){
         },
         Edge: {
             type: 'bezier',
-            overridable: true
+            overridable: false,
+            lineWidth: 1,
+            color: '#7A7A7A',
+            dim:15,
+            alpha:.8
         },
 
         onMouseWheel: function(node){
@@ -267,8 +271,8 @@ function init(json, eems_file_name){
         //override the Edge global style properties.
         onBeforePlotLine: function(adj){
             if (adj.nodeFrom.selected && adj.nodeTo.selected) {
-                adj.data.$color = "#eed";
-                adj.data.$lineWidth = 3;
+                adj.data.$color = "#6C6C6C";
+                adj.data.$lineWidth = 2;
             }
             else {
                 delete adj.data.$color;
