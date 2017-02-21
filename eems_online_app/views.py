@@ -44,7 +44,7 @@ def index(request):
         eems_rqst_dict = {}
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
-        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", "none", False, False, True)
+        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", "none", "none", False, False, True)
 
         json.dumps(eems_available_commands_json)
 
@@ -98,6 +98,9 @@ def run_eems(request):
     #if the user is downloading, don't delete the netCDF file until it's been zipped up.
     download = int(request.POST.get('download'))
 
+    map_quality = request.POST.get('map_quality')
+    print map_quality
+
     print "Original Model ID: " + eems_model_id
     print "Modified Model ID: " + eems_model_modified_id
     print "Changes: " + json.dumps(eems_operator_changes_dict, indent=2)
@@ -147,7 +150,7 @@ def run_eems(request):
     # Send model information to MPilot to run EEMS.
     try:
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, True, False, True)
+        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, map_quality, True, False, True)
         error_code = 0
         error_message = None
         if not download:
@@ -201,7 +204,7 @@ def link(request):
     eems_rqst_dict = {}
     eems_rqst_dict["action"] = 'GetMEEMSETrees'
     my_mpilot_worker = MPilotWorker()
-    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", "none", True, False, True)[1:-1])
+    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", "none", "none", True, False, True)[1:-1])
     print eems_meemse_tree_json
 
     eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)

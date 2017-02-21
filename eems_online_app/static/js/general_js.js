@@ -58,6 +58,8 @@ $('#eems_model_dropdown').change(function(){
         if ($('#eems_model_dropdown option:selected').text() != "") {
 
             $("#run_eems_button").addClass("disabled");
+            $("#quality_selector_div").addClass("disabled");
+            $('#map_quality').attr('disabled', 'disabled');
 
             $("#user_defined_model").html("")
 
@@ -138,6 +140,8 @@ $("#run_eems_button").click(function(){run_eems(0)});
 function run_eems(download) {
 
     $("#run_eems_button").addClass("disabled");
+    $("#quality_selector_div").addClass("disabled");
+    var map_quality = $("#map_quality").val();
 
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
     $("#spinner_div").show()
@@ -155,7 +159,8 @@ function run_eems(download) {
             'eems_model_id': eems_model_id,
             'eems_model_modified_id': eems_model_modified_id,
             'eems_operator_changes_string': eems_operator_changes_string,
-            'download': download
+            'download': download,
+            'map_quality': map_quality
         },
         success: function (json_response) {
             var response = JSON.parse(json_response);
@@ -218,6 +223,8 @@ $('#download_label').click(function(e) {
             complete: function () {
                 $("#download_file").attr("src", "static/img/download.png");
                 $("#download_label").removeClass("disabled");
+                $("#quality_selector_div").removeClass("disabled");
+                $('#map_quality').removeAttr('disabled');
                 $("#link_label").removeClass("disabled");
             }
 
@@ -369,6 +376,8 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             // Call function to store new eems operator and options in a dictionary
             updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
             $("#run_eems_button").removeClass("disabled");
+            $("#quality_selector_div").removeClass("disabled");
+            $('#map_quality').removeAttr('disabled');
             $("#run_eems_div").show();
             $("#save_eems_div").hide();
 

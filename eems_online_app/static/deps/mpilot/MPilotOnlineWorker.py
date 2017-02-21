@@ -95,12 +95,14 @@ class MPilotWorker(mpprog.MPilotProgram):
             outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
             extent = self.extent
             epsg = self.epsg
+            map_quality = self.map_quality
 
             parsedCmd['params'] = {
                 'InFieldName':rsltNm,
                 'OutFileName':outfile,
                 'Extent': extent,
-                'EPSG': epsg
+                'EPSG': epsg,
+                'MapQuality': map_quality,
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -341,6 +343,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         outputBaseDir,
         extent,
         epsg,
+        map_quality,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
@@ -350,6 +353,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         self.id = id
         self.extent = extent
         self.epsg = epsg
+        self.map_quality = map_quality
 
         rtrn = None
 

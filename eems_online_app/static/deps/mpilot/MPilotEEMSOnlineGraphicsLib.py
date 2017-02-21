@@ -196,7 +196,10 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             minVal = dataObj.ExecRslt().min()
             maxVal = dataObj.ExecRslt().max()
 
-        fig = plt.figure(figsize=(24,29))
+        map_quality = self.ParamByNm('MapQuality')
+        w = int(map_quality.split(',')[0])
+        h = int(map_quality.split(',')[1])
+        fig = plt.figure(figsize=(w,h))
         ax1 = fig.add_axes([0,0,1,1])
         ax1.axis('off')
 
