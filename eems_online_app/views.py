@@ -189,7 +189,6 @@ def download(request):
         return_message = "Error. Please try again."
 
     os.remove(output_netcdf)
-    os.remove(zip_name)
     return HttpResponse(return_message)
 
 @csrf_exempt
