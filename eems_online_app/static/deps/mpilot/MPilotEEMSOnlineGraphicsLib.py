@@ -196,7 +196,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             minVal = dataObj.ExecRslt().min()
             maxVal = dataObj.ExecRslt().max()
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=(24,29))
         ax1 = fig.add_axes([0,0,1,1])
         ax1.axis('off')
 
@@ -218,6 +218,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         plt.savefig(outFNm, transparent=True)
         plt.close()
         gc.collect()
+        plt.clf()
 
         # Project MatPlotLib png to Web Mercator
         self.Project(outFNm)
