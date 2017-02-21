@@ -265,6 +265,11 @@ a {
 	left: unset !important;
 }
 
+div#alertify-cover {
+    background-color: black;
+    opacity: 0.4;
+}
+
 #change_operator_form {
 	padding: 10px 15px 20px 25px;
 }
