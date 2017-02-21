@@ -141,6 +141,7 @@ function run_eems(download) {
 
     $("#run_eems_button").addClass("disabled");
     $("#quality_selector_div").addClass("disabled");
+    $('#map_quality').attr('disabled', 'disabled');
     var map_quality = $("#map_quality").val();
 
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
