@@ -435,6 +435,7 @@ li a.active {
 	line-height: 43px;
 	font-size: .95em;
 	width: calc(100% - 560px);
+	white-space:nowrap;
 }
 
 .node_icon {
