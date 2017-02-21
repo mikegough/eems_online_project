@@ -75,11 +75,13 @@ def index(request):
         eems_online_models_json=json.dumps(eems_online_models)
 
         template = 'index.html'
+        hostname_for_link = settings.HOSTNAME_FOR_LINK
         context = {
             #'eems_available_commands_dict': eems_available_commands,
             'initial_eems_model_json': initial_eems_model_json,
             'eems_online_models_json': eems_online_models_json,
             'eems_available_commands_json': eems_available_commands_json,
+            'hostname_for_link': hostname_for_link
         }
 
         return render(request, template, context)
