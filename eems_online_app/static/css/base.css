@@ -323,7 +323,7 @@ li a.active {
 	float: right;
 	top: 106px;
 	right: 0px;
-	background-color: rgba(255,255,255,.7);
+	background-color: rgba(255,255,255,1);
 	padding: 15px 25px 15px 25px;
 	width: 50%;
 	min-width: 788px;
@@ -968,3 +968,40 @@ figcaption {
 	background-color: transparent !important;
 	left: 3px;
 }
+
+/* Transparency slider */
+.ui-opacity {
+	display: none;
+	background: #FFFFFF;
+	position: absolute;
+	left: 535px;
+	bottom: 9px;
+	/* top: 240px; */
+	height: 92px;
+	/* width: 28px; */
+	width: 15px;
+	/* border: 1px solid rgba(0,0,0,0.4); */
+	border-radius: 5px;
+	z-index: 2;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	background-image: url('../img/transparency2.png');
+}
+
+.ui-opacity .handle {
+  position:absolute;
+  background:#414141;
+  left:-5px;
+  top:20px;
+  /*width:26px;*/
+  width:23px;
+  height:10px;
+  border:1px solid rgba(0,0,0,0.4);
+  border-radius:2px;
+  cursor:ns-resize;
+  }
+
+.ui-opacity .handle:hover {
+    background:#595959;
+}
+
+

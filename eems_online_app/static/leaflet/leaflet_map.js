@@ -70,3 +70,39 @@ function swapLegend(layer_name, eems_model_id){
         "<img class='legend_png'  src='static/eems/models/" + eems_model_id + "/overlay/" + layer_name + "_key.png?" + new Date().getTime() +"'>" +
         "<div class='legendLabels'>"
 }
+
+//Opacity/transparency slider on image overlays
+var handle = document.getElementById('handle'),
+    start = false,
+    startTop;
+
+document.onmousemove = function(e) {
+    if (!start) return;
+    // Adjust control.
+    handle.style.top = Math.max(-5, Math.min(78, startTop + parseInt(e.clientY, 10) - start)) + 'px';
+
+    fillOpacityLevel=(1 - (handle.offsetTop / 80));
+
+    // Adjust opacity on image overlays.
+    image_overlay.setOpacity(fillOpacityLevel);
+
+};
+
+handle.onmousedown = function(e) {
+    // Record initial positions.
+    start = parseInt(e.clientY, 10);
+    startTop = handle.offsetTop - 5;
+    return false;
+};
+
+document.onmouseup = function(e) {
+    start = null;
+};
+
+elements=document.getElementsByClassName('ui-opacity')
+//Transparency slider
+
+for (var i = 0; i < elements.length; i++) {
+    elements[i].style.display = elements[i].style.display = 'inline';
+}
+image_overlay.setOpacity(1 - (handle.offsetTop / 92))
