@@ -8,6 +8,7 @@ body {
 
 a{
 	text-decoration:none;
+	color:#3974DA;
 }
 
 a:hover{
@@ -130,9 +131,6 @@ h4 {
     color:#23A4FF;
 }
 
-a {
-    color:#23A4FF;
-}
 
 #map_container {
 	height: calc(100% - 110px);
@@ -141,21 +139,21 @@ a {
 	top: 106px;
 }
 
-#map{
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-    position: absolute;
-    cursor: move;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    right: 0px;
-    float: left;
-    z-index:1;
+#map {
+	width: 100%;
+	height: calc(100% - 22.5px);
+	margin: 0 auto;
+	position: absolute;
+	cursor: move;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	right: 0px;
+	float: left;
+	z-index: 1;
 }
 
 #meemse_container {
@@ -975,7 +973,7 @@ figcaption {
 	background: #FFFFFF;
 	position: absolute;
 	left: 535px;
-	bottom: 9px;
+	bottom: 33px;
 	/* top: 240px; */
 	height: 92px;
 	/* width: 28px; */
@@ -1002,6 +1000,25 @@ figcaption {
 
 .ui-opacity .handle:hover {
     background:#595959;
+}
+
+#footer{
+    font-size:12px;
+    font-family:verdana;
+    color:#58583D;
+    bottom:0px;
+    right:0px;
+    position:fixed;
+    text-align:right;
+    z-index:9999999;
+    width:101%;
+    background-color:#ECECE4;
+    margin-left:0px;
+    margin-right:0px;
+    padding-right:20px;
+    padding-top:2px;
+    line-height:13px;
+    opacity:0.9;
 }
 
 
