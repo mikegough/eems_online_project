@@ -145,38 +145,81 @@
     </div>
 
     <div id="about">
-        <h2>About EEMS Online</h2>
-        EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="consbio.org">Conservation Biology Institute</a>. It is designed to allow the user to explore and modify models developed within the <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">Environmental Evaluation Modeling System (EEMS)</a>,
-        a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan, Ph.D.</a>, an ecological modeler at the Conservation Biology Institute.
+        <div id="about_contents">
+            <h2>About EEMS Online</h2>
+            EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="consbio.org">Conservation Biology Institute</a>. It is designed to allow the user to explore and modify models developed within the <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">Environmental Evaluation Modeling System (EEMS)</a>,
+            a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan, Ph.D.</a>, an ecological modeler at the Conservation Biology Institute.
 
-        For more information about EEMS and Fuzzy Logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>.
-        <p>
-        To get started with EEMS Online, select an EEMS model from the dropdown menu (labeled #1 in the control panel shown below). A short description provides some basic background information about the model. Click on the "Learn more"
-            link for additional information.
+            For more information about EEMS and Fuzzy Logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>. An EEMS manual is included with the software package, but it can also be downloaded separately by clicking <a href="/static/docs/EEMS2.0_Manual.pdf" download target="_blank">here</a>.
+            <p>
+            To get started with EEMS Online, select an EEMS model from the dropdown menu (labeled #1 in the control panel shown below). A short description provides some basic background information about the model. Click on the "Learn more"
+                link for additional information.
+                <figure>
+                    <img id="screen_capture_1" class="screen_capture" src="/static/img/screen_capture_1.png">
+                    <figcaption>Fig.1 - The EEMS Online Control Panel.</figcaption>
+                </figure>
+            Once you have selected a model, you can use the interactive diagram on the right-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
+            the map and expand the node to show any input variables. Clicking the gear icon on any node brings up a dialog box that allows you to make changes to the operator, or change the operator to a different operator. In the screen capture shown below, the user has the option to change operator on the <i>High Soil Sensitivity</i> node from a <i>Fuzzy Or</i> to one of the other available operators.
+            The histogram to the right of the operator selection menu shows the distribution of data for the current node. The Y-Axis indicates the number of reporting units that have the corresonding value on the X-Axis.
+            The available options will vary depending on the node's current operator.
+                <figure>
+                    <img id="screen_capture_2" class="screen_capture" src="/static/img/screen_capture_2.png">
+                    <figcaption>Fig.2 - Clicking the gear icon on any node allows you to make changes to the operator.</figcaption>
+                </figure>
+
+            <h2>Available Operators</h2>
+            The table below lists the available operators, along with the type of data expected as input and a brief description:
+            <p>
+             <table class="tableizer-table">
+             <thead><tr class="tableizer-firstrow"><th>Operator</th><th>Input Data</th><th>Description</th></tr></thead><tbody>
+             <tr><td>AND</td><td>Fuzzy</td><td>Finds the AND value of the inputs (minimum value).</td></tr>
+             <tr><td>&nbsp;</td><td>&nbsp;</td><td> (previously OrNEG in EEMS version 1.0)</td></tr>
+             <tr><td>CONVERT TO FUZZY</td><td>Raw</td><td>Converts a field's values into fuzzy values.</td></tr>
+             <tr><td>Convert To Fuzzy Category</td><td>Raw</td><td>Converts a field's values into fuzzy values by using the user defined category values and matching fuzzy values. Input values that are not in the user defined categories are assigned the user-defined default fuzzy value.</td></tr>
+             <tr><td>EEMS Convert To Fuzzy Curve</td><td>Raw</td><td>Converts a field's values into fuzzy values for EEMS (Environmental Evaluation Modeling System), using linear interpolation between user defined points on an approximation of a curve.</td></tr>
+             <tr><td>Difference</td><td>Raw</td><td>Computes the difference sum for each row of the inputs.</td></tr>
+             <tr><td>EEMS EMDS And</td><td>Fuzzy</td><td>Fuzzy logic operator for EEMS (Environmental Evaluation Modeling System). Finds the EMDS AND value of the inputs. The formula is min + [(mean - min) * (min + 1) / 2]</td></tr>
+             <tr><td>Max</td><td>Raw</td><td>Finds the maximum for each row of the input fields.</td></tr>
+             <tr><td>Mean</td><td>Raw</td><td>Finds the mean for each row of the input fields.</td></tr>
+             <tr><td>Min</td><td>Raw</td><td>Finds the minimum for each row of the input fields.</td></tr>
+             <tr><td>Not</td><td>Fuzzy</td><td>Logical NOT for fuzzy modeling. Reverses the sign of values of the input field.</td></tr>
+             <tr><td>OR</td><td>Fuzzy</td><td>Finds the truest value of the inputs (maximum value).</td></tr>
+             <tr><td>SELECTED UNION</td><td>Fuzzy</td><td>Finds the union value (mean) of the specified number of TRUEest or FALSEest inputs.</td></tr>
+             <tr><td>SUM</td><td>Raw</td><td>Computes the sum of the inputs.</td></tr>
+             <tr><td>UNION</td><td>Fuzzy</td><td>Finds the union value of the inputs (mean value).</td></tr>
+             <tr><td>Weighted EMDS And</td><td>Fuzzy</td><td>Finds the weighted EMDS AND value of the inputs. The formula is min + [(mean - min) * (min + 1) / 2] where the mean is weighted.</td></tr>
+             <tr><td>WEIGHTED MEAN</td><td>Raw</td><td>Finds the weighted mean for each row of the input fields.</td></tr>
+             <tr><td>WEIGHTED SUM</td><td>Raw</td><td>Finds the weighted sum for each row of the input fields. Multiplies each field by its weight before adding. Like a weighted mean without the division.</td></tr>
+             <tr><td>WEIGHTED UNION</td><td>Fuzzy</td><td>Finds the weighted union (mean) for each row of the input fields.</td></tr>
+             <tr><td>XOR</td><td>Fuzzy</td><td>Finds the fuzzy EXCLUSIVE OR value of the inputs by comparing the two truest values. If both are fully true or fully false, false is returned. Otherwise it applies the formula: (truest value - second truest value) / (full true - full false)</td></tr>
+             </tbody></table>
+
+            <h2>Selecting an Operator</h2>
+            <p>EEMS presents the user with choices for many operators and finding the right one can be confusing at first. The guidelines presented here will help you choose the right operator, but remember, sometimes it is best to experiment with several choices to make sure the operator you choose is appropriate for your model.</p>
+            <p>EEMS has operators designed to work on data before they are converted into fuzzy numerical space (i.e. when they are still in <em>raw</em> space) and those designed to work on data after they are converted into fuzzy space (see the above table). A user should respect that distinction. Using a non-fuzzy operator on fuzzy data can produce a result that falls outside the -1 to +1 continuum of fuzzy space. Doing this produces an invalid model.</p>
+            <p><strong>Weighted Sum</strong></p>
+            <p>The operators used in raw space are for the most part pretty straightforward. However the Weighted Sum operator merits a discussion. A <strong>Weighted Sum </strong>takes two or more inputs, and multiplies each of them by a weight before adding them. It has proven especially valuable with combining data of very similar types into one result that is then converted into fuzzy space. For example, if you were evaluating a region for intactness, the negative impact of paved roads might be considered similar to but greater than that of dirt roads. Their effects are additive, but a sum operator is not available in fuzzy space. To apply the <strong>Weighted Sum</strong> operator you might provide a weight of 1 to the paved road density and a weight of 0.5 to the dirt road density. In models that have done this, the result has been labeled &ldquo;Effective Road Density.&rdquo;</p>
+            <p><strong>And, Or, </strong>and<strong> Union</strong></p>
+            <p><strong>And, Or</strong> and <strong>Union</strong> are the most common EEMS operators used. The choice between <strong>And, Or, </strong>and <strong>Union</strong> depends on the relationship of the input data to the question you are asking. <strong>Or</strong> returns the highest fuzzy value of any of the inputs, it is appropriate when any of the inputs is sufficient for your desired outcome. For example if you were evaluating a region in which three critically endangered species were present in some locations, you could use an <strong>Or </strong>to combine <em>presence of species A</em>, <em>presence of species B</em>, and <em>presence of species C</em> into <em>high preserve value</em>. The presence of any of the three species would cause a map reporting unit to have a high fuzzy value. <strong>And </strong>is used when all inputs are necessary for the result to be high. For instance, if both habitat for and presence of a species of interest were required to consider a location as a preserve, you could combine <em>species presence</em> and <em>habitat density</em> with an <strong>And </strong>to produce <em>high preservation value</em>. <strong>And </strong>chooses the lowest fuzzy value of the inputs so that high fuzzy values for both conditions are necessary to yield a high fuzzy value for the result. <strong>Union</strong> takes the mean of the input values. <strong>Union</strong> allows each input to exert an influence on the result. If all inputs have a high value, the result will have a high fuzzy value; if all have a low value, the result will be low. If some are high and some are low, the result will be somewhere in between. Going back to our preserve example, we know if the species is present, the location has value as a preserve. If the habitat is present there is some value, too. If they are both present then the value is the highest. Union will yield that result. A <strong>Weighted Union</strong> is similar to <strong>Union</strong>, except that it allows a weight to the inputs. In our preserve example, if <em>habitat density</em> is more important than <em>species presence </em>(for instance in an area where remnant populations are under stress and habitat has been restored in areas where the species has not been able to recolonize) then you could provide a greater weight to <em>habitat density</em>.</p>
+            <p><strong>Selected Union</strong></p>
+            <p>The Selected Union represents a combination of <strong>Or</strong> (or <strong>And</strong>) and <strong>Union</strong>. Consider a study area that includes many different types of habitat, for example, a basin and range terrain. Some species of concern are found in valleys, others inhabit the foothills, and others the high mountains. What if there are 30 species of concern? The more species of concern in a location, the more valuable the location, but nowhere are they all found together. The <strong>Selected Union</strong> allows for the evaluation of such a study area. With the <strong>Selected Union</strong>, you choose a number of the truest (or falsest) of inputs to evaluate. In the basin and range example, you might choose five. A location with a high density of five (or more) species of concern would have a high fuzzy value for <em>high species diversity</em>. As the density of species of concern falls, so does the fuzzy value for <em>high species diversity</em>. A <strong>Selected Union</strong> with a parameter of 5 Truest would do just that. It performs a <strong>Union</strong> operation on the five inputs with the highest fuzzy values.</p>
+
+            <h2>Running the model</h2>
+
+            You may specify any number of changes to the model. Operators that have been modified will be highlighted in yellow. Once you are satisfied with your changes, click the "Run the model" button labeled #3 on the EEMS Online Control Panel. The model run may take anywhere from several seconds to several minutes
+            to complete, depending on the complexity of the model and the spatial extent and resolution of the input data.
+            </p>
+            Once the model run is complete, the changes will be reflected in the map. The buttons above the map allow you to change the map display between the original version and the modified version (shown below).
             <figure>
-                <img id="screen_capture_1" class="screen_capture" src="/static/img/screen_capture_1.png">
-                <figcaption>Fig.1 - The EEMS Online Control Panel.</figcaption>
+                <img id="screen_capture_3" class="screen_capture" src="/static/img/screen_capture_3.png">
+                <figcaption>Fig.3 - Use the buttons highlighted above to switch between the original and modified versions of a model run.</figcaption>
             </figure>
-        Once you have selected a model, you can use the interactive diagram on the right-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
-        the map and expand the node to show any input variables. Clicking the gear icon on any node brings up a dialog box that allows you to make changes to the operator, or change the operator to a different operator. In the screen capture shown below, the user has the option to change operator on the <i>High Soil Sensitivity</i> node from a <i>Fuzzy Or</i> to one of the other available operators.
-        The histogram to the right of the operator selection menu shows the distribution of data for the current node. The Y-Axis indicates the number of reporting units that have the corresonding value on the X-Axis.
-        The available options will vary depending on the node's current operator.
-            <figure>
-                <img id="screen_capture_2" class="screen_capture" src="/static/img/screen_capture_2.png">
-                <figcaption>Fig.2 - Clicking the gear icon on any node allows you to make changes to the operator.</figcaption>
-            </figure>
-        You may specify any number of changes to the model. Operators that have been modified will be highlighted in yellow. Once you are satisfied with your changes, click the "Run the model" button labeled #3 on the EEMS Online Control Panel. The model run may take anywhere from several seconds to several minutes
-        to complete, depending on the complexity of the model and the spatial extent and resolution of the input data.
-        <p>
-        Once the model run is complete, the changes will be reflected in the map. The buttons above the map allow you to change the map display between the original version and the modified version (shown below).
-        <figure>
-            <img id="screen_capture_3" class="screen_capture" src="/static/img/screen_capture_3.png">
-            <figcaption>Fig.3 - Use the buttons highlighted above to switch between the original and modified versions of a model run.</figcaption>
-        </figure>
-        Once you have conducted a model run, you have the option of either making additional changes to the model and rerunning it, or, if you are satisfied with the results, you can click the Download button to download the output and associated model content, or push the Get Link button which will allow you to share the modified model or access the modified model through EEMS Online at a later time.
-        <br>
-        <br>
-        <br>
+            Once you have conducted a model run, you have the option of either making additional changes to the model and rerunning it, or, if you are satisfied with the results, you can click the Download button to download the output and associated model content, or push the Get Link button which will allow you to share the modified model or access the modified model through EEMS Online at a later time.
+            <br>
+            <br>
+            <br>
+        </div>
+
     </div>
 
     <div id="contact">

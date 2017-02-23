@@ -885,14 +885,34 @@ ul.buttons li.selected a:hover
 #home {
 }
 
+
 #about {
-	display:none;
+	display: none;
 	height: calc(100% - 160px);
 	position: absolute;
-	top: 106px;
+	top: 60px;
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: justify;
+	width: 100%;
+}
+
+#about_contents {
+	width: 1010px;
+	margin-left: auto;
+	margin-right: auto;
+	box-shadow: 0px 0px 20px 2px #595959;
+	padding: 40px 50px;
+}
+
+#about h2 {
+	background-color: #e6e6e6;
+	padding: 20px;
+	border-radius: 5px;
 }
 
 #contact{
@@ -982,4 +1002,25 @@ figcaption {
     padding-top:2px;
     line-height:13px;
     opacity:0.9;
+}
+
+table.tableizer-table {
+	font-size: 13px;
+	border: 1px solid #CCC;
+	width: 1000px;
+	margin-left: 10px;
+}
+
+.tableizer-table td {
+    padding: 4px;
+    margin: 3px;
+    border: 1px solid #CCC;
+}
+
+.tableizer-table th {
+	background-color: #104E8B;
+	color: #FFF;
+	font-weight: bold;
+	white-space: nowrap;
+	padding: 10px;
 }
