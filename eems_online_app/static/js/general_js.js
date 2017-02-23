@@ -597,7 +597,7 @@ $("#collapse_icon").on('click', function(){
     st.controller.constrained=true;
     $("#expand_div").show();
     $("#collapse_div").hide();
-    st.canvas.resize(800,800);
+    st.canvas.resize(840,751);
 });
 
 function get_additional_info(eems_model_id){
