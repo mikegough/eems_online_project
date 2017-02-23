@@ -9,6 +9,7 @@ body {
 a{
 	text-decoration:none;
 	color:#2D5190;
+	cursor:pointer
 }
 
 a:hover{
@@ -29,13 +30,12 @@ a:hover{
 #title {
 	height: 70px;
 	line-height: 65px;
-	padding-left: 20px;
 	font-variant: all-petite-caps;
 	font-size: 2.3em;
 	color: #FFF;
 	text-shadow: 0px 0px 1px black;
 	width: 250px;
-	Font-family: garamond;
+	font-family: garamond;
 	font-weight: Bold;
 	letter-spacing: 1px;
 	padding-left: 150px;
@@ -50,7 +50,6 @@ a:hover{
 	height: 82px;
 	left: -130px;
 	top: -11px;
-	float: left;
 	opacity: .6;
 }
 
@@ -60,37 +59,6 @@ a:hover{
     height: 82px;
     left: 310px;
     top: -11px;
-    float: left;
-}
-
-#MEEMSE_node_count_legend{
-    visibility:hidden;
-    position:relative;
-    top:0px;
-    left:15px;
-    height:10px;
-    width:150px;
-    float:left;
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#aaaaaa+0,aaaaaa+14,bbaaaa+14,bbaaaa+28,ccaaaa+28,ccaaaa+42,ddaaaa+42,ddaaaa+56,eeaaaa+56,eeaaaa+70,ffaaaa+70,ffaaaa+84,a6c8a6+84,a6c8a6+100 */
-}
-
-#MEEMSE_node_count_legend_table{
-    font-size:9px;
-    width:100%
-}
-
-#MEEMSE_node_count_legend_table td{
-    color:#606060;
-    text-align:center;
-    width:14%;
-    min-width:14%;
-    height:10px;
-    min-height:10px;
-    cursor:default;
-}
-
-#MEEMSE_node_count_legend_table th{
-    background-color:#EDEDED;
 }
 
 .EEMS_Tree_Value{
@@ -104,7 +72,6 @@ a:hover{
     margin-right:0px;
     text-align:center;
     position:absolute;
-    bottom: 1px;
     padding-bottom:3px;
     left:0px;
     vertical-align:bottom;
@@ -131,7 +98,6 @@ h4 {
     font-weight:normal;
     color:#23A4FF;
 }
-
 
 #map_container {
 	height: calc(100% - 110px);
@@ -162,7 +128,6 @@ h4 {
 	width: 52.5%;
 	height: calc(100% - 330px);
 	margin: 0 auto;
-	margin-bottom: 0;
 	position: absolute;
 	cursor: move;
 	-webkit-touch-callout: none;
@@ -517,7 +482,6 @@ li a.active {
     right:2px;
 }
 
-
 .modify_icon_class {
    height:16px;
 }
@@ -667,10 +631,6 @@ li a.active {
 	color: #464646;
 	padding: 6px 8px;
 	border-radius: 5px;
-}
-
-a {
-	cursor:pointer
 }
 
 ul.buttons {
@@ -1023,5 +983,3 @@ figcaption {
     line-height:13px;
     opacity:0.9;
 }
-
-
