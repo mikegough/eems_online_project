@@ -86,6 +86,7 @@ document.onmousemove = function(e) {
 
     // Adjust opacity on image overlays.
     image_overlay.setOpacity(fillOpacityLevel);
+    $(".legend_png").css("opacity", fillOpacityLevel)
 
 };
 
