@@ -208,7 +208,7 @@ def link(request):
 
     eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)
     with open(eems_meemse_tree_file, 'w') as outfile:
-        json.dump(eems_meemse_tree_json, outfile)
+        json.dump(eems_meemse_tree_json, outfile, indent=3)
 
     cursor = connection.cursor()
 
@@ -371,7 +371,7 @@ def upload_form(request):
         eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", True, False, True)[1:-1])
         eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
         with open(eems_meemse_tree_file, 'w') as outfile:
-            json.dump(eems_meemse_tree_json, outfile)
+            json.dump(eems_meemse_tree_json, outfile, indent=3)
 
         return HttpResponse("Model uploaded successsfully")
 
