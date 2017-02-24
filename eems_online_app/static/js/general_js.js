@@ -13,7 +13,6 @@ $( document ).ready(function() {
             $(this).addClass("meemse_resize_min")
         },
         stop: function(){
-            $(this).removeClass("meemse_resize_min")
         }
     });
 
