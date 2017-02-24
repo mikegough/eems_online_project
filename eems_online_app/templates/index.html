@@ -28,6 +28,8 @@
 
     <!-- Jquery NEEDS to be unique for each app. Get new CND link here @ https://code.jquery.com/ -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
     <!-- JIT  -->
     <link type="text/css" href="{% static 'js/jit/my_jit/Spacetree.css' %}" rel="stylesheet" />
@@ -53,7 +55,6 @@
         <img id="logo_l" src="{% static 'img/eems_logo.png' %}">
         <img id="logo_r" src="{% static 'img/eems_logo_r.png' %}">
     </div>
-
     <div id="nav_bar">
         <ul>
             <li><a id="home_link" class="active" >Home</a></li>
@@ -75,73 +76,74 @@
                <div id='handle' class='handle'></div>
            </div>
         </div>
-
-        <div id="control_panel">
-           <div id="canvas_controls">
-               <div id="expand_div" title="Maximize the model diagram">
-                    <img id='expand_icon' src='static/img/expand.png'>
-               </div>
-               <div id="collapse_div" title="Shrink the model diagram">
-                    <img id='collapse_icon' src='static/img/collapse.png'>
-               </div>
-               <div id="save_div">
-                    <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
-               </div>
-           </div>
-           <div id="current_file" class="eems_controls">
-               <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
-                    <select id="eems_model_dropdown" name="eems_model_dropdown"></select>
-               </div>
-               <div id="getting_started" class="eems_controls">
-                   Explore and modify the model
-                   <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
-               </div>
-               <div id="save_eems_div" class="eems_controls">
-                   <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">3</div>
-                   <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
-                        Get Link <img id="link_img" src="{% static '/img/link.png' %}">
+        <div id="control_panel_and_meemse_container">
+            <div id="control_panel">
+               <div id="current_file" class="eems_controls">
+                   <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
+                        <select id="eems_model_dropdown" name="eems_model_dropdown"></select>
+                   </div>
+                   <div id="getting_started" class="eems_controls">
+                       Explore & modify the model
+                       <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
+                   </div>
+                   <div id="save_eems_div" class="eems_controls">
+                       <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">3</div>
+                       <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
+                            Get Link <img id="link_img" src="{% static '/img/link.png' %}">
+                       </label>
+                       <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
+                            Download <img id="download_file" src="{% static '/img/download.png' %}">
+                       </label>
+                   </div>
+                   <div id="run_eems_div" class="eems_controls">
+                       <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
+                            <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
+                       <div id="quality_selector_div">
+                           Map Quality
+                           <select id="map_quality">
+                           <option value="6,8">Low (fastest)
+                           <option value="12,16" checked="checked">Medium (fast)
+                           <option value="24,32">High (slowest)
+                           </select>
+                       </div>
+                   </div>
+                   <!--
+                   <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
+                   -->
+                   <!-- COMMENT OUT BROWSE BUTTON FOR NOW
+                   <label for="files" class="alertify-button alertify-button-ok" id="files_label">
+                   Browse <img id="open_file" src="{% static '/img/open.svg' %}">
                    </label>
-                   <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
-                        Download <img id="download_file" src="{% static '/img/download.png' %}">
-                   </label>
+                   -->
+                   <input type="file" id="files" name="file" style="display:none"/>
+                   <div id="model_info_div"><div id="model_info_contents"></div>
                </div>
-               <div id="run_eems_div" class="eems_controls">
-                    <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
-                    <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
-                    <div id="quality_selector_div">
-                       Map Quality
-                       <select id="map_quality">
-                       <option value="6,8">Low (fastest)
-                       <option value="12,16" checked="checked">Medium (fast)
-                       <option value="24,32">High (slowest)
-                       </select>
-                    </div>
-               </div>
-               <!--
-               <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
-               -->
-               <!-- COMMENT OUT BROWSE BUTTON FOR NOW
-               <label for="files" class="alertify-button alertify-button-ok" id="files_label">
-               Browse <img id="open_file" src="{% static '/img/open.svg' %}">
-               </label>
-               -->
-               <input type="file" id="files" name="file" style="display:none"/>
-               <div id="model_info_div"><div id="model_info_contents"></div>
-           </div>
-        </div>
-
-        <div id="meemse_container">
-            <div id="spinner_div">
-                <div>
-                    <img id="spinner_img" src="{% static 'img/spinner.svg' %}">
-                </div>
-                <p/>
-                <div id="spinner_text">Running EEMS...</div>
             </div>
-            <div id="log"></div>
-            <div id="infovis"></div>
-        </div>
 
+            <div id="meemse_container" >
+                <div id="canvas_controls">
+                    <div id="expand_div" title="Maximize the model diagram">
+                        <img id='expand_icon' src='static/img/expand.png'>
+                    </div>
+                    <div id="collapse_div" title="Shrink the model diagram">
+                        <img id='collapse_icon' src='static/img/collapse.png'>
+                    </div>
+                    <div id="save_div">
+                        <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
+                    </div>
+                </div>
+
+                <div id="spinner_div">
+                    <div>
+                        <img id="spinner_img" src="{% static 'img/spinner.svg' %}">
+                    </div>
+                    <p/>
+                    <div id="spinner_text">Running EEMS...</div>
+                </div>
+                <div id="log"></div>
+                <div id="infovis"></div>
+            </div>
+        </div>
     </div>
 
     <div id="about">

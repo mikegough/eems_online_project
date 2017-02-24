@@ -1,5 +1,6 @@
 body {
     margin:0px;
+	overflow-x:hidden;
 }
 
 #about a {
@@ -125,8 +126,8 @@ h4 {
 
 #meemse_container {
 	top: 262px;
-	width: 52.5%;
-	height: calc(100% - 330px);
+	width: calc(50% + 40px);
+	height: calc(100% - 325px);
 	margin: 0 auto;
 	position: absolute;
 	cursor: move;
@@ -136,8 +137,8 @@ h4 {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	right: 0px;
-	float: right;
+	left: 0px;
+	float: left;
 	z-index: 2;
 	-webkit-transition: background 0.1s linear;
 	-moz-transition: background 0.1s linear;
@@ -145,15 +146,15 @@ h4 {
 	-o-transition: background 0.1s linear;
 	transition: background 0.1s linear;
 	border-bottom-left-radius: 5px;
-	background-color: rgba(255,255,255,0);
-	box-shadow: 0px 0px 0px rgba(0,0,0,0);
+	background-color: rgba(255,255,255,.7);
 	overflow: hidden;
 	padding: 25px 5px 0px 5px;
+	box-shadow: 0px 0px 20px rgba(0,0,0,.3);
 }
 
 #meemse_container:hover {
-    background-color: rgba(255,255,255,.5);
-    box-shadow: 0px 0px 20px rgba(0,0,0,.1);
+    background-color: rgba(255,255,255,.8);
+    box-shadow: 0px 0px 20px rgba(0,0,0,.5);
 }
 
 
@@ -184,11 +185,11 @@ h4 {
 	position: relative;
 	text-align: center;
 	width: 100%;
-	top: -15px !important;
+	top: -2px !important;
 	font-size: 1.0em;
 	font-weight: bold;
 	color: #23A4FF;
-	height: 20px;
+	height: 30px;
 }
 
 .log_text_second_line {
@@ -225,8 +226,8 @@ h4 {
 .alertify {
 	top: 210px !important;
 	width: 680px !important;
-	right: 100px !important;
-	left: unset !important;
+	left: 350px !important;
+	right: unset !important;
 }
 
 div#alertify-cover {
@@ -286,16 +287,16 @@ li a.active {
 #control_panel {
 	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
 	position: absolute;
-	float: right;
+	float: left;
 	top: 106px;
-	right: 0px;
+	left: 0px;
 	background-color: rgba(255,255,255,1);
 	padding: 15px 25px 15px 25px;
 	width: 50%;
-	min-width: 788px;
 	z-index: 999;
 	font-family: tahoma;
 	font-size: 16px;
+	min-width: 680px;
 }
 
 #files_label {
@@ -403,10 +404,12 @@ li a.active {
 #getting_started {
 	position: relative;
 	float: left;
-	line-height: 43px;
 	font-size: .95em;
-	width: calc(100% - 560px);
-	white-space:nowrap;
+	width: calc(100% - 580px);
+	padding: 20px 5px 0px 5px;
+	text-align: center;
+	line-height: 18px;
+	overflow-wrap: break-word;
 }
 
 .node_icon {
@@ -429,7 +432,7 @@ li a.active {
 
 #run_eems_div {
 	float: right;
-	width: 169px;
+	width: 199px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
@@ -451,6 +454,7 @@ li a.active {
 	position: relative;
 	left: 5px;
 	padding: 0px 14px;
+	width: 160px;
 }
 
 .disabled {
@@ -560,8 +564,8 @@ li a.active {
 }
 
 .legend_png {
- 	float:left;
-	width:500px;
+	float: left;
+	width: 400px;
 }
 
 #spinner_div {
@@ -812,11 +816,12 @@ ul.buttons li.selected a:hover
 }
 
 #canvas_controls {
-	position: absolute;
+	position: relative;
 	z-index: 9999;
-	top: 170px;
-	right: 60px;
+	top: 0px;
+	right: 55px;
 	opacity: .8;
+	float: right;
 }
 
 #expand_div {
@@ -859,7 +864,7 @@ ul.buttons li.selected a:hover
 #model_info_div {
 	font-size: .8em;
 	color: #4e4e4e;
-	height: 126px;
+	height: 136px;
 }
 
 #model_info_header {
@@ -938,16 +943,17 @@ figcaption {
 }
 
 #map_quality {
-	width: 90px;
+	width: 92px;
+	font-size: 1em;
 }
 
 #quality_selector_div {
-	font-size: .75em;
-	top: 5px;
+	font-size: .7em;
+	top: 3px;
 	position: relative;
 	padding: 3px;
 	background-color: transparent !important;
-	left: 3px;
+	left: 2px;
 }
 
 /* Transparency slider */
@@ -955,13 +961,10 @@ figcaption {
 	display: none;
 	background: #FFFFFF;
 	position: absolute;
-	left: 535px;
+	right: 435px;
 	bottom: 33px;
-	/* top: 240px; */
-	height: 92px;
-	/* width: 28px; */
+	height: 80px;
 	width: 15px;
-	/* border: 1px solid rgba(0,0,0,0.4); */
 	border-radius: 5px;
 	z-index: 2;
 	box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -1024,3 +1027,5 @@ table.tableizer-table {
 	white-space: nowrap;
 	padding: 10px;
 }
+
+

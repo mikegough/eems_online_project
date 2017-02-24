@@ -1,4 +1,16 @@
 $( document ).ready(function() {
+    <!-- Resize Meemse Container -->
+
+    var meemse_height = $("#meemse_container" ).height();
+    var meemse_width = $("#meemse_container" ).width();
+
+    $( "#meemse_container" ).resizable({
+        minHeight:20,
+        minWidth:0,
+        maxWidth:meemse_width,
+        maxHeight: meemse_height
+    });
+
 
     $("#files").prop('value', '');
 
@@ -575,7 +587,7 @@ $("#save_icon").on('click', function() {
 
 $("#expand_icon").on('click', function(){
     st.onClick(st.root);
-    $("#meemse_container").css("top",'105px');
+    $("#meemse_container").css("top",'106px');
     $("#meemse_container").css("background-color",'white');
     $("#meemse_container").css("opacity",'1');
     $("#meemse_container").height("calc(100% - 155px)");
@@ -586,6 +598,7 @@ $("#expand_icon").on('click', function(){
     st.controller.constrained=false;
     $("#expand_div").hide();
     $("#collapse_div").show();
+    $("#meemse_container").resizable('disable');
 });
 
 $("#collapse_icon").on('click', function(){
@@ -598,6 +611,7 @@ $("#collapse_icon").on('click', function(){
     $("#expand_div").show();
     $("#collapse_div").hide();
     st.canvas.resize(840,751);
+    $("#meemse_container").resizable('enable');
 });
 
 function get_additional_info(eems_model_id){
@@ -654,3 +668,4 @@ $("#contact_link").on('click', function(){
     $("#contact_link").addClass('active')
 
 });
+

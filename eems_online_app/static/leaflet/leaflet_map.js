@@ -2,11 +2,11 @@ var map = L.map('map', {
         zoomControl: false,
         attributionControl: false
     }
-).setView([36,-110.5], 6);
+).setView([37,-129.5], 6);
 
 // Basemaps
-gray=L.esri.basemapLayer("Gray").addTo(map);
-topographic=L.esri.basemapLayer("Topographic")
+topographic=L.esri.basemapLayer("Topographic").addTo(map);
+gray=L.esri.basemapLayer("Gray")
 national_geographic=L.esri.basemapLayer("NationalGeographic")
 imagery=L.esri.basemapLayer("Imagery")
 oceans=L.esri.basemapLayer("Oceans")
@@ -28,11 +28,11 @@ var groupedOverlays = {
 };
 
 L.control.zoom({
-     position:'topleft'
+     position:'topright'
 }).addTo(map);
 
 //DYNAMIC LEGEND
-var dynamic_legend = L.control({position: 'bottomleft'});
+var dynamic_legend = L.control({position: 'bottomright'});
 
 //Initialize Legend
 dynamic_legend.onAdd = function (map) {
@@ -43,7 +43,7 @@ dynamic_legend.onAdd = function (map) {
 
 dynamic_legend.addTo(map)
 
-var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topleft'};
+var options = { exclusiveGroups: ["Reporting Units","Base Maps"], position:'topright'};
 L.control.groupedLayers("", groupedOverlays, options).addTo(map);
 
 function swapImageOverlay(layer_name, eems_model_id, delay_speed) {
