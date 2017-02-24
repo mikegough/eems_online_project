@@ -8,7 +8,13 @@ $( document ).ready(function() {
         minHeight:20,
         minWidth:0,
         maxWidth:meemse_width,
-        maxHeight: meemse_height
+        maxHeight:meemse_height,
+        start: function(){
+            $(this).addClass("meemse_resize_min")
+        },
+        stop: function(){
+            $(this).removeClass("meemse_resize_min")
+        }
     });
 
 
@@ -588,11 +594,11 @@ $("#save_icon").on('click', function() {
 $("#expand_icon").on('click', function(){
     st.onClick(st.root);
     $("#meemse_container").css("top",'106px');
+    $("#meemse_container").css("z-index",'9999');
     $("#meemse_container").css("background-color",'white');
     $("#meemse_container").css("opacity",'1');
     $("#meemse_container").height("calc(100% - 155px)");
-    $("#meemse_container").width("100%");
-    $("#infovis").width("100%");
+    $("#meemse_container").width("calc(200% + 155px)");
     $("#infovis-canvaswidget").width("100%");
     st.canvas.resize(screen.width,$("#meemse_container").height());
     st.controller.constrained=false;
@@ -602,10 +608,11 @@ $("#expand_icon").on('click', function(){
 });
 
 $("#collapse_icon").on('click', function(){
-    $("#meemse_container").css("top",'262px');
+    $("#meemse_container").css("top",'272px');
+    $("#meemse_container").css("z-index",'2');
     $("#meemse_container").css("background-color",'');
-    $("#meemse_container").height("calc(100% - 330px)");
-    $("#meemse_container").width("52.5%");
+    $("#meemse_container").height("calc(100% - 325px)");
+    $("#meemse_container").width("calc(100% + 40px)");
     $("#infovis-canvaswidget").width("52.5%");
     st.controller.constrained=true;
     $("#expand_div").show();

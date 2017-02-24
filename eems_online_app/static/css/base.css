@@ -125,9 +125,11 @@ h4 {
 }
 
 #meemse_container {
-	top: 262px;
-	width: calc(50% + 40px);
-	height: calc(100% - 325px);
+	top: 272px;
+	z-index:999;
+	width: calc(100% + 40px);
+	min-width: 719.5px;
+	height: calc(100% - 335px);
 	margin: 0 auto;
 	position: absolute;
 	cursor: move;
@@ -153,9 +155,14 @@ h4 {
 }
 
 #meemse_container:hover {
-    background-color: rgba(255,255,255,.8);
+    background-color: rgba(255,255,255,.9);
     box-shadow: 0px 0px 20px rgba(0,0,0,.5);
 }
+
+.meemse_resize_min{
+	min-width:0px !important;
+}
+
 
 
 #center-container {
@@ -226,7 +233,7 @@ h4 {
 .alertify {
 	top: 210px !important;
 	width: 680px !important;
-	left: 350px !important;
+	left: 325px !important;
 	right: unset !important;
 }
 
@@ -284,15 +291,21 @@ li a.active {
     background-color: #4CAF50;
 }
 
+#control_panel_and_meemse_container{
+	position: absolute;
+	width: calc(50% - 75px);
+	height:100%;
+}
+
 #control_panel {
 	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
-	position: absolute;
+	position: relative;
 	float: left;
 	top: 106px;
 	left: 0px;
 	background-color: rgba(255,255,255,1);
 	padding: 15px 25px 15px 25px;
-	width: 50%;
+	width: 100%;
 	z-index: 999;
 	font-family: tahoma;
 	font-size: 16px;
@@ -818,7 +831,7 @@ ul.buttons li.selected a:hover
 #canvas_controls {
 	position: relative;
 	z-index: 9999;
-	top: 0px;
+	top: -10px;
 	right: 55px;
 	opacity: .8;
 	float: right;
