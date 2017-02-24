@@ -898,7 +898,7 @@ ul.buttons li.selected a:hover
 	margin-left: auto;
 	margin-right: auto;
 	text-align: justify;
-	width: 100%;
+	width: calc(100% - 140px);
 }
 
 #about_contents {
