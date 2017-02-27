@@ -323,9 +323,9 @@ li a.active {
 	position: absolute;
 	float: right;
 	display: none;
-	right: 12px;
+	right: 28px;
 	font-size: .95em !important;
-	width: 95px;
+	width: 130px;
 	height: 18px;
 	line-height: 17px !important;
 }
@@ -345,7 +345,6 @@ li a.active {
 }
 
 .alertify-button-ok{
-    margin:0px 15px;
 }
 
 #filename {
@@ -454,18 +453,19 @@ li a.active {
 }
 
 #save_eems_div {
-	display:none;
+	display: none;
 	float: right;
-	width: 169px;
+	width: 191px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
 	right: -8px;
+	padding: 10px 14px;
 }
 
 #run_eems_button {
 	position: relative;
-	left: 5px;
+	left: -2px;
 	padding: 0px 14px;
 	width: 160px;
 }
