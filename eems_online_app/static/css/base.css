@@ -640,7 +640,7 @@ li a.active {
 #button_div {
 	position: absolute;
 	z-index: 2;
-	left:15%;
+	right:15%;
 	top: 0px;
 	display: none;
 	width: 230px;

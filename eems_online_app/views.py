@@ -51,7 +51,7 @@ def index(request):
         # Get initial EEMS model (default to ID=1)
         initial_eems_model_id = request.GET.get('model', 1)
 
-        query = "SELECT ID, NAME, EXTENT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
+        query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -65,7 +65,7 @@ def index(request):
 
         # GET all available EEMS Models
         eems_online_models = {}
-        query = "SELECT ID, NAME, EXTENT, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
+        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
         print query;
         cursor.execute(query)
         for row in cursor:
