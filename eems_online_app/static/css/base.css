@@ -333,6 +333,11 @@ li a.active {
 	z-index: 3;
 }
 
+.stay_put{
+	position: absolute !important;
+	left: 270px;
+}
+
 #modify_model{
 
 }
@@ -483,13 +488,11 @@ li a.active {
 }
 
 #save_eems_div {
-	display: none;
-	float: left;
+	float: right;
 	width: 191px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	right: -8px;
 	padding: 10px 14px;
 }
 
@@ -501,7 +504,7 @@ li a.active {
 }
 
 .disabled {
-	background-color: #ccc !important;
+	background-color: #ECE9E9 !important;
 	pointer-events: none;
 	color: #8A8A8A !important;
 	text-shadow: unset !important;

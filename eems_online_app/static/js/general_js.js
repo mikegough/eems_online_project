@@ -12,14 +12,14 @@ $( document ).ready(function() {
         maxHeight:max_height,
 
         start: function(){
-            //$(this).addClass("meemse_resize_min")
         },
         resize: function(){
-            if ($(this).width() < 630 ){
-               // $("#getting_started").hide()
+            if ($(this).width() < 470) {
+                $("#save_eems_div").addClass("stay_put");
             }
             else {
-                $("#getting_started").show()
+                $("#save_eems_div").removeClass("stay_put");
+
             }
         },
 
@@ -75,8 +75,8 @@ $('#eems_model_dropdown').change(function(){
 
         $("#button_div").hide();
         $("#run_eems_button").addClass("disabled");
-        $("#run_eems_div").show();
-        $("#save_eems_div").hide();
+        $("#download_label").addClass("disabled");
+        $("#link_label").addClass("disabled");
 
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
 
@@ -206,13 +206,12 @@ function run_eems(download) {
                 console.log("EEMS Model ID: " + eems_model_modified_id);
                 console.log("EEMS Command Modifications: ");
                 console.log(JSON.stringify(eems_bundled_commands, null, 2));
-                $("#download_label").show();
-                $("#link_label").show();
+                $("#download_label").removeClass("disabled");
+                $("#link_label").removeClass("disabled");
                 $("#button_div").show();
                 eems_model_id_for_map_display = eems_model_modified_id;
                 swapImageOverlay(last_layer_clicked, eems_model_id_for_map_display);
-                $("#run_eems_div").hide();
-                $("#save_eems_div").show();
+                $("#run_eems_div").addClass("disabled");
             }
         },
         error: function (xhr, errmsg, err) {
@@ -407,9 +406,10 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
             $("#run_eems_button").removeClass("disabled");
             $("#quality_selector_div").removeClass("disabled");
-            $('#map_quality').removeAttr('disabled');
-            $("#run_eems_div").show();
-            $("#save_eems_div").hide();
+            $("#map_quality").removeAttr("disabled");
+            $("#run_eems_div").removeClass("disabled");
+            $("#download_label").addClass("disabled");
+            $("#link_label").addClass("disabled");
 
         }
     });
