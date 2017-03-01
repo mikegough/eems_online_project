@@ -129,13 +129,10 @@ h4 {
 }
 
 #meemse_container {
-	top: 272px;
-	z-index:999;
-	width: calc(100% + 40px);
-	min-width: 719.5px;
-	height: calc(100% - 335px);
+	width: calc(100% + 30px);
+	height: calc(100% - 281px);
 	margin: 0 auto;
-	position: absolute;
+	position: relative;
 	cursor: move;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -156,6 +153,7 @@ h4 {
 	overflow: hidden;
 	padding: 25px 5px 0px 5px;
 	box-shadow: 0px 0px 20px rgba(0,0,0,.3);
+	/* max-height: calc(100% - 415px); */
 }
 
 #meemse_container:hover {
@@ -167,6 +165,15 @@ h4 {
 	min-width:0px !important;
 }
 
+.fixed_meemse{
+	position:fixed !important;
+	top:0px !important;
+	height:100% !important;
+	width:100% !important;
+	background-color:white !important;
+	opacity:1 !important;
+	z-index:999999 !important;
+}
 
 
 #center-container {
@@ -237,7 +244,7 @@ h4 {
 .alertify {
 	top: 210px !important;
 	width: 680px !important;
-	left: 325px !important;
+	left: 295px !important;
 	right: unset !important;
 }
 
@@ -295,25 +302,39 @@ li a.active {
     background-color: #4CAF50;
 }
 
-#control_panel_and_meemse_container{
+#control_panel_and_meemse_container {
 	position: absolute;
-	width: calc(50% - 75px);
-	height:100%;
+	width: 680px;
+	height: calc(100% - 140px);
+	top: 106px;
+	padding-right: 40px;
+	z-index: 9999;
 }
 
-#control_panel {
-	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
+.control_panel {
 	position: relative;
 	float: left;
-	top: 106px;
 	left: 0px;
 	background-color: rgba(255,255,255,1);
-	padding: 15px 25px 15px 25px;
+	padding: 15px 20px;
 	width: 100%;
 	z-index: 999;
 	font-family: tahoma;
 	font-size: 16px;
-	min-width: 680px;
+	box-shadow: 0px 0px 20px rgba(0,0,0,.2);
+	overflow: hidden;
+}
+
+#run_and_save {
+	position: absolute;
+	height: 70px;
+	width: calc(100% - 40px);
+	bottom: 0px;
+	z-index: 3;
+}
+
+#modify_model{
+
 }
 
 #files_label {
@@ -413,19 +434,24 @@ li a.active {
 	float: left;
 	line-height: 43px;
 	margin-right: 13px;
-	left: -5px;
 	width: 308px;
 }
 
 #getting_started {
-	position: relative;
-	float: left;
+	float: right;
 	font-size: .95em;
-	width: calc(100% - 580px);
-	padding: 20px 5px 0px 5px;
-	text-align: center;
-	line-height: 18px;
-	overflow-wrap: break-word;
+	width: calc(100% - 412px);
+	text-align: left;
+	z-index: 999;
+	font-family: tahoma;
+	line-height: 43px;
+	position: absolute;
+	left: 370px;
+}
+
+#getting_started_text {
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .node_icon {
@@ -447,7 +473,7 @@ li a.active {
 }
 
 #run_eems_div {
-	float: right;
+	float: left;
 	width: 199px;
 	margin-left: auto;
 	margin-right: auto;
@@ -458,7 +484,7 @@ li a.active {
 
 #save_eems_div {
 	display: none;
-	float: right;
+	float: left;
 	width: 191px;
 	margin-left: auto;
 	margin-right: auto;
@@ -881,7 +907,10 @@ ul.buttons li.selected a:hover
 #model_info_div {
 	font-size: .8em;
 	color: #4e4e4e;
-	height: 136px;
+	position: relative;
+	top: 0px;
+	float: left;
+	height: 48px;
 }
 
 #model_info_header {

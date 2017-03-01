@@ -56,7 +56,7 @@ function init(json, eems_file_name){
         orientation:"top",
         //Higher numbers = higher on the page
         //offsetY:120,
-        offsetY:300,
+        offsetY:160,
         //To Show all nodes. Set to false. modify LevelsToShow.
         constrained:true,
         levelsToShow: 40,

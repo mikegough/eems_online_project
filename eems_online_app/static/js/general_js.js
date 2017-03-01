@@ -1,18 +1,30 @@
 $( document ).ready(function() {
     <!-- Resize Meemse Container -->
 
-    var meemse_height = $("#meemse_container" ).height();
-    var meemse_width = $("#meemse_container" ).width();
+    var max_height = $("#control_panel_and_meemse_container").height();
+    var max_width = $(window).width();
+    var max_width = 640;
 
-    $( "#meemse_container" ).resizable({
-        minHeight:20,
+    $( "#control_panel_and_meemse_container" ).resizable({
+        minHeight:183,
         minWidth:0,
-        maxWidth:meemse_width,
-        maxHeight:meemse_height,
+        //maxWidth:max_width,
+        maxHeight:max_height,
+
         start: function(){
-            $(this).addClass("meemse_resize_min")
+            //$(this).addClass("meemse_resize_min")
         },
+        resize: function(){
+            if ($(this).width() < 630 ){
+               // $("#getting_started").hide()
+            }
+            else {
+                $("#getting_started").show()
+            }
+        },
+
         stop: function(){
+            st.canvas.resize($("#meemse_container").width(),$("#meemse_container").height());
         }
     });
 
@@ -592,12 +604,7 @@ $("#save_icon").on('click', function() {
 
 $("#expand_icon").on('click', function(){
     st.onClick(st.root);
-    $("#meemse_container").css("top",'106px');
-    $("#meemse_container").css("z-index",'9999');
-    $("#meemse_container").css("background-color",'white');
-    $("#meemse_container").css("opacity",'1');
-    $("#meemse_container").height("calc(100% - 155px)");
-    $("#meemse_container").width("calc(200% + 155px)");
+    $("#meemse_container").addClass("fixed_meemse");
     $("#infovis-canvaswidget").width("100%");
     st.canvas.resize(screen.width,$("#meemse_container").height());
     st.controller.constrained=false;
@@ -607,11 +614,7 @@ $("#expand_icon").on('click', function(){
 });
 
 $("#collapse_icon").on('click', function(){
-    $("#meemse_container").css("top",'272px');
-    $("#meemse_container").css("z-index",'2');
-    $("#meemse_container").css("background-color",'');
-    $("#meemse_container").height("calc(100% - 325px)");
-    $("#meemse_container").width("calc(100% + 40px)");
+    $("#meemse_container").removeClass("fixed_meemse");
     $("#infovis-canvaswidget").width("52.5%");
     st.controller.constrained=true;
     $("#expand_div").show();
