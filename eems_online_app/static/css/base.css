@@ -149,7 +149,7 @@ h4 {
 	-o-transition: background 0.1s linear;
 	transition: background 0.1s linear;
 	border-bottom-left-radius: 5px;
-	background-color: rgba(255,255,255,.7);
+	background-color: rgba(255,255,255,.9);
 	overflow: hidden;
 	padding: 25px 5px 0px 5px;
 	box-shadow: 0px 0px 20px rgba(0,0,0,.3);
@@ -157,7 +157,7 @@ h4 {
 }
 
 #meemse_container:hover {
-    background-color: rgba(255,255,255,.9);
+    background-color: rgba(255,255,255,1);
     box-shadow: 0px 0px 20px rgba(0,0,0,.5);
 }
 
@@ -244,7 +244,7 @@ h4 {
 .alertify {
 	top: 210px !important;
 	width: 680px !important;
-	left: 295px !important;
+	left: 290px !important;
 	right: unset !important;
 }
 
@@ -304,8 +304,8 @@ li a.active {
 
 #control_panel_and_meemse_container {
 	position: absolute;
-	width: 680px;
-	height: calc(100% - 140px);
+	width: 673px;
+	height: calc(100% - 142px);
 	top: 106px;
 	padding-right: 40px;
 	z-index: 9999;

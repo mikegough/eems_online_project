@@ -2,7 +2,7 @@ var map = L.map('map', {
         zoomControl: false,
         attributionControl: false
     }
-).setView([37,-129.5], 6);
+).setView([37,-126.5], 6);
 
 // Basemaps
 topographic=L.esri.basemapLayer("Topographic").addTo(map);
