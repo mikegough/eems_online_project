@@ -1,4 +1,5 @@
 $( document ).ready(function() {
+
     <!-- Resize Meemse Container -->
 
     var max_height = $("#control_panel_and_meemse_container").height();
@@ -19,7 +20,6 @@ $( document ).ready(function() {
             }
             else {
                 $("#save_eems_div").removeClass("stay_put");
-
             }
         },
 
@@ -46,12 +46,12 @@ $( document ).ready(function() {
 
     eems_model_id = initial_eems_model_json[0][0];
 
-    eems_model_id_for_map_display = eems_model_id
+    eems_model_id_for_map_display = eems_model_id;
 
-    $("#eems_model_dropdown option[value=" + eems_model_id + "]").attr('selected', 'selected').trigger("change")
+    $("#eems_model_dropdown option[value=" + eems_model_id + "]").attr('selected', 'selected').trigger("change");
 
     init_eems_file_name = initial_eems_model_json[0][1][1];
-    init_eems_file =  "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
+    init_eems_file =  "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json";
     init_eems_model = init_eems_file_name.split(".")[0];
 
     $.getJSON(init_eems_file, function(results) {
@@ -78,10 +78,10 @@ $('#eems_model_dropdown').change(function(){
         $("#download_label").addClass("disabled");
         $("#link_label").addClass("disabled");
 
-        overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'))
+        overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
 
         eems_model_modified_id = '';
-        eems_model_current_model = $("#eems_model_dropdown option:selected").text()
+        eems_model_current_model = $("#eems_model_dropdown option:selected").text();
 
         // Get the JSON file and render the model
         if ($('#eems_model_dropdown option:selected').text() != "") {
@@ -90,16 +90,16 @@ $('#eems_model_dropdown').change(function(){
             $("#quality_selector_div").addClass("disabled");
             $('#map_quality').attr('disabled', 'disabled');
 
-            $("#user_defined_model").html("")
+            $("#user_defined_model").html("");
 
             eems_model_id = this.value;
             eems_model_id_for_map_display = this.value;
 
-            var path_to_json_file = "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json"
+            var path_to_json_file = "static/eems/models/" + eems_model_id_for_map_display + "/tree/meemse_tree.json";
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
             eems_online_model_description = eems_online_models_json[this.value][0][2];
-            $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more..</span>")
+            $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more..</span>");
 
             $("#model_info_more").on("click", function(){
                 get_additional_info(eems_model_id)
@@ -576,15 +576,15 @@ function reset_eems_bundled_commands(){
 }
 
 $('#map_original_button').on('click', function () {
-    swapImageOverlay(last_layer_clicked,eems_model_id)
-    eems_model_id_for_map_display = eems_model_id
+    swapImageOverlay(last_layer_clicked,eems_model_id);
+    eems_model_id_for_map_display = eems_model_id;
     $("#map_original_button").addClass('selected');
     $("#map_modified_button").removeClass('selected');
 });
 
 $('#map_modified_button').on('click', function () {
-    swapImageOverlay(last_layer_clicked,eems_model_modified_id)
-    eems_model_id_for_map_display = eems_model_modified_id
+    swapImageOverlay(last_layer_clicked,eems_model_modified_id);
+    eems_model_id_for_map_display = eems_model_modified_id;
     $("#map_modified_button").addClass('selected');
     $("#map_original_button").removeClass('selected');
 });
@@ -635,10 +635,10 @@ function get_additional_info(eems_model_id){
         // handle a successful response
         success: function (response) {
             var json_additional_info = JSON.parse(response)
-            model_name = json_additional_info["name"]
-            long_description = json_additional_info["long_description"]
-            author = json_additional_info["author"]
-            creation_date = json_additional_info["creation_date"]
+            model_name = json_additional_info["name"];
+            long_description = json_additional_info["long_description"];
+            author = json_additional_info["author"];
+            creation_date = json_additional_info["creation_date"];
             alertify.alert("<div class='long_description'><div class='long_description_header'>Model: </div>" + model_name + "<br><div class='long_description_header'>Author: </div>" + author +"<br><div class='long_description_header'>" + "Creation Date: </div>" + creation_date + "</p><div class='long_description_header'>Description</div></p>" + long_description + "</div>");
         },
 
@@ -652,29 +652,26 @@ $("#about_link").on('click', function(){
     $("#about").show();
     $("#home").hide();
     $("#contact").hide();
-    $("#about_link").addClass('active')
-    $("#home_link").removeClass('active')
+    $("#about_link").addClass('active');
+    $("#home_link").removeClass('active');
     $("#contact_link").removeClass('active')
-
 });
 
 $("#home_link").on('click', function(){
     $("#about").hide();
     $("#home").show();
     $("#contact").hide();
-    $("#about_link").removeClass('active')
-    $("#home_link").addClass('active')
+    $("#about_link").removeClass('active');
+    $("#home_link").addClass('active');
     $("#contact_link").removeClass('active')
-
 });
 
 $("#contact_link").on('click', function(){
     $("#about").hide();
     $("#home").hide();
     $("#contact").show();
-    $("#about_link").removeClass('active')
-    $("#home_link").removeClass('active')
-    $("#contact_link").addClass('active')
-
+    $("#about_link").removeClass('active');
+    $("#home_link").removeClass('active');
+    $("#contact_link").addClass('active');
 });
 
