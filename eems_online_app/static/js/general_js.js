@@ -605,6 +605,7 @@ $("#save_icon").on('click', function() {
 $("#expand_icon").on('click', function(){
     st.onClick(st.root);
     $("#meemse_container").addClass("fixed_meemse");
+    $("#canvas_controls").addClass("fixed_canvas_controls");
     $("#infovis-canvaswidget").width("100%");
     st.canvas.resize(screen.width,$("#meemse_container").height());
     st.controller.constrained=false;
@@ -615,6 +616,7 @@ $("#expand_icon").on('click', function(){
 
 $("#collapse_icon").on('click', function(){
     $("#meemse_container").removeClass("fixed_meemse");
+    $("#canvas_controls").removeClass("fixed_canvas_controls");
     $("#infovis-canvaswidget").width("52.5%");
     st.controller.constrained=true;
     $("#expand_div").show();

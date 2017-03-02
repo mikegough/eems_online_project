@@ -175,6 +175,10 @@ h4 {
 	z-index:999999 !important;
 }
 
+.fixed_canvas_controls{
+	position: fixed !important;
+	top: 120px !important;
+}
 
 #center-container {
     height:100%;
