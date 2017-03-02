@@ -1,6 +1,9 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <head>
+    <title> EEMS Online </title>
+
+    <link rel="icon" href="static/img/eems.png">
 
     <script>
 
@@ -44,7 +47,6 @@
 
     <!-- JSON EEMS Commands -->
     <script src="{% static 'json/FuncListForMike.json' %}"></script>
-
     <!-- Canvas2image -->
     <script src="{% static 'js/html2canvas/html2canvas.js' %}"></script>
 
@@ -158,9 +160,9 @@
         <div id="about_contents">
             <h2>About EEMS Online <div id="manual"><a title="Click to download the EEMS 2.0 desktop manual" href="static/docs/EEMS2.0_Manual.pdf" download><img id="manual_icon" src="/static/img/manual.png"><br>EEMS Manual</a></div></h2>
             EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="http://consbio.org">Conservation Biology Institute (CBI)</a>. It is designed to allow the user to explore, modify, and run models constructed within the Environmental Evaluation Modeling System (EEMS),
-             a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan, Ph.D.</a>, an ecological modeler at CBI.
+             a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan,</a> an ecological modeler at CBI.
 
-            For more information about EEMS and fuzzy logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>. EEMS is available as set of script tools in an ArcGIS toolbox, or as a standalone command-line based program. An EEMS manual is included with the software package, but it can also be downloaded separately by clicking <a href="/static/docs/EEMS2.0_Manual.pdf" download target="_blank">here</a>.
+            For more information about EEMS and fuzzy logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>. EEMS is available as a set of script tools in an ArcGIS toolbox, or as a standalone command-line based program. An EEMS manual is included with the software package, but it can also be downloaded separately by clicking <a href="/static/docs/EEMS2.0_Manual.pdf" download target="_blank">here</a>.
             <h2>Getting Started</h2>
             To get started with EEMS Online, select an EEMS model from the dropdown menu (labeled #1 in the control panel shown below). A short description provides some basic background information about the model. Click on the "Learn more"
                 link for additional information.
@@ -168,7 +170,7 @@
                     <img id="screen_capture_1" class="screen_capture" src="/static/img/screen_capture_1.png">
                     <figcaption>Fig.1 - Use the dropdown menu to select a model.</figcaption>
                 </figure>
-            Once you have selected a model, you can use the interactive diagram on the right-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
+            Once you have selected a model, you can use the interactive diagram on the left-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
             the map and expand the node to show any input variables. Clicking the gear icon on any node brings up a dialog box that allows you to make changes to the operator, or change the operator to a different operator (Fig 2).
             The histogram to the right of the operator selection menu shows the distribution of data for the current node. The Y-Axis indicates the number of reporting units that have the corresonding value on the X-Axis.
             The available options will vary depending on the node's current operator.
