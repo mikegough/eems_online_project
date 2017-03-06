@@ -4,7 +4,38 @@ $( function() {
 
 $("#submit").click(function(e) {
 
+    upload_files()
+    //process_user_data()
+
+});
+
+function upload_files(){
+
     $("#spinner_div").show();
+
+    var form = document.querySelector('#file-form');
+    var data = new FormData(form);
+
+    $.ajax({
+        url : "/upload_files",
+        type: "POST",
+        data : data,
+        processData: false,
+        contentType: false,
+        success:function(response){
+
+            process_user_data()
+        },
+        error: function (xhr, errmsg, err) {
+            //if fails
+            console.log(xhr)
+        }
+    });
+
+}
+
+function process_user_data() {
+
 
     var owner = $("#owner").val();
     var model_name = $("#model_name").val();
@@ -13,14 +44,14 @@ $("#submit").click(function(e) {
     var resolution = $("#resolution").val();
 
     /*
-    var xmin = $("#xmin").val().replace(/\s+/g, '');
-    var ymin = $("#ymin").val().replace(/\s+/g, '');
-    var xmax = $("#xmax").val().replace(/\s+/g, '');
-    var ymax = $("#ymax").val().replace(/\s+/g, '');
+     var xmin = $("#xmin").val().replace(/\s+/g, '');
+     var ymin = $("#ymin").val().replace(/\s+/g, '');
+     var xmax = $("#xmax").val().replace(/\s+/g, '');
+     var ymax = $("#ymax").val().replace(/\s+/g, '');
 
-    var epsg = $("#epsg").val();
-    var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
-    */
+     var epsg = $("#epsg").val();
+     var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
+     */
     var short_description = $("#short_description").val();
     var long_description = $("#long_description").val();
 
@@ -47,8 +78,8 @@ $("#submit").click(function(e) {
             alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please try again.</div>")
         },
 
-        complete: function(){
+        complete: function () {
             $("#spinner_div").hide()
         }
     });
-});
+}

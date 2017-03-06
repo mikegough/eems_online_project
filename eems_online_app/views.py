@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 from django.conf import settings
 from django.template.loader import render_to_string
+from django import forms
 
 import os
 import shutil
@@ -306,6 +307,25 @@ def upload(request):
             return render(request, "upload.html")
         else:
             return redirect(reverse(login)+"?auth=0")
+
+class FileUploadForm(forms.Form):
+    file = forms.FileField()
+
+@csrf_exempt
+def upload_files(request):
+    mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/{}'.format('model.mpt')
+    if request.method == 'POST':
+        form = FileUploadForm(files=request.FILES)
+        if form.is_valid():
+            f = request.FILES['file']
+            print 'valid form'
+            with open(mpt_file, 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+        else:
+            print 'invalid form'
+            print form.errors
+    return HttpResponse("Files uploaded successfully")
 
 @csrf_exempt
 def upload_form(request):
