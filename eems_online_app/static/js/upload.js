@@ -10,6 +10,7 @@ $("#submit").click(function(e) {
     var model_name = $("#model_name").val();
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();
+    var resolution = $("#resolution").val();
 
     /*
     var xmin = $("#xmin").val().replace(/\s+/g, '');
@@ -31,6 +32,7 @@ $("#submit").click(function(e) {
             'model_name': model_name,
             'model_author': model_author,
             'creation_date': creation_date,
+            'resolution': resolution,
             //'epsg': epsg,
             //'extent': extent,
             'short_description': short_description,

@@ -316,6 +316,7 @@ def upload_form(request):
         eems_model_name = request.POST.get('model_name')
         author = str(request.POST.get('model_author'))
         creation_date = str(request.POST.get('creation_date'))
+        resolution = float(request.POST.get('resolution'))
         #input_epsg = int(request.POST.get('epsg'))
         short_description = str(request.POST.get('short_description'))
         long_description = str(request.POST.get('long_description'))
@@ -326,10 +327,19 @@ def upload_form(request):
         mpt_file = glob.glob(input_dir + "/*.mpt")[0]
         mpt_file = mpt_file.replace("\\","/")
 
-        netCDF_file = glob.glob(input_dir + "/*.nc")[0]
-        netCDF_file = netCDF_file.replace("\\","/")
+        FGDB_file = glob.glob(input_dir + "/*.gdb")[0]
 
-        netCDF_file_name = os.path.basename(netCDF_file)
+        if FGDB_file:
+            FGDB_file = FGDB_file.replace("\\","/")
+            netCDF_file = mpt_file.replace(".mpt", ".nc")
+            netCDF_file_name = os.path.basename(netCDF_file)
+            print netCDF_file
+            rasterize(FGDB_file, netCDF_file, resolution)
+
+        else:
+            netCDF_file = glob.glob(input_dir + "/*.nc")[0]
+            netCDF_file = netCDF_file.replace("\\","/")
+            netCDF_file_name = os.path.basename(netCDF_file)
 
         input_epsg  = getEPSGFromNCfile(netCDF_file)
 
@@ -472,3 +482,71 @@ def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to
   poly.AddGeometry(ring)
   poly.Transform(transform)
   return(poly.GetEnvelope())
+
+
+def rasterize(infile, outfile, pixel_size):
+
+  fill = -9999. # nodata value
+  # We assume a single layer, and that all features have the same fields.
+  # So we use feature 0 as a pattern for the fields to transcribe.
+
+  # Fields we don't want to turn into netcdf variables:
+  exclude = ['Shape_Length', 'Shape_Area']
+
+  # Need to map gdal types to numpy types, but not sure how to
+  # use the library commands to do this. Right now, all I have is reals:
+  npTypes = {2: np.float32, 0:np.int, 4:np.int}
+  ps = pixel_size # shorthand
+
+  c = ogr.Open(infile)
+  src = c.GetLayer(0)
+  x_min, x_max, y_min, y_max = src.GetExtent()
+  rows = int((y_max - y_min) / ps)
+  cols = int((x_max - x_min) / ps)
+
+  # create an in-memory workspace
+  # might need to do this per-field if we have other data types
+  buf = gdal.GetDriverByName('MEM').Create('', cols, rows, 1, gdal.GDT_Float32)
+  wkt = src.GetSpatialRef().ExportToWkt()
+  buf.SetProjection(wkt)
+  # Going north-to-south
+  # buf.SetGeoTransform((x_min, ps, 0, y_min, 0, ps))
+  buf.SetGeoTransform((x_min, ps, 0, y_max, 0, -ps))
+  band = buf.GetRasterBand(1)
+  band.SetNoDataValue(fill)
+
+  # make netcdf vars for each field
+  featureDefn = src.GetLayerDefn()
+  with netCDF4.Dataset(outfile, 'w') as nc:
+    nc.createDimension('y', rows)
+    nc.createDimension('x', cols)
+    nc.createVariable('y', np.double, ['y'])
+    nc.createVariable('x', np.double, ['x'])
+    # For CF-compliant projection info
+    nc.createVariable('crs', np.int32, [])
+    nc.variables['crs'].setncattr('crs_wkt', wkt)
+
+    for fieldIndex in range(featureDefn.GetFieldCount()):
+      fieldDefn = featureDefn.GetFieldDefn(fieldIndex)
+      fieldName = fieldDefn.GetNameRef()
+      if fieldName in exclude:
+        continue
+      type = fieldDefn.GetType()
+      npType = npTypes[type]
+      nc.createVariable(fieldName, npType, ['y', 'x'], fill_value=fill)
+
+    # Now we've created all the vars, we write them. If we did this
+    # in the above loop, we'd switch the netCDF driver between define
+    # and write modes, which takes a lot of time
+    # Going north-to-south
+    # nc.variables['y'][:] = [(y_min + ps/2.) + ps * i for i in range(rows)]
+    nc.variables['y'][:] = [(y_max - ps/2.) - ps * i for i in range(rows)]
+    nc.variables['x'][:] = [(x_min + ps/2.) + ps * i for i in range(cols)]
+    for fieldIndex in range(featureDefn.GetFieldCount()):
+      fieldName = featureDefn.GetFieldDefn(fieldIndex).GetNameRef()
+      if fieldName in exclude:
+        continue
+      band.Fill(fill) # Don't know whether this is necessary
+      err = gdal.RasterizeLayer(buf, [1], src,
+        options=["ATTRIBUTE=%s" % fieldName])
+      nc.variables[fieldName][:] = band.ReadAsArray()
