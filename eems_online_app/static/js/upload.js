@@ -5,7 +5,6 @@ $( function() {
 $("#submit").click(function(e) {
 
     upload_files()
-    //process_user_data()
 
 });
 
@@ -13,7 +12,9 @@ function upload_files(){
 
     $("#spinner_div").show();
 
-    var form = document.querySelector('#file-form');
+    $("#spinner_text").html("Uploading Files...");
+
+    var form = document.querySelector('#file_form');
     var data = new FormData(form);
 
     $.ajax({
@@ -24,10 +25,10 @@ function upload_files(){
         contentType: false,
         success:function(response){
 
-            process_user_data()
+           process_user_data()
         },
         error: function (xhr, errmsg, err) {
-            //if fails
+
             console.log(xhr)
         }
     });
@@ -35,6 +36,8 @@ function upload_files(){
 }
 
 function process_user_data() {
+
+    $("#spinner_text").html("Processing data...");
 
 
     var owner = $("#owner").val();

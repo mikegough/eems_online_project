@@ -309,19 +309,22 @@ def upload(request):
             return redirect(reverse(login)+"?auth=0")
 
 class FileUploadForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
 @csrf_exempt
 def upload_files(request):
-    mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/{}'.format('model.mpt')
+    upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/'
     if request.method == 'POST':
         form = FileUploadForm(files=request.FILES)
         if form.is_valid():
-            f = request.FILES['file']
-            print 'valid form'
-            with open(mpt_file, 'wb+') as destination:
-                for chunk in f.chunks():
-                    destination.write(chunk)
+            files = request.FILES.getlist('file')
+            for f in files:
+                file_name = f.name
+                file_copy = upload_dir + "/" + file_name
+                print 'valid form'
+                with open(file_copy, 'wb+') as destination:
+                    for chunk in f.chunks():
+                        destination.write(chunk)
         else:
             print 'invalid form'
             print form.errors
@@ -347,16 +350,16 @@ def upload_form(request):
         mpt_file = glob.glob(input_dir + "/*.mpt")[0]
         mpt_file = mpt_file.replace("\\","/")
 
-        FGDB_file = glob.glob(input_dir + "/*.gdb")[0]
 
-        if FGDB_file:
+        try:
+            FGDB_file = glob.glob(input_dir + "/*.gdb")[0]
             FGDB_file = FGDB_file.replace("\\","/")
             netCDF_file = mpt_file.replace(".mpt", ".nc")
             netCDF_file_name = os.path.basename(netCDF_file)
             print netCDF_file
             rasterize(FGDB_file, netCDF_file, resolution)
 
-        else:
+        except:
             netCDF_file = glob.glob(input_dir + "/*.nc")[0]
             netCDF_file = netCDF_file.replace("\\","/")
             netCDF_file_name = os.path.basename(netCDF_file)
