@@ -149,7 +149,6 @@ h4 {
 	-ms-transition: background 0.1s linear;
 	-o-transition: background 0.1s linear;
 	transition: background 0.1s linear;
-	border-bottom-left-radius: 5px;
 	background-color: rgba(255,255,255,.9);
 	overflow: hidden;
 	padding: 25px 5px 0px 5px;
@@ -923,6 +922,7 @@ ul.buttons li.selected a:hover
 	top: 0px;
 	float: left;
 	height: 48px;
+	min-width: 100%;
 }
 
 #model_info_header {
