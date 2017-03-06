@@ -99,7 +99,7 @@ $('#eems_model_dropdown').change(function(){
 
             eems_online_model_name = eems_online_models_json[this.value][0][0];
             eems_online_model_description = eems_online_models_json[this.value][0][2];
-            $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more..</span>");
+            $("#model_info_contents").html("<span id='model_info_header'>Model Description:</span> " + eems_online_model_description + "<span id='model_info_more'> Learn more...</span>");
 
             $("#model_info_more").on("click", function(){
                 get_additional_info(eems_model_id)
