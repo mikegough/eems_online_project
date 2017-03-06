@@ -6,6 +6,7 @@ from django import forms
 
 import os
 import shutil
+import zipfile
 import glob
 import gdal
 import re
@@ -91,6 +92,35 @@ def index(request):
         }
 
         return render(request, template, context)
+
+@csrf_exempt
+def get_additional_info(request):
+
+    eems_model_id = request.POST.get('eems_model_id')
+
+    print eems_model_id
+
+    cursor = connection.cursor()
+
+    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+
+    cursor.execute(query)
+
+    for row in cursor:
+        name = row[0]
+        author = row[1]
+        creation_date = row[2]
+        long_description = row[3]
+
+    context = {
+        "name": name,
+        "author": author,
+        "creation_date": creation_date,
+        "long_description": long_description,
+    }
+
+    return HttpResponse(json.dumps(context))
+
 
 @csrf_exempt
 def run_eems(request):
@@ -239,48 +269,6 @@ def link(request):
 
 
 @csrf_exempt
-def load_eems_user_model(request):
-
-    #  For user uploaded EEMS file
-
-    #  User passes back a serialized EEMS command file.
-    eems_model_id = get_random_string(length=32)
-    eems_model_name = request.POST.get('eems_filename').split('.')[0]
-    eems_file_contents = request.POST.get('eems_file_contents')
-
-    # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
-    pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
-
-    # Connect to the database
-    cursor = connection.cursor()
-
-    # Load EEMS data into database (model as binary)
-    cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_id, eems_model_name, sqlite3.Binary(pdata)))
-
-    # Retreive EEMS data from Database
-    query="SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % (eems_model_id)
-
-    cursor.execute(query)
-    for row in cursor:
-        eems_model_contents = pickle.loads(str(row[0]))
-    print (eems_model_contents)
-
-    # ToDO: Convert EEMS file to JSON
-
-    # ToDO: Get list of available EEMS commands from MPilot EEMS
-
-    # ToDO: Create New PNG files from EEMS output
-
-    # ToDo: Get List of available actions from EEMS
-
-    context = {
-        "eems_model_id" : eems_model_id,
-    }
-
-    return HttpResponse(json.dumps(context))
-
-
-@csrf_exempt
 def login(request):
 
     auth_code = request.GET.get('auth')
@@ -313,15 +301,16 @@ class FileUploadForm(forms.Form):
 
 @csrf_exempt
 def upload_files(request):
+    # Take user uploaded files (data + command file) and copy them to the uploads directory
     upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/'
     if request.method == 'POST':
         form = FileUploadForm(files=request.FILES)
         if form.is_valid():
+            print 'valid form'
             files = request.FILES.getlist('file')
             for f in files:
                 file_name = f.name
                 file_copy = upload_dir + "/" + file_name
-                print 'valid form'
                 with open(file_copy, 'wb+') as destination:
                     for chunk in f.chunks():
                         destination.write(chunk)
@@ -350,15 +339,22 @@ def upload_form(request):
         mpt_file = glob.glob(input_dir + "/*.mpt")[0]
         mpt_file = mpt_file.replace("\\","/")
 
-
+        # Try FGDB first
         try:
+            FGDB_zip = glob.glob(input_dir + "/*.zip")[0]
+            zip_ref = zipfile.ZipFile(FGDB_zip, 'r')
+            zip_ref.extractall(input_dir)
+            zip_ref.close()
+
             FGDB_file = glob.glob(input_dir + "/*.gdb")[0]
+
             FGDB_file = FGDB_file.replace("\\","/")
             netCDF_file = mpt_file.replace(".mpt", ".nc")
             netCDF_file_name = os.path.basename(netCDF_file)
-            print netCDF_file
+            print "Converting FGDB feature class to NetCDF"
             rasterize(FGDB_file, netCDF_file, resolution)
 
+        # Else look for NC
         except:
             netCDF_file = glob.glob(input_dir + "/*.nc")[0]
             netCDF_file = netCDF_file.replace("\\","/")
@@ -430,36 +426,11 @@ def upload_form(request):
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
 
+        upload_files = glob.glob(input_dir + "/*")
+        for f in upload_files:
+            print "delete this file: " + f
+
         return HttpResponse("Model uploaded successsfully")
-
-
-@csrf_exempt
-def get_additional_info(request):
-
-    eems_model_id = request.POST.get('eems_model_id')
-
-    print eems_model_id
-
-    cursor = connection.cursor()
-
-    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
-
-    cursor.execute(query)
-
-    for row in cursor:
-        name = row[0]
-        author = row[1]
-        creation_date = row[2]
-        long_description = row[3]
-
-    context = {
-        "name": name,
-        "author": author,
-        "creation_date": creation_date,
-        "long_description": long_description,
-    }
-
-    return HttpResponse(json.dumps(context))
 
 def getEPSGFromNCfile(ncfile):
     with netCDF4.Dataset(ncfile, 'r') as nc:
@@ -475,13 +446,11 @@ def getWktFromNCFile(ncfile):
 
 def getExtentFromNCFile(ncfile, coords=['lat','lon']):
   with netCDF4.Dataset(ncfile, 'r') as nc:
-    wkt = nc.variables['crs'].getncattr('crs_wkt')
     # had to rearange order. NetCDF Flipped?
     y_min = np.amin(nc.variables[coords[0]])
     y_max = np.amax(nc.variables[coords[0]])
     x_min = np.amin(nc.variables[coords[1]])
     x_max = np.amax(nc.variables[coords[1]])
-    #return [[x_min,y_min],[x_max, y_max]]
     return [x_min, x_max, y_min, y_max]
 
 def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to_epsg=False):
@@ -505,7 +474,6 @@ def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to
   poly.AddGeometry(ring)
   poly.Transform(transform)
   return(poly.GetEnvelope())
-
 
 def rasterize(infile, outfile, pixel_size):
 
@@ -573,3 +541,48 @@ def rasterize(infile, outfile, pixel_size):
       err = gdal.RasterizeLayer(buf, [1], src,
         options=["ATTRIBUTE=%s" % fieldName])
       nc.variables[fieldName][:] = band.ReadAsArray()
+
+@csrf_exempt
+def load_eems_user_model(request):
+
+    # Reference only. Not being used.
+
+    #  For user uploaded EEMS file
+
+    #  User passes back a serialized EEMS command file.
+    eems_model_id = get_random_string(length=32)
+    eems_model_name = request.POST.get('eems_filename').split('.')[0]
+    eems_file_contents = request.POST.get('eems_file_contents')
+
+    # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
+    pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
+
+    # Connect to the database
+    cursor = connection.cursor()
+
+    # Load EEMS data into database (model as binary)
+    cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_id, eems_model_name, sqlite3.Binary(pdata)))
+
+    # Retreive EEMS data from Database
+    query="SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % (eems_model_id)
+
+    cursor.execute(query)
+    for row in cursor:
+        eems_model_contents = pickle.loads(str(row[0]))
+    print (eems_model_contents)
+
+    # ToDO: Convert EEMS file to JSON
+
+    # ToDO: Get list of available EEMS commands from MPilot EEMS
+
+    # ToDO: Create New PNG files from EEMS output
+
+    # ToDo: Get List of available actions from EEMS
+
+    context = {
+        "eems_model_id" : eems_model_id,
+    }
+
+    return HttpResponse(json.dumps(context))
+
+
