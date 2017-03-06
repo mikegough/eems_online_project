@@ -10,6 +10,11 @@ import gdal
 import re
 import time
 
+import ogr
+import osr
+import numpy as np
+import netCDF4
+
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 import json
@@ -305,27 +310,15 @@ def upload(request):
 @csrf_exempt
 def upload_form(request):
 
+        image_overlay_size = "24,32"
+
         owner = str(request.POST.get('owner'))
         eems_model_name = request.POST.get('model_name')
         author = str(request.POST.get('model_author'))
         creation_date = str(request.POST.get('creation_date'))
-        epsg = str(request.POST.get('epsg'))
-        extent = str(request.POST.get('extent'))
-        extent_list = extent.replace('[','').replace(']','').split(',')
+        #input_epsg = int(request.POST.get('epsg'))
         short_description = str(request.POST.get('short_description'))
         long_description = str(request.POST.get('long_description'))
-
-        extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
-        print extent_for_gdal
-
-        # Create a new record in the datatabase for the new model
-        cursor = connection.cursor()
-        query = "SELECT MAX(CAST(ID as integer)) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
-        cursor.execute(query)
-        max_id = cursor.fetchone()[0]
-        eems_model_id =  str(int(max_id) + 1)
-
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, epsg, extent, owner, short_description, long_description, author, creation_date))
 
         # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
         input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
@@ -336,8 +329,38 @@ def upload_form(request):
         netCDF_file = glob.glob(input_dir + "/*.nc")[0]
         netCDF_file = netCDF_file.replace("\\","/")
 
-        mpt_file_name = os.path.basename(mpt_file)
         netCDF_file_name = os.path.basename(netCDF_file)
+
+        input_epsg  = getEPSGFromNCfile(netCDF_file)
+
+        # Get the Extent from the NetCDF file (try y,x first)
+        try:
+            extent_input_crs = getExtentFromNCFile(netCDF_file, ['y', 'x'])
+        except:
+            extent_input_crs = getExtentFromNCFile(netCDF_file, ['lat', 'lon'])
+
+        # Restructure for database insert
+        extent_input_crs_insert = str([[extent_input_crs[2],extent_input_crs[0]],[extent_input_crs[3],extent_input_crs[1]]])
+
+        # Restructure for GDAL
+        extent_for_gdal = str(extent_input_crs[0]) + " " + str(extent_input_crs[3]) + " " + str(extent_input_crs[1]) + " " + str(extent_input_crs[2])
+
+        # Get Web Mercator Extent from input CRS
+        extent_wm = getExtentInDifferentCRS(extent_input_crs,False,False,input_epsg,3857)
+        #print "Extent WebMercator: ", extent_wm
+
+        # Get GCS Extent from Web Mercator Extent
+        extent_gcs = getExtentInDifferentCRS(extent_wm,False,False,3857,4326)
+        extent_gcs_insert = str([[extent_gcs[2],extent_gcs[0]],[extent_gcs[3],extent_gcs[1]]])
+
+        # Create a new record in the datatabase for the new model
+        cursor = connection.cursor()
+        query = "SELECT MAX(CAST(ID as integer)) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
+        cursor.execute(query)
+        max_id = cursor.fetchone()[0]
+        eems_model_id =  str(int(max_id) + 1)
+
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date))
 
         output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
 
@@ -366,10 +389,10 @@ def upload_form(request):
 
         # Run EEMS to create the image overlays and the histograms
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, epsg, True, False, True)
+        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, str(input_epsg), image_overlay_size, True, False, True)
 
         # Create the MEEMSE tree
-        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", True, False, True)[1:-1])
+        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", "none", True, False, True)[1:-1])
         eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
@@ -405,3 +428,47 @@ def get_additional_info(request):
 
     return HttpResponse(json.dumps(context))
 
+def getEPSGFromNCfile(ncfile):
+    with netCDF4.Dataset(ncfile, 'r') as nc:
+        wkt = nc.variables['crs'].getncattr('crs_wkt')
+        srs = osr.SpatialReference()
+        srs.ImportFromWkt(wkt)
+        epsg = srs.GetAttrValue("AUTHORITY", 1)
+        return int(epsg)
+
+def getWktFromNCFile(ncfile):
+  with netCDF4.Dataset(ncfile, 'r') as nc:
+    return nc.variables['crs'].getncattr('crs_wkt')
+
+def getExtentFromNCFile(ncfile, coords=['lat','lon']):
+  with netCDF4.Dataset(ncfile, 'r') as nc:
+    wkt = nc.variables['crs'].getncattr('crs_wkt')
+    # had to rearange order. NetCDF Flipped?
+    y_min = np.amin(nc.variables[coords[0]])
+    y_max = np.amax(nc.variables[coords[0]])
+    x_min = np.amin(nc.variables[coords[1]])
+    x_max = np.amax(nc.variables[coords[1]])
+    #return [[x_min,y_min],[x_max, y_max]]
+    return [x_min, x_max, y_min, y_max]
+
+def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to_epsg=False):
+  s_srs = osr.SpatialReference()
+  if wkt:
+    s_srs.ImportFromWkt(wkt)
+  elif proj4:
+    s_srs.ImportFromProj4(proj4)
+  elif epsg:
+    s_srs.ImportFromEPSG(epsg)
+  else: # no reprojection to do
+    return extent
+  t_srs = osr.SpatialReference()
+  t_srs.ImportFromEPSG(to_epsg) # we want lat-lon
+  transform = osr.CoordinateTransformation(s_srs, t_srs)
+  ring = ogr.Geometry(ogr.wkbLinearRing)
+  for x in range(2):
+    for y in range(2):
+      ring.AddPoint(extent[x], extent[2+y])
+  poly = ogr.Geometry(ogr.wkbPolygon)
+  poly.AddGeometry(ring)
+  poly.Transform(transform)
+  return(poly.GetEnvelope())
