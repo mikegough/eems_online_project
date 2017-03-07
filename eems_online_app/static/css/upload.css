@@ -23,6 +23,7 @@
 	color: #506C9C;
 	font-weight: bold;
 	padding-right: 10px;
+	width: 185px;
 }
 
 #upload_table td {
@@ -120,4 +121,12 @@
 }
 
 #upload_form {
+}
+
+.upload_field_info_icon{
+	cursor:help;
+}
+
+#spatial_resolution_row {
+	display:none;
 }

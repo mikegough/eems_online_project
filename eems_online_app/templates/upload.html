@@ -29,14 +29,18 @@
         </tr>
         <tr>
         <tr>
-            <td>Dataset</td>
+            <td>Dataset <img class="upload_field_info_icon" src="static/img/info.png" title="Allowable formats: NetCDF or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">
+                <br>
             </td>
         </tr>
+        <tr id="spatial_resolution_row">
+            <td>Spatial Resolution<img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
+        </tr>
         <tr>
-            <td>Command File </td>
+            <td>Command File<img class="upload_field_info_icon" src="static/img/info.png" title="Must be an EEMS 3.0 command file with a .mpt extention"> </td>
             <td>
                 <input id="command_file" name="file" type="file">
                 </form>
@@ -53,9 +57,6 @@
         </tr>
         <tr>
             <td>Creation Date </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
-        </tr>
-        <tr>
-            <td>Spatial Resolution</td><td><input id="resolution" type="number"> <br><span style="font-size:.7em">Applicable only for FGDB feature class uploads. The units will match the units of the input dastaset's coordinate system.</span></td>
         </tr>
         <!--
         <tr>

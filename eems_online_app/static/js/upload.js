@@ -8,6 +8,19 @@ $("#submit").click(function(e) {
 
 });
 
+$("#data_file").on('change', function(){
+
+    var filename = $('input[type=file]').val();
+
+    if (filename.indexOf(".zip") != -1){
+        $("#spatial_resolution_row").show();
+    }
+    else {
+        $("#spatial_resolution_row").hide();
+    }
+
+});
+
 function upload_files(){
 
     $("#spinner_div").show();
@@ -26,6 +39,7 @@ function upload_files(){
         success:function(response){
 
            process_user_data()
+
         },
         error: function (xhr, errmsg, err) {
 
@@ -39,14 +53,13 @@ function process_user_data() {
 
     $("#spinner_text").html("Processing data...");
 
-
     var owner = $("#owner").val();
     var model_name = $("#model_name").val();
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();
     var resolution = $("#resolution").val();
 
-    /*
+    /* May need to keep for manual coordinate entry override.
      var xmin = $("#xmin").val().replace(/\s+/g, '');
      var ymin = $("#ymin").val().replace(/\s+/g, '');
      var xmax = $("#xmax").val().replace(/\s+/g, '');
@@ -54,7 +67,7 @@ function process_user_data() {
 
      var epsg = $("#epsg").val();
      var extent = "[[" + ymin +  "," + xmin + "],["  + ymax + "," + xmax + "]]";
-     */
+    */
     var short_description = $("#short_description").val();
     var long_description = $("#long_description").val();
 
