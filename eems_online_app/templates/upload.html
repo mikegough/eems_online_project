@@ -15,6 +15,10 @@
     <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.bootstrap.css' %}" rel="stylesheet" />
     <script src="{% static 'deps/alertify/alertify.js-0.3.11/lib/alertify.min.js' %}"></script>
 
+    <script>
+        username = "{{ username }}"
+    </script>
+
 
 </head>
 <body>
@@ -25,7 +29,8 @@
 </div>
     <table id="upload_table">
         <tr>
-            <td colspan="2" id="table_header"> EEMS Model Upload </td>
+            <td colspan="2" id="table_header"> EEMS Online Upload Form <div id="owner_div"> Logged in as <span id="owner">{{ username }}</span></div></td>
+        </tr>
         </tr>
         <tr>
         <tr>
@@ -37,26 +42,23 @@
             </td>
         </tr>
         <tr id="spatial_resolution_row">
-            <td>Spatial Resolution<img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
+            <td>Spatial Resolution <img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
         </tr>
         <tr>
-            <td>Command File<img class="upload_field_info_icon" src="static/img/info.png" title="Must be an EEMS 3.0 command file with a .mpt extention"> </td>
+            <td>Command File <img class="upload_field_info_icon" src="static/img/info.png" title="Must be an EEMS 3.0 command file with a .mpt extention"> </td>
             <td>
                 <input id="command_file" name="file" type="file">
                 </form>
             </td>
         </tr>
         <tr>
-            <td> User </td><td><input id="owner" type="text" value="CBI" readonly></td>
+            <td>Model Name <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model"> </td><td><input id="model_name" type="text"></td>
         </tr>
         <tr>
-            <td>Model Name </td><td><input id="model_name" type="text"></td>
+            <td>Model Author <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model's author"> </td><td><input id="model_author" type="text"></td>
         </tr>
         <tr>
-            <td>Model Author</td><td><input id="model_author" type="text"></td>
-        </tr>
-        <tr>
-            <td>Creation Date </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
+            <td>Creation Date <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the date the model was created"> </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
         </tr>
         <!--
         <tr>
@@ -76,10 +78,10 @@
         </tr>
         -->
         <tr>
-            <td>Short Description </td><td><textarea  maxlength="365" id="short_description"></textarea></td>
+            <td>Short Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description"></textarea></td>
         </tr>
         <tr>
-            <td>Long Description </td><td><textarea id="long_description"></textarea></td>
+            <td>Long Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a longer description of your model"> </td><td><textarea id="long_description"></textarea></td>
         </tr>
         <tr>
             <td colspan="2"> <input type="button" class="button" name="submit" value="submit" id="submit" /></td>

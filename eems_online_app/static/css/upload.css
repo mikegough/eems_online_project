@@ -8,13 +8,20 @@
 }
 
 #table_header {
-	text-align: center !important;
+	text-align: left !important;
 	background-color: #343F57 !important;
 	color: white !important;
 	font-family: arial;
 	height: 30px;
 	line-height: 30px;
 	letter-spacing: 1px;
+	padding-left: 20px !important;
+}
+
+#owner_div {
+	float: right;
+	padding-right: 10px;
+	font-size: .7em;
 }
 
 #upload_table td:first-child {

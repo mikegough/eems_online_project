@@ -55,7 +55,7 @@ function process_user_data(upload_id) {
 
     $("#spinner_text").html("Processing data...");
 
-    var owner = $("#owner").val();
+    var owner = username;
     var model_name = $("#model_name").val();
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();

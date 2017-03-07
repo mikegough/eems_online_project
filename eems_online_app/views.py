@@ -292,7 +292,7 @@ def upload(request):
 
         if user_password == password and user_username == username:
             print "Password verified"
-            return render(request, "upload.html")
+            return render(request, "upload.html", {"username":username})
         else:
             return redirect(reverse(login)+"?auth=0")
 
@@ -304,10 +304,11 @@ def upload_files(request):
 
     upload_id = get_random_string(length=32)
 
-    # Make an upload directory and copy user files (data + eems command file)
+    # Make an upload directory
     upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
     os.mkdir(upload_dir)
 
+    # Copy user files to upload directory (data + eems command file)
     if request.method == 'POST':
         form = FileUploadForm(files=request.FILES)
         if form.is_valid():
@@ -323,10 +324,13 @@ def upload_files(request):
             print 'invalid form'
             print form.errors
 
+    # Return directory name
     return HttpResponse(upload_id)
 
 @csrf_exempt
 def upload_form(request):
+
+        # Files have been uploaded. Process user data and form fields. Run EEMS.
 
         image_overlay_size = "24,32"
 
@@ -335,7 +339,6 @@ def upload_form(request):
         eems_model_name = request.POST.get('model_name')
         author = str(request.POST.get('model_author'))
         creation_date = str(request.POST.get('creation_date'))
-        resolution = float(request.POST.get('resolution'))
         #input_epsg = int(request.POST.get('epsg'))
         short_description = str(request.POST.get('short_description'))
         long_description = str(request.POST.get('long_description'))
@@ -349,16 +352,20 @@ def upload_form(request):
 
         # Try FGDB first
         try:
+            #Unzip zipped GDB
             FGDB_zip = glob.glob(upload_dir + "/*.zip")[0]
             zip_ref = zipfile.ZipFile(FGDB_zip, 'r')
             zip_ref.extractall(upload_dir)
             zip_ref.close()
 
             FGDB_file = glob.glob(upload_dir + "/*.gdb")[0]
-
             FGDB_file = FGDB_file.replace("\\","/")
-            netCDF_file = mpt_file.replace(".mpt", ".nc")
-            netCDF_file_name = os.path.basename(netCDF_file)
+
+            netCDF_file_name = os.path.basename(FGDB_file).split(".")[0] + ".nc"
+            netCDF_file = upload_dir + "/" + netCDF_file_name
+
+            resolution = float(request.POST.get('resolution'))
+
             print "Converting FGDB feature class to NetCDF"
             rasterize(FGDB_file, netCDF_file, resolution)
 
@@ -434,7 +441,7 @@ def upload_form(request):
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
 
-        #shutil.rmtree(upload_dir)
+        shutil.rmtree(upload_dir)
 
         return HttpResponse("Model uploaded successsfully")
 
