@@ -38,7 +38,9 @@ function upload_files(){
         contentType: false,
         success:function(response){
 
-           process_user_data()
+           upload_id = response
+
+           process_user_data(upload_id)
 
         },
         error: function (xhr, errmsg, err) {
@@ -49,7 +51,7 @@ function upload_files(){
 
 }
 
-function process_user_data() {
+function process_user_data(upload_id) {
 
     $("#spinner_text").html("Processing data...");
 
@@ -75,6 +77,7 @@ function process_user_data() {
         url: "/upload_form", // the endpoint
         type: "POST", // http method
         data: {
+            'upload_id': upload_id,
             'owner': owner,
             'model_name': model_name,
             'model_author': model_author,

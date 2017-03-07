@@ -301,8 +301,13 @@ class FileUploadForm(forms.Form):
 
 @csrf_exempt
 def upload_files(request):
-    # Take user uploaded files (data + command file) and copy them to the uploads directory
-    upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/'
+
+    upload_id = get_random_string(length=32)
+
+    # Make an upload directory and copy user files (data + eems command file)
+    upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+    os.mkdir(upload_dir)
+
     if request.method == 'POST':
         form = FileUploadForm(files=request.FILES)
         if form.is_valid():
@@ -317,13 +322,15 @@ def upload_files(request):
         else:
             print 'invalid form'
             print form.errors
-    return HttpResponse("Files uploaded successfully")
+
+    return HttpResponse(upload_id)
 
 @csrf_exempt
 def upload_form(request):
 
         image_overlay_size = "24,32"
 
+        upload_id = str(request.POST.get('upload_id'))
         owner = str(request.POST.get('owner'))
         eems_model_name = request.POST.get('model_name')
         author = str(request.POST.get('model_author'))
@@ -333,20 +340,21 @@ def upload_form(request):
         short_description = str(request.POST.get('short_description'))
         long_description = str(request.POST.get('long_description'))
 
-        # Uploaded files (netCDF file & mpt file need to be in the uploads directory)
-        input_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads'
+        upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
 
-        mpt_file = glob.glob(input_dir + "/*.mpt")[0]
+        print "Upload dir: " + upload_dir
+
+        mpt_file = glob.glob(upload_dir + "/*.mpt")[0]
         mpt_file = mpt_file.replace("\\","/")
 
         # Try FGDB first
         try:
-            FGDB_zip = glob.glob(input_dir + "/*.zip")[0]
+            FGDB_zip = glob.glob(upload_dir + "/*.zip")[0]
             zip_ref = zipfile.ZipFile(FGDB_zip, 'r')
-            zip_ref.extractall(input_dir)
+            zip_ref.extractall(upload_dir)
             zip_ref.close()
 
-            FGDB_file = glob.glob(input_dir + "/*.gdb")[0]
+            FGDB_file = glob.glob(upload_dir + "/*.gdb")[0]
 
             FGDB_file = FGDB_file.replace("\\","/")
             netCDF_file = mpt_file.replace(".mpt", ".nc")
@@ -356,7 +364,7 @@ def upload_form(request):
 
         # Else look for NC
         except:
-            netCDF_file = glob.glob(input_dir + "/*.nc")[0]
+            netCDF_file = glob.glob(upload_dir + "/*.nc")[0]
             netCDF_file = netCDF_file.replace("\\","/")
             netCDF_file_name = os.path.basename(netCDF_file)
 
@@ -426,9 +434,7 @@ def upload_form(request):
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
 
-        upload_files = glob.glob(input_dir + "/*")
-        for f in upload_files:
-            print "delete this file: " + f
+        #shutil.rmtree(upload_dir)
 
         return HttpResponse("Model uploaded successsfully")
 
