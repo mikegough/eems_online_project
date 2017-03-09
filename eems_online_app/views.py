@@ -441,7 +441,7 @@ def upload_form(request):
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
 
-        #shutil.rmtree(upload_dir)
+        shutil.rmtree(upload_dir)
 
         return HttpResponse("Model uploaded successsfully")
 
