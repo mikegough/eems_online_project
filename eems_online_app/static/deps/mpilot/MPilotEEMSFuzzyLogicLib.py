@@ -759,21 +759,21 @@ class FuzzyNot(mpefp._MPilotEEMSFxnParent):
         
         rtrn = self._ParamToList('InFieldName')
         rtrn += self._ParamToList('PrecursorFieldNames')
+        return rtrn
     
     # def DependencyNms(self):
 
     def Exec(self,executedObjects):
 
-        self._ValidateListLen('InFldNms',1)
-        fldNm = self._ParamToList('InFieldName')
-        
-        self._ValidateProgDataType(fldNm,executedObjects[fldNm],'Fuzzy')
-        self.execRslt = -executedObjects[fldNm].ExecRslt()
+        inFldNm = self.ParamByNm('InFieldName')
+
+        self._ValidateProgDataType(inFldNm,executedObjects[inFldNm],'Fuzzy')
+        self.execRslt = -executedObjects[inFldNm].ExecRslt()
 
         self._InsureFuzzy(self.execRslt)
 
         executedObjects[self.RsltNm()] = self
-        
+
     # def Exec(self,executedObjects):
 
 # class FuzzyNot(mpefp._MPilotEEMSFxnParent):    
