@@ -34,7 +34,7 @@
         </tr>
         <tr>
         <tr>
-            <td>Dataset <img class="upload_field_info_icon" src="static/img/info.png" title="Allowable formats: NetCDF or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
+            <td>Dataset <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">
@@ -45,7 +45,7 @@
             <td>Spatial Resolution <img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
         </tr>
         <tr>
-            <td>Command File <img class="upload_field_info_icon" src="static/img/info.png" title="Must be an EEMS 3.0 command file with a .mpt extention"> </td>
+            <td>Command File <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be an EEMS 2.0 command file with a .eem extension or an EEMS 3.0 command file with a .mpt extension"> </td>
             <td>
                 <input id="command_file" name="file" type="file">
                 </form>
