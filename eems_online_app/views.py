@@ -329,8 +329,9 @@ def upload_files(request):
                 with open(file_copy, 'wb+') as destination:
                     for chunk in f.chunks():
                         destination.write(chunk)
-                if ".eem" in file_name:
-                    mpt_file = upload_dir + "/" + file_name.replace(".eem", ".mpt").replace("\\","/")
+                if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
+                    extension = "." + file_name.split(".")[-1]
+                    mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
                     print mpt_file
                     cv = Converter(file_copy,mpt_file,None,None,False)
                     cv.ConvertScript()
