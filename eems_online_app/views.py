@@ -34,11 +34,6 @@ from EEMSCvt20To30 import *
 from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
 
-try:
-   import cPickle as pickle
-except:
-   import pickle
-
 import fileinput
 
 @csrf_exempt
@@ -142,7 +137,7 @@ def run_eems(request):
 
     # Get the extent of the original EEMS model. Used to project PNG in GDAL.
     cursor = connection.cursor()
-    query="SELECT EXTENT, EPSG FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query = "SELECT EXTENT, EPSG FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
     cursor.execute(query)
     for row in cursor:
             extent = row[0]
@@ -165,7 +160,7 @@ def run_eems(request):
 
         # Copy the mpt file to the user output directory
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
-        shutil.copyfile(original_mpt_file,mpt_file_copy)
+        shutil.copyfile(original_mpt_file, mpt_file_copy)
 
     else:
         mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
