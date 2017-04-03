@@ -246,7 +246,7 @@ h4 {
 }
 
 .alertify {
-	top: 210px !important;
+	top: 180px !important;
 	width: 680px !important;
 	left: 290px !important;
 	right: unset !important;
@@ -939,7 +939,7 @@ ul.buttons li.selected a:hover
 }
 
 .long_description{
-	height: 600px;
+	max-height: 50vh;
 	margin: 0px 1px 0px 30px;
 	overflow-y: scroll;
 }
