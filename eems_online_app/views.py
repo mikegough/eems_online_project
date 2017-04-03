@@ -70,7 +70,7 @@ def index(request):
         # GET all available EEMS Models
         eems_online_models = {}
         query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
-        print query;
+        print query
         cursor.execute(query)
         for row in cursor:
             eems_online_models[str(row[0])]=[]
@@ -195,7 +195,7 @@ def run_eems(request):
 
     context={
         "eems_model_modified_id": eems_model_modified_id,
-        "error_code": error_code ,
+        "error_code": error_code,
         "error_message": error_message
     }
 
@@ -272,7 +272,7 @@ def login(request):
     print auth_code
 
     context = {
-        "auth_code" : auth_code,
+        "auth_code": auth_code,
     }
 
     template = "login.html"
@@ -321,7 +321,7 @@ def upload_files(request):
                     extension = "." + file_name.split(".")[-1]
                     mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
                     print mpt_file
-                    cv = Converter(file_copy,mpt_file,None,None,False)
+                    cv = Converter(file_copy, mpt_file, None, None, False)
                     cv.ConvertScript()
         else:
             print 'invalid form'
@@ -448,50 +448,3 @@ def upload_form(request):
         shutil.rmtree(upload_dir)
 
         return HttpResponse("Model uploaded successfully")
-
-
-@csrf_exempt
-def load_eems_user_model(request):
-
-    # Reference only. Not being used.
-
-    #  For user uploaded EEMS file
-
-    #  User passes back a serialized EEMS command file.
-    eems_model_id = get_random_string(length=32)
-    eems_model_name = request.POST.get('eems_filename').split('.')[0]
-    eems_file_contents = request.POST.get('eems_file_contents')
-
-    # Pickle the EEMS file contents. Return the pickled representation of the object as a bytes object
-    pdata = pickle.dumps(eems_file_contents, pickle.HIGHEST_PROTOCOL)
-
-    # Connect to the database
-    cursor = connection.cursor()
-
-    # Load EEMS data into database (model as binary)
-    cursor.execute("insert into EEMS_USER_MODELS (ID, NAME, MODEL) values (%s,%s,%s)", (eems_model_id, eems_model_name, sqlite3.Binary(pdata)))
-
-    # Retreive EEMS data from Database
-    query="SELECT MODEL FROM EEMS_USER_MODELS where ID = '%s'" % (eems_model_id)
-
-    cursor.execute(query)
-    for row in cursor:
-        eems_model_contents = pickle.loads(str(row[0]))
-    print (eems_model_contents)
-
-    # ToDO: Convert EEMS file to JSON
-
-    # ToDO: Get list of available EEMS commands from MPilot EEMS
-
-    # ToDO: Create New PNG files from EEMS output
-
-    # ToDo: Get List of available actions from EEMS
-
-    context = {
-        "eems_model_id" : eems_model_id,
-    }
-
-    return HttpResponse(json.dumps(context))
-
-
-
