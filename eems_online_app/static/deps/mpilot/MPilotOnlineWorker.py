@@ -73,10 +73,10 @@ class MPilotWorker(mpprog.MPilotProgram):
         parsedCmd = {}
         parsedCmd['rsltNm'] = '{}_OutputDone'.format(self.id)
         parsedCmd['cmd'] = 'EEMSWrite'
+        outfile = self.outputBaseDir + 'data/results.nc'
         parsedCmd['arguments'] = {
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
-            'OutFileName':'../eems/models/{}/data/nc/Results.nc'.format(self.id),
-            'OutFileName':'{}.nc'.format('Tst'),
+            'OutFileName': outfile,
             'DimensionFileName': dimFileNm,
             'DimensionFieldName':dimFieldNm
             }
@@ -93,9 +93,17 @@ class MPilotWorker(mpprog.MPilotProgram):
             
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
+            outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
+            extent = self.extent
+            epsg = self.epsg
+            map_quality = self.map_quality
+
             parsedCmd['arguments'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':'../eems/models/{}/overlay/png/{}.png'.format(self.id,rsltNm)
+                'OutFileName':outfile,
+                'Extent': extent,
+                'EPSG': epsg,
+                'MapQuality': map_quality,
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -110,9 +118,10 @@ class MPilotWorker(mpprog.MPilotProgram):
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_{}_HistoDist'.format('Tst',rsltNm)
             parsedCmd['cmd'] = 'HistoDist'
+            outfile = self.outputBaseDir + 'histogram/' + rsltNm + '.png'
             parsedCmd['arguments'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':'../eems/models/{}/histogram/png/{}.png'.format(self.id,rsltNm)
+                'OutFileName':outfile
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -148,8 +157,8 @@ class MPilotWorker(mpprog.MPilotProgram):
         # first we save the mpt script represented by
         # the mpt program:
 
-        with open('../eems/models/{}/eemssrc/model.mpt'.format(self.id),'w') as outF:
-            outF.write(self.ProgAsText())
+        #with open('../../../eems/models/{}/eemssrc/model.mpt'.format(self.id),'w') as outF:
+        #    outF.write(self.ProgAsText())
 
         # Since we want to produce an outputfile as well
         # as a map image and a distribution 
