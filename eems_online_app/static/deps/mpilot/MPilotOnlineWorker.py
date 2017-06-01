@@ -333,15 +333,15 @@ class MPilotWorker(mpprog.MPilotProgram):
     
     def HandleRqst(
         self,
-        id,
         rqst,
+        id = None,
         outputBaseDir = None,
         extent = None,
         epsg = None,
         map_quality = None,
         srcProgNm = None,
-        doFileLoad=True,
-        rqstIsJSON=True,
+        doFileLoad=False,
+        rqstIsJSON=False,
         reset=True
         ):
 
@@ -355,8 +355,9 @@ class MPilotWorker(mpprog.MPilotProgram):
 
         if rqstIsJSON: rqst = json.loads(rqst)
 
-        if os.path.isfile(srcProgNm) and doFileLoad:
-            self.LoadMptFile(srcProgNm)
+        if srcProgNm is not None:
+            if os.path.isfile(srcProgNm) and doFileLoad:
+                self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 
