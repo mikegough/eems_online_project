@@ -335,19 +335,26 @@ class MPilotWorker(mpprog.MPilotProgram):
         self,
         id,
         rqst,
+        outputBaseDir = None,
+        extent = None,
+        epsg = None,
+        map_quality = None,
+        srcProgNm = None,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
         ):
 
+        self.outputBaseDir = outputBaseDir
         self.id = id
+        self.extent = extent
+        self.epsg = epsg
+        self.map_quality = map_quality
 
         rtrn = None
 
         if rqstIsJSON: rqst = json.loads(rqst)
 
-        srcProgNm = '../eems/models/{}/eemssrc/model.mpt'.format(self.id)
-            
         if os.path.isfile(srcProgNm) and doFileLoad:
             self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
@@ -355,8 +362,9 @@ class MPilotWorker(mpprog.MPilotProgram):
 
         rtrn = self._ProcessRqst(rqst)
         
-        with open(srcProgNm,'w') as outF:
-            outF.write(self.ProgAsText())
+        if srcProgNm is not None:
+            with open(srcProgNm,'w') as outF:
+                outF.write(self.ProgAsText())
             
         if reset:
             self._ClearCmds() # resets this program so it has no commands
