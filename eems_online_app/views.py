@@ -178,7 +178,7 @@ def run_eems(request):
     # Send model information to MPilot to run EEMS.
     try:
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, map_quality, True, False, True)
+        my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
         error_code = 0
         error_message = None
         if not download:
