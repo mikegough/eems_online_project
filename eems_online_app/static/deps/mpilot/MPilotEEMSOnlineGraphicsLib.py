@@ -55,7 +55,7 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
-        
+
         dataObj = executedObjects[self.ValFromArgByNm('InFieldName')]
         self._ValidateIsDataLayer(dataObj)
 
@@ -95,7 +95,7 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
             bins=50,
             range=(xMin,xMax),
             facecolor = faceColor,
-            )
+        )
         ax1.set_xlabel('Value')
         ax1.set_ylabel('Count')
         ax1.set_title('Distribution for {}'.format(self.ValFromArgByNm('InFieldName')))
@@ -131,30 +131,6 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
     # def __init__(self,mptCmdStruct=None):
 
-    def Project(self, outFNm):
-
-        input_basename = outFNm.replace('.png','')
-        trans_tiff = input_basename + "_trans.tiff"
-        warp_tiff = input_basename + "_warp.tiff"
-        output_png = input_basename + ".png"
-
-        extent = self.ArgByNm('Extent')
-        epsg = self.ArgByNm('EPSG')
-
-        os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
-
-        os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
-
-        src_ds = gdal.Open(warp_tiff)
-
-        # Overwrite Matplotlib png
-        driver.CreateCopy(output_png, src_ds,0)
-
-        src_ds = None
-
-        os.remove(trans_tiff)
-        os.remove(warp_tiff)
-
     def _SetFxnDesc(self):
         
         self.fxnDesc['DisplayName'] = 'RenderLayer'
@@ -181,6 +157,30 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         return rtrn
     
     # def DependencyNms(self):
+
+    def Project(self, outFNm):
+
+            input_basename = outFNm.replace('.png','')
+            trans_tiff = input_basename + "_trans.tiff"
+            warp_tiff = input_basename + "_warp.tiff"
+            output_png = input_basename + ".png"
+
+            extent = self.ArgByNm('Extent')
+            epsg = self.ArgByNm('EPSG')
+
+            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
+
+            os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
+
+            src_ds = gdal.Open(warp_tiff)
+
+            # Overwrite Matplotlib png
+            driver.CreateCopy(output_png, src_ds,0)
+
+            src_ds = None
+
+            os.remove(trans_tiff)
+            os.remove(warp_tiff)
         
     def Exec(self,executedObjects):
 
@@ -204,10 +204,10 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         ax1.axis('off')
 
         cmap = self.ValFromArgByNm('ColorMap')
-        if cmap is None: cmap = 'RdYlBu'
-        
+        if cmap is None: cmap = 'RdYlBu_r'
+
         origin = self.ArgByNm('Origin') if self.ArgByNm('Origin') is not None else 'lower'
-                
+
         myImg = ax1.imshow(
             dataObj.ExecRslt(),
             aspect='auto',
@@ -239,7 +239,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         # Add string _key before the extension on the outfile name
         outFNm = re.sub(r'(\.[^\.]+)$',r'_key\1',outFNm)
-
+        
         plt.savefig(outFNm)
         plt.close()
         gc.collect()
@@ -299,8 +299,9 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         # plt.close(fig) # fig must be closed to get it out of memory
 
     # def Exec(self,executedObjects):
-    
+
 # class RenderLayer(mpefp._MPilotEEMSFxnParent):
+
 
 class ScatterXY(mpefp._MPilotEEMSFxnParent):
 
@@ -410,7 +411,7 @@ class ScatterXY(mpefp._MPilotEEMSFxnParent):
         executedObjects[self.RsltNm()] = self
         
         plt.close(fig) # fig must be closed to get it out of memory
-        
+
     # def Exec(self,executedObjects):
-    
+
 # class ScatterXY(mpefp._MPilotEEMSFxnParent):
