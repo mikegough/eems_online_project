@@ -2,11 +2,15 @@ from __future__ import division
 import MPilotEEMSFxnParent as mpefp
 import numpy as np
 import copy as cp
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 import tempfile as tf
 import os
 import re
+import gc
+import gdal
+driver = gdal.GetDriverByName("PNG")
 
 class HistoDist(mpefp._MPilotEEMSFxnParent):
 
@@ -127,6 +131,30 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
     # def __init__(self,mptCmdStruct=None):
 
+    def Project(self, outFNm):
+
+        input_basename = outFNm.replace('.png','')
+        trans_tiff = input_basename + "_trans.tiff"
+        warp_tiff = input_basename + "_warp.tiff"
+        output_png = input_basename + ".png"
+
+        extent = self.ArgByNm('Extent')
+        epsg = self.ArgByNm('EPSG')
+
+        os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
+
+        os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
+
+        src_ds = gdal.Open(warp_tiff)
+
+        # Overwrite Matplotlib png
+        driver.CreateCopy(output_png, src_ds,0)
+
+        src_ds = None
+
+        os.remove(trans_tiff)
+        os.remove(warp_tiff)
+
     def _SetFxnDesc(self):
         
         self.fxnDesc['DisplayName'] = 'RenderLayer'
@@ -168,7 +196,10 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             minVal = dataObj.ExecRslt().min()
             maxVal = dataObj.ExecRslt().max()
 
-        fig = plt.figure()
+        map_quality = self.ArgByNm('MapQuality')
+        w = int(map_quality.split(',')[0])
+        h = int(map_quality.split(',')[1])
+        fig = plt.figure(figsize=(w,h))
         ax1 = fig.add_axes([0,0,1,1])
         ax1.axis('off')
 
@@ -185,9 +216,15 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             )
 
         myImg.set_cmap(cmap)
-        
-        plt.savefig(outFNm)
-        plt.close(fig)
+
+        plt.gca().invert_yaxis()
+        plt.savefig(outFNm, transparent=True)
+        plt.close()
+        gc.collect()
+        plt.clf()
+
+        # Project MatPlotLib png to Web Mercator
+        self.Project(outFNm)
 
         # now the key
         fig = plt.figure(figsize=(8,1))
@@ -202,10 +239,11 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         # Add string _key before the extension on the outfile name
         outFNm = re.sub(r'(\.[^\.]+)$',r'_key\1',outFNm)
-        
+
         plt.savefig(outFNm)
-        plt.close(fig)
-        
+        plt.close()
+        gc.collect()
+
         # ax1 = fig.add_subplot(111)
 
         # if dataObj.DataType() == 'Fuzzy':
