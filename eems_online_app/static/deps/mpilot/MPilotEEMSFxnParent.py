@@ -33,7 +33,7 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
 
     def __init__(
         self,
-        mptCmdStruct=None,
+        strCmd=None,
         dataType=None,
         isDataLayer=False
         ):
@@ -42,34 +42,34 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
         self.fuzzyMax = 1.0
         self.dataType = dataType
         self.isDataLayer = isDataLayer
-        super(_MPilotEEMSFxnParent, self).__init__(mptCmdStruct)
+        super(_MPilotEEMSFxnParent, self).__init__(strCmd)
 
-    # def __init__(self,mptCmdStruct=None):
+    # def __init__(self,strCmd=None):
 
-    def _ValidateProgDataType(self,argNm,argDatum,tgtTypes):
+    def _ValidateProgDataType(self,paramNm,paramDatum,tgtTypes):
 
         if not isinstance(tgtTypes,list): tgtTypes = [tgtTypes]
 
-        if argDatum.DataType() not in tgtTypes:
+        if paramDatum.DataType() not in tgtTypes:
             raise Exception(
                 '{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Argument list has invalid type:\n',
-                    'Argument name: {}  Should be one of: {}  Is: {}\n'.format(
-                        argNm,
+                    'Parameter list has invalid type:\n',
+                    'Parameter name: {}  Should be one of: {}  Is: {}\n'.format(
+                        paramNm,
                         tgtTypes,
-                        argDatum.DataType(),
+                        paramDatum.DataType(),
                         ),
                     'File: {}  Line number: {}\n'.format(
-                        self.mptCmdStruct['cmdFileNm'],
-                        self.mptCmdStruct['lineNo']
+                        self.strCmd['cmdFileNm'],
+                        self.strCmd['lineNo']
                         ),
                         
-                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                    'Full command:\n{}\n'.format(self.strCmd['rawCmdStr'])
                 ),
             )
 
-    # def _ValidateProgDataType(self,argNm,parmDatum,type2):
+    # def _ValidateProgDataType(self,paramNm,parmDatum,type2):
 
     def _ValidateIsDataLayer(self,mpObject):
 
@@ -82,79 +82,65 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                         mpObject.RsltNm(),
                         ),
                     'File: {}  Line number: {}\n'.format(
-                        self.mptCmdStruct['cmdFileNm'],
-                        self.mptCmdStruct['lineNo']
+                        self.strCmd['cmdFileNm'],
+                        self.strCmd['lineNo']
                         ),
-                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                    'Full command:\n{}\n'.format(self.strCmd['rawCmdStr'])
                 ),
             )
 
-    # def _ValidateProgDataType(self,argNm,parmDatum,type2):
+    # def _ValidateProgDataType(self,paramNm,parmDatum,type2):
 
-    def InitFromParsedCmd(self,parsedCmd):
-        
-        self.mptCmdStruct['parsedCmd'] = cp.deepcopy(parsedCmd)
-        self.InitRawCmdFromParsedCmd()
-        self.InitCleanCmdFromParsedCmd()
-        if 'DataType' in parsedCmd['arguments']:
-            self.dataType = parsedCmd['arguments']['DataType']
-        if 'IsDataLayer' in parsedCmd['arguments']:
-            self.isDataLayer = parsedCmd['arguments']['IsDataLayer']
-        
-    # def InitFromParsedCmd(self,parsedCmd):
-
-    def ValFromArgByNm(self,argNm):
+    def ValFromParamByNm(self,paramNm):
 
         # Return an actual value (be that a single value or a list)
-        # of a argument. Arguments are read as strings, so this
+        # of a parameter. Parameters are read as strings, so this
         # converts that string into what it is supposed be. Right
         # now, it only does conversion on variables that are numeric.
-        # If there is an option for what the argument can be, it
+        # If there is an option for what the parameter can be, it
         # finds the most restrictive (e.g. integer instead of float)
-        # definition for the argument and does the conversion based
+        # definition for the parameter and does the conversion based
         # on that.
 
         rtrn = None
-        arg = self.ArgByNm(argNm)
+        param = self.ParamByNm(paramNm)
+        
+        if param is None: return None
 
-        if arg is None: return None
-
-        # Get the legal arg types for this argument
-        if argNm in self.fxnDesc['ReqArgs']:
-            legalArgTypes = self.fxnDesc['ReqArgs'][argNm]
-        elif argNm in self.fxnDesc['OptArgs']:
-            legalArgTypes = self.fxnDesc['OptArgs'][argNm]
+        # Get the legal param types for this parameter
+        if paramNm in self.fxnDesc['ReqParams']:
+            legalParamTypes = self.fxnDesc['ReqParams'][paramNm]
+        elif paramNm in self.fxnDesc['OptParams']:
+            legalParamTypes = self.fxnDesc['OptParams'][paramNm]
         else:
             raise Exception(
                 '{}{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
                     'Programming error:\n',
-                    '  Cannot find description of argter: {}'.format(argNm),
+                    '  Cannot find description of paramter: {}'.format(paramNm),
                     '  Check and correct the class definition of the MPilot command: {}\n'.format(
                         self.fxnDesc['Name']
                         ),
                     'File: {}  Line number: {}\n'.format(
-                        self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
+                        self.strCmd['cmdFileNm'],self.strCmd['lineNo']
                         ),
-                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                    'Full command:\n{}\n'.format(self.strCmd['rawCmdStr'])
                     ),
                 )
 
-        # if argNm self.fxnDesc['ReqArgs']:
+        # if paramNm self.fxnDesc['ReqParams']:
 
         # From the choices it is allowed to be, find out
         # the most restrictive type that fits. Note,
         # order of checking matters here.
-
-        argType = None
         
-        if not isinstance(legalArgTypes, list):
+        if not isinstance(legalParamTypes, list):
             
-            argType = legalArgTypes
+            paramType = legalParamTypes
             
         else:
 
-            for simplestArgType in [
+            for simplestParamType in [
                 'Positive Integer',
                 'Integer',
                 'Positive Integer List',
@@ -166,47 +152,28 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                 'Float List',
                 'Positive Float List',
                 'Fuzzy Value List',
-                'Field Name',
-                'Field Name List'
                 ]:
 
-                # Check the options for this argument
-                if simplestArgType in legalArgTypes:
+                # Check the options for this parameter
+                if simplestParamType in legalParamTypes:
                     # is it this?
-                    if self._IsArgType(arg,simplestArgType):
-                        argType = simplestArgType
-                        break
+                    if self._IsParamType(param,simplestParamType):
+                        paramType = simplestParamType
 
-        # if not isinstance(argTypes, list):
+        # if not isinstance(paramTypes, list):
 
-        if argType is None:
-            raise Exception(
-                '{}{}{}{}{}{}{}'.format(
-                    '\n********************ERROR********************\n',
-                    'Illegal argument value(s): \n'.format(legalArgTypes),
-                    '  Argument name: {}\n'.format(argNm),
-                    '  Must be (one of): {}\n'.format(legalArgTypes),
-                    '  Value is: {}\n'.format(arg),
-                    'File: {}  Line number: {}\n'.format(
-                        self.mptCmdStruct['cmdFileNm'],
-                        self.mptCmdStruct['lineNo']
-                        ),
-                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
-                    )
-                )
-
-        # List of the argter values in string form
-        argVals = arg.replace('[','').replace(']','').split(',')
+        # List of the paramter values in string form
+        paramVals = param.replace('[','').replace(']','').split(',')
 
         # Convert the string(s) into value(s)
-        if argType in [
+        if paramType in [
             'Integer',
             'Positive Integer',
             'Integer List',
             'Positive Integer List',
             ]:
-            rtrn = [int(x) for x in argVals]
-        elif argType in [
+            rtrn = [int(x) for x in paramVals]
+        elif paramType in [
             'Float',
             'Positive Float',
             'Fuzzy Value',
@@ -214,16 +181,16 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
             'Positive Float List',
             'Fuzzy Value List',
             ]:
-            rtrn = [float(x) for x in argVals]
-        elif argType in [
+            rtrn = [float(x) for x in paramVals]
+        elif paramType in [
             'Truest Or Falsest'
             ]:
-            if (arg == '-1' or
-                re.match(r'^[Ff][Aa][Ll][Ss][Ee][Ss][Tt]$',arg)
+            if (param == '-1' or
+                re.match(r'^[Ff][Aa][Ll][Ss][Ee][Ss][Tt]$',param)
                 ):
                 rtrn = ['Falsest']
-            elif (arg == '1' or
-                re.match(r'^[Tt][Rr][Uu][Ee][Ss][Tt]$',arg)
+            elif (param == '1' or
+                re.match(r'^[Tt][Rr][Uu][Ee][Ss][Tt]$',param)
                 ):
                 rtrn = ['Truest']
             else:
@@ -231,19 +198,19 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                     'Programming error. Truest Or Falsest has value: {}\n'.format(inStr))
 
         else: # No conversion required
-            rtrn = argVals
-        # if argType in [...] elif...else
+            rtrn = paramVals
+        # if paramType in [...] elif...else
             
         # Convert to single value is type is not list
-        if argType.find('List') < 0:
+        if paramType.find('List') < 0:
             rtrn = rtrn[0]
 
         return rtrn
 
-    # def ValFromArgByNm(self,argNm):
+    # def ValFromParamByNm(self,paramNm):
 
-    # Used to check validity of mptCmdStruct argument types
-    def _IsArgType(self,inStr,inType):
+    # Used to check validity of strCmd argument types
+    def _IsParamType(self,inStr,inType):
 
         if re.match(r'.+ List$',inType):
             theType = inType.replace(' List','',1)
@@ -275,13 +242,13 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                     if int(theStr) < 1:
                         return False
             elif theType == 'Float':
-                if not re.match(r'^[+-]{0,1}([0-9]+\.*[0-9]*)(e[+-]{0,1}[0-9]+){0,1}$|(^[+-]{0,1}\.[0-9]+)(e[+-]{0,1}[0-9]+){0,1}$',theStr):
+                if not re.match(r'^[+-]{0,1}([0-9]+\.*[0-9]*)$|(^[+-]{0,1}\.[0-9]+)$',theStr):
                     return False
             elif theType == 'Positive Float':
-                if not re.match(r'^[+]{0,1}([0-9]+\.*[0-9]*)(e[+-]{0,1}[0-9]+){0,1}$|(^[+-]{0,1}\.[0-9]+)(e[+-]{0,1}[0-9]+){0,1}$',theStr):
+                if not re.match(r'^[+]{0,1}([0-9]+\.*[0-9]*)$|(^[+-]{0,1}\.[0-9]+)$',theStr):
                     return False
             elif theType == 'Fuzzy Value':
-                if not re.match(r'^[+-]{0,1}([0-9]+\.*[0-9]*)(e[+-]{0,1}[0-9]+){0,1}$|(^[+-]{0,1}\.[0-9]+)(e[+-]{0,1}[0-9]+){0,1}$',theStr):
+                if not re.match(r'^[+-]{0,1}([0-9]+\.*[0-9]*)$|(^[+-]{0,1}\.[0-9]+)$',theStr):
                     return False
                 if not self.fuzzyMin <= float(theStr) <= self.fuzzyMax:
                     return False
@@ -292,7 +259,7 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                     re.match(r'^[Ff][Aa][Ll][Ss][Ee][Ss][Tt]$',inStr)):
                     return False                
             elif theType == 'Boolean':
-                if not (inStr == 'True' or inStr == 'False'):
+                if not inStr == 'True' or inStr == 'False':
                     return False                
             elif theType == 'Data Type Desc':
                 if not theStr in [
@@ -312,14 +279,14 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                     '{}{}{}'.format(
                         '\n********************ERROR********************\n',
                         'Class definition error.\n',
-                        'Illegal argument type in function descriptions: {}'.format(inType)
+                        'Illegal parameter type in function descriptions: {}'.format(inType)
                         )
                     )
         # for theStr in theStrs:
 
         return True
     
-    # def _IsArgType(self,inStr,type):
+    # def _IsParamType(self,inStr,type):
 
     def _InsureFuzzy(self,arr):
         
@@ -331,56 +298,56 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
         
     # def _InsureFuzzy(self,arr):
 
-    def _IsValidArgType(self,argStr,argTypes):
+    def _IsValidParamType(self,paramStr,paramTypes):
 
         rtrn = False
-        if not isinstance(argTypes,list): argTypes = [argTypes]
+        if not isinstance(paramTypes,list): paramTypes = [paramTypes]
             
-        for pType in argTypes:
-            if self._IsArgType(argStr,pType):
+        for pType in paramTypes:
+            if self._IsParamType(paramStr,pType):
                 rtrn = True
                 break
             
         return rtrn
     
-    # def _IsValidArgType(self,argStr,argTypes):
+    # def _IsValidParamType(self,paramStr,paramTypes):
 
-    def SetArg(self,argNm,value):
+    def SetParam(self,paramNm,value):
         
         # value must be string
-        if argNm in self.fxnDesc['ReqArgs']:
-            legalArgTypes = self.fxnDesc['ReqArgs'][argNm]
-        elif argNm in self.fxnDesc['OptArgs']:
-            legalArgTypes = self.fxnDesc['OptArgs'][argNm]
+        if paramNm in self.fxnDesc['ReqParams']:
+            legalParamTypes = self.fxnDesc['ReqParams'][paramNm]
+        elif paramNm in self.fxnDesc['OptParams']:
+            legalParamTypes = self.fxnDesc['OptParams'][paramNm]
         else:
             raise Exception(
                 '{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Trying to set non-existend argument:\n',
-                    '  Argument: {}  Value: {}'.format(argNm,value),
+                    'Trying to set non-existend parameter:\n',
+                    '  Parameter: {}  Value: {}'.format(paramNm,value),
                     ),
                 )
 
-        if not isinstance(legalArgTypes,list): legalArgTypes = [legalArgTypes]
+        if not isinstance(legalParamTypes,list): legalParamTypes = [legalParamTypes]
 
-        if not self._IsValidArgType(value,legalArgTypes):
+        if not self._IsValidParamType(value,legalParamTypes):
             raise Exception(
                 '{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Invalid value for argument:\n',
-                    '  Argument: {}  Value: {}'.format(argNm,value),
-                    '  Value must be one of:\n    {}'.format('\n    '.join(legalArgTypes)),
+                    'Invalid value for parameter:\n',
+                    '  Parameter: {}  Value: {}'.format(paramNm,value),
+                    '  Value must be one of:\n    {}'.format('\n    '.join(legalParamTypes)),
                     ),
                 )
 
-        self.mptCmdStruct['parsedCmd']['arguments'][argNm] = cp.deepcopy(value)
+        self.strCmd['parsedCmd']['params'][paramNm] = cp.deepcopy(value)
         
-    # def SetArg(self,argNm,value):
+    # def SetParam(self,paramNm,value):
         
     def DependencyNms(self):
         
-        rtrn = self._ArgToList('InFieldNames')
-        rtrn += self._ArgToList('PrecursorFieldNames')
+        rtrn = self._ParamToList('InFieldNames')
+        rtrn += self._ParamToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
