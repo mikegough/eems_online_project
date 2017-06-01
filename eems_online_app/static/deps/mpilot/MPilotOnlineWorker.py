@@ -1,8 +1,8 @@
 #!/opt/local/bin/python
-import shutil
 
 import MPilotProgram as mpprog
 import MPilotFramework as mpf
+import MPilotParseMetadata as mppm
 import json
 import os
 import uuid # to make a unique file name
@@ -67,17 +67,17 @@ class MPilotWorker(mpprog.MPilotProgram):
         # and variable for dimensions
         for cmdNm,cmd in self.UnorderedCmds().items():
             if cmd.FxnNm() == 'EEMSRead':
-                dimFileNm = cmd.ParamByNm('InFileName')
-                dimFieldNm = cmd.ParamByNm('InFieldName')
+                dimFileNm = cmd.ArgByNm('InFileName')
+                dimFieldNm = cmd.ArgByNm('InFieldName')
 
         parsedCmd = {}
         parsedCmd['rsltNm'] = '{}_OutputDone'.format(self.id)
         parsedCmd['cmd'] = 'EEMSWrite'
-        outfile = self.outputBaseDir + 'data/results.nc'
-        parsedCmd['params'] = {
+        parsedCmd['arguments'] = {
             'OutFieldNames':'[{}]'.format(','.join(rsltNms)),
-            'OutFileName':outfile,
-            'DimensionFileName':dimFileNm,
+            'OutFileName':'../eems/models/{}/data/nc/Results.nc'.format(self.id),
+            'OutFileName':'{}.nc'.format('Tst'),
+            'DimensionFileName': dimFileNm,
             'DimensionFieldName':dimFieldNm
             }
 
@@ -90,19 +90,12 @@ class MPilotWorker(mpprog.MPilotProgram):
         # Save each node's data to a graphic
         for rsltNm in rsltNms:
             parsedCmd = {}
+            
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
-            outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
-            extent = self.extent
-            epsg = self.epsg
-            map_quality = self.map_quality
-
-            parsedCmd['params'] = {
+            parsedCmd['arguments'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':outfile,
-                'Extent': extent,
-                'EPSG': epsg,
-                'MapQuality': map_quality,
+                'OutFileName':'../eems/models/{}/overlay/png/{}.png'.format(self.id,rsltNm)
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -111,15 +104,15 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _AddOutputLayerCmds(self)
 
     def _AddOutputDistributionCmds(self,rsltNms):
+
         # Save each node's data to a graphic
         for rsltNm in rsltNms:
             parsedCmd = {}
             parsedCmd['rsltNm'] = '{}_{}_HistoDist'.format('Tst',rsltNm)
             parsedCmd['cmd'] = 'HistoDist'
-            outfile = self.outputBaseDir + 'histogram/' + rsltNm + '.png'
-            parsedCmd['params'] = {
+            parsedCmd['arguments'] = {
                 'InFieldName':rsltNm,
-                'OutFileName':outfile
+                'OutFileName':'../eems/models/{}/histogram/png/{}.png'.format(self.id,rsltNm)
                 }
 
             self._CreateAndAddMptCmd(parsedCmd)
@@ -151,17 +144,16 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _DelOutputDistributionCmds(self,rsltNms):
         
     def _RunProg(self):
-        # first we save the mpt script represented by the mpt program:
 
-        #outfile = self.outputBaseDir + 'eemssrc/model.mpt'
-        #with open(outfile,'w') as outF:
-         #   outF.write(self.ProgAsText())
+        # first we save the mpt script represented by
+        # the mpt program:
 
-        ########################################
+        with open('../eems/models/{}/eemssrc/model.mpt'.format(self.id),'w') as outF:
+            outF.write(self.ProgAsText())
 
         # Since we want to produce an outputfile as well
         # as a map image and a distribution 
-        # distribution for each node in the model, we need
+        # for each node in the model, we need
         # to add commands to do that to the program before
         # we run it, and remove the commands after the run.
 
@@ -185,8 +177,7 @@ class MPilotWorker(mpprog.MPilotProgram):
     # def _RunProg(self):
 
     def _ProcessCmds(self,rqstCmds):
-        print "\nProcessing Commands (_ProcessCmds)", rqstCmds
-
+        
         for rqstCmd in rqstCmds:
             self._ProcessRqst(rqstCmd)
             
@@ -205,27 +196,35 @@ class MPilotWorker(mpprog.MPilotProgram):
         mptCmd = self.CmdByNm(rsltNm)
         cmdData = OrderedDict()
         meemseSubtree = OrderedDict()
-
+        
         meemseSubtree['id'] = rsltNm
         meemseSubtree['name'] = rsltNm
         meemseSubtree['data'] = OrderedDict()
-
+        
         meemseSubtree['data']['arguments'] = []
-        if mptCmd.Params() is not None:
-            for paramNm in mptCmd.Params():
+        if mptCmd.Args() is not None:
+            for argNm in mptCmd.Args():
+                if argNm == 'Metadata': continue
                 meemseSubtree['data']['arguments'].append(
                     '{}:{}'.format(
-                        paramNm,
-                        re.sub(r'(.*)\]$',r'\1',re.sub(r'^\[(.*)$',r'\1',mptCmd.ParamByNm(paramNm)))
+                        argNm,
+                        re.sub(r'(.*)\]$',r'\1',re.sub(r'^\[(.*)$',r'\1',mptCmd.ArgByNm(argNm)))
                         )
                     )
 
+            if 'Metadata' in mptCmd.Args():
+                meemseSubtree['data']['Metadata'] = (
+                    mppm.ParseMetadata(mptCmd.ArgByNm('Metadata'))
+                    )
+                    
+                
+        
         meemseSubtree['data']['is_fuzzy'] = False
         if mptCmd.FxnReturnType() == 'Fuzzy':
             meemseSubtree['data']['is_fuzzy'] = True
-        elif mptCmd.ParamByNm('DataType') == 'Fuzzy':
+        elif mptCmd.ArgByNm('DataType') == 'Fuzzy':
             meemseSubtree['data']['is_fuzzy'] = True
-
+            
         meemseSubtree['data']['raw_operation'] = mptCmd.FxnNm()
         meemseSubtree['data']['short_desc'] = mptCmd.FxnShortDesc()
         meemseSubtree['data']['operation'] = mptCmd.FxnDisplayName()
@@ -237,7 +236,7 @@ class MPilotWorker(mpprog.MPilotProgram):
                 meemseSubtree['children'].append(self._MakeMEEMSESubtree(childRsltNm))
 
         return meemseSubtree
-
+        
     # def _MakeMEEMSENodeDef(self,cmdNm):
 
     def _MakeMEEMSETrees(self):
@@ -251,8 +250,7 @@ class MPilotWorker(mpprog.MPilotProgram):
         return meemseTrees
             
     def _UpdateCmd(self,parsedCmd):
-
-        print parsedCmd['rsltNm']
+        
         if not self.RsltNmExists(parsedCmd['rsltNm']):
             raise Exception('missing command')
         self.DelCmdByRsltNm(parsedCmd['rsltNm'])
@@ -313,8 +311,6 @@ class MPilotWorker(mpprog.MPilotProgram):
 
     def _ProcessRqst(self,rqst):
 
-        print "Processing Request (_ProcessRqst)", rqst
-
         if rqst['action'] ==   'ProcessCmds':             rtrn = self._ProcessCmds(rqst['cmds'])
         elif rqst['action'] == 'CreateProg':              rtrn = self._CreateProg()
         elif rqst['action'] == 'AddCmd':                  rtrn = self._CreateAndAddMptCmd(rqst['cmd'])
@@ -338,37 +334,27 @@ class MPilotWorker(mpprog.MPilotProgram):
     def HandleRqst(
         self,
         id,
-        srcProgNm,
         rqst,
-        outputBaseDir,
-        extent,
-        epsg,
-        map_quality,
         doFileLoad=True,
         rqstIsJSON=True,
         reset=True
         ):
 
-        self.outputBaseDir = outputBaseDir
         self.id = id
-        self.extent = extent
-        self.epsg = epsg
-        self.map_quality = map_quality
 
         rtrn = None
 
         if rqstIsJSON: rqst = json.loads(rqst)
 
-        print srcProgNm
+        srcProgNm = '../eems/models/{}/eemssrc/model.mpt'.format(self.id)
             
         if os.path.isfile(srcProgNm) and doFileLoad:
-            print "Loading MptFile (LoadMptFile):  " + srcProgNm
             self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 
         rtrn = self._ProcessRqst(rqst)
-
+        
         with open(srcProgNm,'w') as outF:
             outF.write(self.ProgAsText())
             

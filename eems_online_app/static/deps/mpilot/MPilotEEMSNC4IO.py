@@ -9,6 +9,7 @@ import numpy as np
 import netCDF4 as nc4
 from scipy.io import netcdf
 import copy as cp
+import os.path
 
 class EEMSRead(mpefp._MPilotEEMSFxnParent):
 
@@ -22,8 +23,8 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
         self.mptCmdStruct = mptCmdStruct
 
         if mptCmdStruct is not None:
-            if self.ParamByNm('DataType') is not None:
-                dataType = self.ParamByNm('DataType')
+            if self.ArgByNm('DataType') is not None:
+                dataType = self.ArgByNm('DataType')
 
         super(EEMSRead, self).__init__(
             mptCmdStruct=mptCmdStruct,
@@ -42,13 +43,13 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Reads a variable from a file, converting floats to nearest int when necessary.'
         self.fxnDesc['ReturnType'] = ['Fuzzy','Float','Positive Float','Integer','Positive Integer']
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFileName':'File Name',
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'MissingValue':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             'DataType':'Data Type Desc',
@@ -58,21 +59,35 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
     
     def Exec(self,executedObjects):
-        
-        with nc4.Dataset(self.ParamByNm('InFileName'),'r') as inDS:
-            if self.ParamByNm('InFieldName') not in inDS.variables:
+
+        if not os.path.isfile(self.ArgByNm('InFileName')):
+            raise Exception(
+                '{}{}{}{}'.format(
+                    '\n********************ERROR********************\n',
+                    'Read file does not exist: {}\n'.format(self.ArgByNm('InFileName')),
+                    'Script File: {}  Line number: {}\n'.format(
+                        self.mptCmdStruct['cmdFileNm'],
+                        self.mptCmdStruct['lineNo']
+                        ),
+                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                ),
+            )
+        # if not os.path.isfile(self.ArgByNm('InFileName'),'r'):
+            
+        with nc4.Dataset(self.ArgByNm('InFileName'),'r') as inDS:
+            if self.ArgByNm('InFieldName') not in inDS.variables:
                 raise Exception(
                     '{}{}{}{}{}'.format(
                         '\n********************ERROR********************\n',
-                        'Read failure for file: {}\n'.format(self.ParamByNm('InFileName')),
-                        '  Variable not in file: {}\n'.format(self.ParamByNm('InFieldName')),
-                        'File: {}  Line number: {}\n'.format(
+                        'Read failure for file: {}\n'.format(self.ArgByNm('InFileName')),
+                        '  Variable not in file: {}\n'.format(self.ArgByNm('InFieldName')),
+                        'Script File: {}  Line number: {}\n'.format(
                             self.mptCmdStruct['cmdFileNm'],
                             self.mptCmdStruct['lineNo']
                             ),
@@ -80,7 +95,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
                     ),
                 )
 
-            inV = inDS.variables[self.ParamByNm('InFieldName')]
+            inV = inDS.variables[self.ArgByNm('InFieldName')]
             
             if isinstance(inV[:],np.ma.core.MaskedArray):
                 newMask = cp.deepcopy(inV[:].mask)
@@ -148,7 +163,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
                         '\n********************ERROR********************\n',
                         'Invalid data for data type: {}\n'.format(self.dataType),
                         '  {}\n'.format(msg),
-                        'File: {}  Line number: {}\n'.format(
+                        'Script File: {}  Line number: {}\n'.format(
                             self.mptCmdStruct['cmdFileNm'],
                             self.mptCmdStruct['lineNo']
                             ),
@@ -160,11 +175,11 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
             self.execRslt.soften_mask()
 
             # Make the missing value missing
-            if self.ParamExists('MissingValue'):
+            if self.ArgExists('MissingValue'):
                 if self.execRslt.mask.dtype in [int]:
-                    missingVal = int(self.ValFromParamByNm('MissingValue'))                    
+                    missingVal = int(self.ValFromArgByNm('MissingValue'))                    
                 else:
-                    missingVal = float(self.ValFromParamByNm('MissingValue'))                    
+                    missingVal = float(self.ValFromArgByNm('MissingValue'))                    
                 
                 if isinstance(self.execRslt.mask,np.ndarray):
                     self.execRslt.mask = np.where(
@@ -183,7 +198,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
                 
                 self.execRslt.data[np.where(self.execRslt.mask)] = self.execRslt.fill_value
                 
-            # if self.ParamExists('MissingValue'):
+            # if self.ArgExists('MissingValue'):
                 
         # Check shape versus shape of any object with a data layer
         # (i.e. data layer is masked array)
@@ -199,15 +214,15 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
                         '\n********************ERROR********************\n',
                         'Input variable shape did not match existing data:\n',
                         '  Input file name, field name, and shape: {}  {}'.format(
-                            self.ParamByNm('InFileName'),
-                            self.ParamByNm('InFieldName'),
+                            self.ArgByNm('InFileName'),
+                            self.ArgByNm('InFieldName'),
                             self.execRslt.shape
                             ),
                         '  Existing field name and shape: {}  {}'.format(
                             exObjKey,
                             exObjVal.ExecRslt().shape
                             ),
-                        'File: {}  Line number: {}\n'.format(
+                        'Script File: {}  Line number: {}\n'.format(
                             self.mptCmdStruct['cmdFileNm'],
                             self.mptCmdStruct['lineNo']
                             ),
@@ -247,13 +262,13 @@ class EEMSWrite(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Writes one or more file'
         self.fxnDesc['ReturnType'] = 'Boolean'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'OutFileName':'File Name',
             'OutFieldNames':['Field Name','Field Name List'],
             'DimensionFileName':'File Name',
             'DimensionFieldName':'Field Name',
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -261,25 +276,44 @@ class EEMSWrite(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('OutFieldNames')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('OutFieldNames')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
 
     def Exec(self,executedObjects):
 
-        outFldNms = self._ParamToList('OutFieldNames')
+        try: # check for writable file
+            outF = open(self.ArgByNm('OutFileName'),'w')
+            outF.close()
+            os.remove(self.ArgByNm('OutFileName'))
+        except IOError:
+            raise Exception(
+                '{}{}{}{}'.format(
+                    '\n********************ERROR********************\n',
+                    'Unable to open file for writing: {}\n'.format(self.ArgByNm('OutFileName')),
+                    'Script File: {}  Line number: {}\n'.format(
+                        self.mptCmdStruct['cmdFileNm'],
+                        self.mptCmdStruct['lineNo']
+                        ),
+                    'Full command:\n{}\n'.format(self.mptCmdStruct['rawCmdStr'])
+                ),
+            )
+
+        # try: # check for writable file            
+        
+        outFldNms = self._ArgToList('OutFieldNames')
 
         # Check that all output variables are data layers
         for outFldNm in outFldNms:
             self._ValidateIsDataLayer(executedObjects[outFldNm])
 
-        with nc4.Dataset(self.ParamByNm('OutFileName'),'w') as outDS:
+        with nc4.Dataset(self.ArgByNm('OutFileName'),'w') as outDS:
             
             # Prep the dimensions in the ouput file
-            with nc4.Dataset(self.ParamByNm('DimensionFileName')) as dimDS:
-                dimNms = dimDS[self.ParamByNm('DimensionFieldName')].dimensions
+            with nc4.Dataset(self.ArgByNm('DimensionFileName')) as dimDS:
+                dimNms = dimDS[self.ArgByNm('DimensionFieldName')].dimensions
                 for dimNm in dimNms:
                     inDimV = dimDS.variables[dimNm]
                     outDS.createDimension(dimNm,inDimV.size)
@@ -288,9 +322,13 @@ class EEMSWrite(mpefp._MPilotEEMSFxnParent):
                         if attNm not in dir(outDimV):
                             setattr(outDimV,attNm,getattr(inDimV,attNm))
                     outDimV[:] = inDimV[:]
-            # with Dataset(self.ParamByNm('DimensionFileName')) as dimDS:
+            # with Dataset(self.ArgByNm('DimensionFileName')) as dimDS:
 
-            
+            # Make the universal mask
+            uniMask = cp.deepcopy(executedObjects[outFldNm].ExecRslt().mask)
+            for outFldNm in outFldNms[1:]:
+                uniMask = np.ma.mask_or(uniMask,executedObjects[outFldNm].ExecRslt().mask)
+
             # Write those bad boys
             for outFldNm in outFldNms:
                 outV = outDS.createVariable(
@@ -299,7 +337,8 @@ class EEMSWrite(mpefp._MPilotEEMSFxnParent):
                     dimNms,
                     fill_value = executedObjects[outFldNm].ExecRslt().fill_value
                     )
-                outV[:] = cp.deepcopy(executedObjects[outFldNm].ExecRslt())
+                # outV[:] = cp.deepcopy(executedObjects[outFldNm].ExecRslt())
+                outV[:] = np.ma.MaskedArray(executedObjects[outFldNm].ExecRslt().data,uniMask)                
             # for outFldNm in outFldNms:
         
         self.execRslt = True
