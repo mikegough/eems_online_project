@@ -21,12 +21,12 @@ class Copy(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Copies the data from another field'
         self.fxnDesc['ReturnType'] = 'Any'
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -34,15 +34,15 @@ class Copy(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ArgToList('InFieldName')
-        rtrn += self._ArgToList('PrecursorFieldNames')
+        rtrn = self._ParamToList('InFieldName')
+        rtrn += self._ParamToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
 
-        fldNmObj = executedObjects[self.ValFromArgByNm('InFieldName')]
+        fldNmObj = executedObjects[self.ValFromParamByNm('InFieldName')]
         self.execRslt = cp.deepcopy(fldNmObj.ExecRslt())
         self.dataType = fldNmObj.DataType()
         self.isDataLayer = fldNmObj.IsDataLayer()
@@ -76,13 +76,13 @@ class AMinusB(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'A':'Field Name',
             'B':'Field Name'
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -90,17 +90,17 @@ class AMinusB(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ArgToList('A')
-        rtrn += self._ArgToList('B')
-        rtrn += self._ArgToList('PrecursorFieldNames')
+        rtrn = self._ParamToList('A')
+        rtrn += self._ParamToList('B')
+        rtrn += self._ParamToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
     
     def Exec(self,executedObjects):
 
-        aObj = executedObjects[self.ValFromArgByNm('A')]
-        bObj = executedObjects[self.ValFromArgByNm('B')]
+        aObj = executedObjects[self.ValFromParamByNm('A')]
+        bObj = executedObjects[self.ValFromParamByNm('B')]
         
         self._ValidateIsDataLayer(aObj)
         self._ValidateIsDataLayer(bObj)
@@ -162,12 +162,12 @@ class Sum(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
 
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name List']
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -177,7 +177,7 @@ class Sum(mpefp._MPilotEEMSFxnParent):
         # executedObjects is a dictionary of executed MPilot function objects
         
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ArgToList('InFieldNames')
+        fldNms = self._ParamToList('InFieldNames')
 
         # Validate input data and gather types
         inDataTypes = {}
@@ -239,13 +239,13 @@ class WeightedSum(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
 
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name List'],
             'Weights':['Float','Float List']            
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -257,8 +257,8 @@ class WeightedSum(mpefp._MPilotEEMSFxnParent):
         self._ValidateListLen('InFldNms',1)
         self._ValidateEqualListLens(['InFieldNames','Weights'])
         
-        fldNms = self._ArgToList('InFieldNames')
-        wts = self.ValFromArgByNm('Weights')
+        fldNms = self._ParamToList('InFieldNames')
+        wts = self.ValFromParamByNm('Weights')
 
         # Validate input data and gather types
         for fldNm in fldNms:
@@ -313,12 +313,12 @@ class Multiply(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
 
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name List']
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -328,7 +328,7 @@ class Multiply(mpefp._MPilotEEMSFxnParent):
         # executedObjects is a dictionary of executed MPilot function objects
         
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ArgToList('InFieldNames')
+        fldNms = self._ParamToList('InFieldNames')
 
         # Validate input data and gather types
         inDataTypes = {}
@@ -387,13 +387,13 @@ class ADividedByB(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'A':'Field Name',
             'B':'Field Name'
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -401,17 +401,17 @@ class ADividedByB(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ArgToList('A')
-        rtrn += self._ArgToList('B')
-        rtrn += self._ArgToList('PrecursorFieldNames')
+        rtrn = self._ParamToList('A')
+        rtrn += self._ParamToList('B')
+        rtrn += self._ParamToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
     
     def Exec(self,executedObjects):
 
-        aObj = executedObjects[self.ValFromArgByNm('A')]
-        bObj = executedObjects[self.ValFromArgByNm('B')]
+        aObj = executedObjects[self.ValFromParamByNm('A')]
+        bObj = executedObjects[self.ValFromParamByNm('B')]
         
         self._ValidateIsDataLayer(aObj)
         self._ValidateIsDataLayer(bObj)
@@ -463,12 +463,12 @@ class Minimum(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name','Field Name List']
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -477,7 +477,7 @@ class Minimum(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
 
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ArgToList('InFieldNames')
+        fldNms = self._ParamToList('InFieldNames')
         
         # Validate input data and gather types
         inDataTypes = {}
@@ -537,12 +537,12 @@ class Maximum(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name','Field Name List']
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -551,7 +551,7 @@ class Maximum(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
 
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ArgToList('InFieldNames')
+        fldNms = self._ParamToList('InFieldNames')
         
         # Validate input data and gather types
         inDataTypes = {}
@@ -612,12 +612,12 @@ class Mean(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
 
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name List']
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -627,7 +627,7 @@ class Mean(mpefp._MPilotEEMSFxnParent):
         # executedObjects is a dictionary of executed MPilot function objects
         
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ArgToList('InFieldNames')
+        fldNms = self._ParamToList('InFieldNames')
 
         # Validate input data and gather types
         inDataTypes = {}
@@ -685,13 +685,13 @@ class WeightedMean(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
 
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldNames':['Field Name List'],
             'Weights':['Float','Float List']            
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -703,8 +703,8 @@ class WeightedMean(mpefp._MPilotEEMSFxnParent):
         self._ValidateListLen('InFldNms',1)
         self._ValidateEqualListLens(['InFieldNames','Weights'])
         
-        fldNms = self._ArgToList('InFieldNames')
-        wts = self.ValFromArgByNm('Weights')
+        fldNms = self._ParamToList('InFieldNames')
+        wts = self.ValFromParamByNm('Weights')
 
         # Validate input data and gather types
         for fldNm in fldNms:
@@ -756,14 +756,14 @@ class Normalize(mpefp._MPilotEEMSFxnParent):
             'Positive Float'
             ]                        
         
-        self.fxnDesc['ReqArgs'] = {
+        self.fxnDesc['ReqParams'] = {
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptArgs'] = {
+        self.fxnDesc['OptParams'] = {
             'StartVal':'Float',
             'EndVal':'Float',
             'OutFileName':'File Name',
-            'Metadata':'Any',
+            'MetaData':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -771,19 +771,19 @@ class Normalize(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ArgToList('InFieldName')
-        rtrn += self._ArgToList('PrecursorFieldNames')
+        rtrn = self._ParamToList('InFieldName')
+        rtrn += self._ParamToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
 
-        inObj = executedObjects[self.ValFromArgByNm('InFieldName')]
+        inObj = executedObjects[self.ValFromParamByNm('InFieldName')]
         self._ValidateIsDataLayer(inObj)
         
-        startVal = self.ValFromArgByNm('StartVal')
-        endVal = self.ValFromArgByNm('EndVal')
+        startVal = self.ValFromParamByNm('StartVal')
+        endVal = self.ValFromParamByNm('EndVal')
         if startVal is None: startVal = 0.0
         if endVal is None: endVal = 1.0
 
