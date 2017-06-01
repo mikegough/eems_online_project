@@ -340,8 +340,8 @@ class MPilotWorker(mpprog.MPilotProgram):
         epsg = None,
         map_quality = None,
         srcProgNm = None,
-        doFileLoad=True,
-        rqstIsJSON=True,
+        doFileLoad=False,
+        rqstIsJSON=False,
         reset=True
         ):
 
