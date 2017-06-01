@@ -355,8 +355,9 @@ class MPilotWorker(mpprog.MPilotProgram):
 
         if rqstIsJSON: rqst = json.loads(rqst)
 
-        if os.path.isfile(srcProgNm) and doFileLoad:
-            self.LoadMptFile(srcProgNm)
+        if srcProgNm is not None:
+            if os.path.isfile(srcProgNm) and doFileLoad:
+                self.LoadMptFile(srcProgNm)
         # elif rqst['action'] != 'CreateProg':
         #     raise Exception('missing source program')
 
