@@ -526,25 +526,25 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
     update_cmd_dict["cmd"] = {};
     update_cmd_dict["cmd"]["rsltNm"] = node_id;
     update_cmd_dict["cmd"]["cmd"] = new_operator;
-    update_cmd_dict["cmd"]["params"] = {};
+    update_cmd_dict["cmd"]["arguments"] = {};
 
     // MPilot needs the list of InFieldNames as a string within brackets. A list won't work.
     if (new_operator.toLowerCase().indexOf("cvttofuzzy") == -1) {
-        update_cmd_dict["cmd"]["params"]["InFieldNames"] = '[';
+        update_cmd_dict["cmd"]["arguments"]["InFieldNames"] = '[';
         $.each(eems_children_dict[node_id], function(count, value) {
             // ToDO: Not sure why the children in the JSON files have a ":number" after the file name.
             var child_name=value.split(":")[0];
-            update_cmd_dict["cmd"]["params"]["InFieldNames"] += child_name + ",";
+            update_cmd_dict["cmd"]["arguments"]["InFieldNames"] += child_name + ",";
         });
         // Remove the trailing comma.
-        update_cmd_dict["cmd"]["params"]["InFieldNames"] = update_cmd_dict["cmd"]["params"]["InFieldNames"].slice(0,-1);
-        update_cmd_dict["cmd"]["params"]["InFieldNames"] += ']';
+        update_cmd_dict["cmd"]["arguments"]["InFieldNames"] = update_cmd_dict["cmd"]["arguments"]["InFieldNames"].slice(0,-1);
+        update_cmd_dict["cmd"]["arguments"]["InFieldNames"] += ']';
     }
     // For Convert To Fuzzy operators, the key is "InFieldName" (singular), and it is not a list.
     else {
         $.each(eems_children_dict[node_id], function(count, value) {
             var child_name=value.split(":")[0];
-            update_cmd_dict["cmd"]["params"]["InFieldName"] = child_name;
+            update_cmd_dict["cmd"]["arguments"]["InFieldName"] = child_name;
         });
 
     }
@@ -555,10 +555,10 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
         var child_name=value.split(":")[0];
         // Check the required parameter type stored in eems_available_commands_json. If it's a list, add the brackets.
         if (typeof eems_available_commands_json[new_operator_id]["ReqParams"][param] != "undefined" && (eems_available_commands_json[new_operator_id]["ReqParams"][param][0]).indexOf("List") != -1) {
-            update_cmd_dict["cmd"]["params"][param] = "[" + value + "]";
+            update_cmd_dict["cmd"]["arguments"][param] = "[" + value + "]";
         }
         else {
-            update_cmd_dict["cmd"]["params"][param] = value;
+            update_cmd_dict["cmd"]["arguments"][param] = value;
         }
     });
 
