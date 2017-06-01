@@ -17,7 +17,7 @@ class _MPilotFxnParent(object):
         # that is used to order commands, check command validity,
         # and provide detailed information in error messages.
 
-        # The parameters that are used in executing the command
+        # The arguments that are used in executing the command
         
         self.execRslt = None
         self.fxnDesc = OrderedDict()
@@ -35,7 +35,7 @@ class _MPilotFxnParent(object):
                 }
 
             self.mptCmdStruct['parsedCmd'] = {}
-            self.mptCmdStruct['parsedCmd']['params'] = {}
+            self.mptCmdStruct['parsedCmd']['arguments'] = {}
                 
         else:
             
@@ -70,12 +70,12 @@ class _MPilotFxnParent(object):
         ### you create.
 
         self.fxnDesc['Name'] = 'PilotCmd'
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFileName':'File Name',   # for commands that read
             'InField':'Field Name',     # a field name or field name list
             'Other':'TypeOfArgumentVariable'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
             'PrecursorField':'Field Name', # a field name or field name list
             }
@@ -90,19 +90,19 @@ class _MPilotFxnParent(object):
         # Assumes syntax of parsed command is valid
         # Right now, does not check result name
 
-        cmdParams = self.mptCmdStruct['parsedCmd']['params']
+        cmdArgs = self.mptCmdStruct['parsedCmd']['arguments']
 
-        reqParamsSet = set(self.fxnDesc['ReqParams'])
-        optParamSet = set(self.fxnDesc['OptParams'])
-        inParamsSet = set(cmdParams.keys())
+        reqArgsSet = set(self.fxnDesc['ReqArgs'])
+        optArgSet = set(self.fxnDesc['OptArgs'])
+        inArgsSet = set(cmdArgs.keys())
         
-        # are all required params there?
-        if not reqParamsSet.issubset(inParamsSet):
+        # are all required args there?
+        if not reqArgsSet.issubset(inArgsSet):
             raise Exception(
                 '{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Missing input parameter(s):\n  {}\n'.format(
-                        ' '.join(reqParamsSet - inParamsSet)
+                    'Missing input argument(s):\n  {}\n'.format(
+                        ' '.join(reqArgsSet - inArgsSet)
                         ),
                     'File: {}  Line number: {}\n'.format(
                         self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
@@ -111,13 +111,13 @@ class _MPilotFxnParent(object):
                     ),
                 )
 
-        # are all of the params either optional or required?
-        if not inParamsSet.issubset(set.union(reqParamsSet,optParamSet)):
+        # are all of the args either optional or required?
+        if not inArgsSet.issubset(set.union(reqArgsSet,optArgSet)):
             raise Exception(
                 '{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Invalid input parameter(s):\n  {}\n'.format(
-                        ' '.join(inParamsSet - set.union(reqParamsSet,optParamSet))
+                    'Invalid input argument(s):\n  {}\n'.format(
+                        ' '.join(inArgsSet - set.union(reqArgsSet,optArgSet))
                         ),
                     'File: {}  Line number: {}\n'.format(
                         self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
@@ -127,44 +127,44 @@ class _MPilotFxnParent(object):
                 )
 
         # Is the result name a valid field name
-        self._ValidateParamType(self.mptCmdStruct['parsedCmd']['rsltNm'],'Field Name')
+        self._ValidateArgType(self.mptCmdStruct['parsedCmd']['rsltNm'],'Field Name')
         
-        # Are the all the params of the correct type?
-        # loop through the allowed parameter
-        descParams = cp.deepcopy(self.fxnDesc['ReqParams'])
-        descParams.update(self.fxnDesc['OptParams'])
+        # Are the all the args of the correct type?
+        # loop through the allowed argument
+        descArgs = cp.deepcopy(self.fxnDesc['ReqArgs'])
+        descArgs.update(self.fxnDesc['OptArgs'])
 
-        for descParamNm,descParamType in descParams.items():
+        for descArgNm,descArgType in descArgs.items():
 
-            # if the param was not in the input params,
+            # if the arg was not in the input args,
             # don't worry about it
-            if descParamNm not in inParamsSet: 
+            if descArgNm not in inArgsSet: 
                 continue
             
-            # param type spec can be list, if not make it a
+            # arg type spec can be list, if not make it a
             # list for ease of coding this
-            if not isinstance(descParamType,list):
-                descParamType = [descParamType]
+            if not isinstance(descArgType,list):
+                descArgType = [descArgType]
 
-            # loop through the valid param types
-            paramIsValid = False
-            for pType in descParamType:
-                if  self._IsParamType(cmdParams[descParamNm],pType):
-                    paramIsValid = True
+            # loop through the valid arg types
+            argIsValid = False
+            for pType in descArgType:
+                if  self._IsArgType(cmdArgs[descArgNm],pType):
+                    argIsValid = True
                     break
-            # for pType in paramType:
+            # for pType in argType:
                 
-            # determine if the param is one the valid types
+            # determine if the arg is one the valid types
 
-            if not paramIsValid:
+            if not argIsValid:
                 raise Exception(
                     '{}{}{}{}{}'.format(
                         '\n********************ERROR********************\n',
-                        'Invalid parameter value:\n',
-                        '  Parameter name: {}\n  Should be one of:\n    {}\n  Value is:{}\n'.format(
-                            descParamNm,
-                            '\n    '.join(descParamType),
-                            cmdParams[descParamNm]
+                        'Invalid argument value:\n',
+                        '  Argument name: {}\n  Should be one of:\n    {}\n  Value is:{}\n'.format(
+                            descArgNm,
+                            '\n    '.join(descArgType),
+                            cmdArgs[descArgNm]
                             ),
                         'File: {}  Line number: {}\n'.format(
                             self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
@@ -176,15 +176,15 @@ class _MPilotFxnParent(object):
     # def _ValidateStrCmd():
     # Functions to test individual file types
 
-    def _ValidateParamExists(self,paramNm):
+    def _ValidateArgExists(self,argNm):
 
-        if not self.ParamExists(paramNm):
+        if not self.ArgExists(argNm):
             raise Exception(
                 '{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Trying to acces invalid parameter:\n',
-                    '  Parameter name: {}\n'.format(
-                        paramNm
+                    'Trying to acces invalid argument:\n',
+                    '  Argument name: {}\n'.format(
+                        argNm
                         ),
                     'File: {}  Line number: {}\n'.format(
                         self.mptCmdStruct['cmdFileNm'],
@@ -194,27 +194,25 @@ class _MPilotFxnParent(object):
                 ),
             )
 
-    # def _ValidateParamExists(self,paramNm):
+    # def _ValidateArgExists(self,argNm):
 
-    def _ValidateParamType(self,param,paramType):
+    def _ValidateArgType(self,arg,argType):
 
-        if not self._IsParamType(param,paramType):
-            
-            print param,paramType
+        if not self._IsArgType(arg,argType):
             
             raise Exception(
                 '{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Input parameter has invalid type:\n',
+                    'Input argument has invalid type:\n',
                     'Value: {}  Is not: {}\n'.format(
-                        param,
-                        paramType
+                        arg,
+                        argType
                         ),
                     
-                    # 'Parameter name: {}  Should be: {}  Is: {}\n'.format(
+                    # 'Argument name: {}  Should be: {}  Is: {}\n'.format(
                     #     'InVals',
-                    #     self.fxnDesc['ReqParams']['InVals'],
-                    #     pCmd['params']['InVals'],
+                    #     self.fxnDesc['ReqArgs']['InVals'],
+                    #     pCmd['arguments']['InVals'],
                     #     ),
                     'File: {}  Line number: {}\n'.format(
                         self.mptCmdStruct['cmdFileNm'],
@@ -224,19 +222,19 @@ class _MPilotFxnParent(object):
                 ),
             )
 
-    # def _ValidateParamType(self,param,paramType):
+    # def _ValidateArgType(self,arg,argType):
         
-    def _ValidateListLen(self,paramNm,minLen,maxLen=float('inf')):
+    def _ValidateListLen(self,argNm,minLen,maxLen=float('inf')):
 
-        listLen = len(self.ParamByNm('InFieldNames').replace('[','').replace(']','').split(','))
+        listLen = len(self.ArgByNm('InFieldNames').replace('[','').replace(']','').split(','))
         
         if not minLen <= listLen <= maxLen:
             raise Exception(
                 '{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Parameter list has invalid length:\n',
-                    'Parameter name: {}  Should be: {} <= Length <= {}  Length is {}.\n'.format(
-                        paramNm,
+                    'Argument list has invalid length:\n',
+                    'Argument name: {}  Should be: {} <= Length <= {}  Length is {}.\n'.format(
+                        argNm,
                         minLen,
                         maxLen,
                         len(myLst)
@@ -251,20 +249,20 @@ class _MPilotFxnParent(object):
             
     # def _ValidateListLen(self,myLst,minLen,maxLen=float('inf')):
 
-    def _ValidateEqualListLens(self,paramNms):
+    def _ValidateEqualListLens(self,argNms):
         
         listLen = -1
-        for paramNm in paramNms:
-            pListLen = len(self.ParamByNm(paramNm).replace('[','').replace(']','').split(','))
+        for argNm in argNms:
+            pListLen = len(self.ArgByNm(argNm).replace('[','').replace(']','').split(','))
             if listLen < 0:
                 listLen = pListLen
             elif pListLen != listLen:
                 raise Exception(
                     '{}{}{}{}{}'.format(
                         '\n********************ERROR********************\n',
-                        'List parameters do not have identical lengths:\n',
-                        '  These parameters must have identical lengths:\n    {}\n'.format(
-                            '\n    '.join(paramNms)
+                        'List arguments do not have identical lengths:\n',
+                        '  These arguments must have identical lengths:\n    {}\n'.format(
+                            '\n    '.join(argNms)
                             ),
                         'File: {}  Line number: {}\n'.format(
                             self.mptCmdStruct['cmdFileNm'],
@@ -274,11 +272,11 @@ class _MPilotFxnParent(object):
                     ),
                 )
             
-    # def _ValidateEqualListLens(self,paramNms):
+    # def _ValidateEqualListLens(self,argNms):
     
-    def _ValidateParamListItemsUnique(self,paramNm):
+    def _ValidateArgListItemsUnique(self,argNm):
 
-        inLst = self.ValFromParamByNm('RawValues')
+        inLst = self.ValFromArgByNm('RawValues')
         
         if not isinstance(inLst,list): return
         
@@ -286,11 +284,11 @@ class _MPilotFxnParent(object):
             raise Exception(
                 '{}{}{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'List parameter does not have unique entries:\n',
-                    '   Parameter name: {}\n'.format(
-                        paramNm,
+                    'List argument does not have unique entries:\n',
+                    '   Argument name: {}\n'.format(
+                        argNm,
                         ),
-                    '   Parameter values:\n    {}\n'.format(
+                    '   Argument values:\n    {}\n'.format(
                         '\n    '.join([float(x) for x in inLst]),
                         ),
                     'File: {}  Line number: {}\n'.format(
@@ -302,26 +300,26 @@ class _MPilotFxnParent(object):
             )
 
         
-    # def _ValidateEqualListLens(self,paramNms):
+    # def _ValidateEqualListLens(self,argNms):
 
-    def _ParamToList(self,paramNm):
+    def _ArgToList(self,argNm):
         
-        rtrn = [] # empty list if the param does not exist in the cmd
-        if self.ParamByNm(paramNm) is not None:
-            rtrn = self.ParamByNm(paramNm).replace('[','').replace(']','').split(',')
+        rtrn = [] # empty list if the arg does not exist in the cmd
+        if self.ArgByNm(argNm) is not None:
+            rtrn = self.ArgByNm(argNm).replace('[','').replace(']','').split(',')
 
         return rtrn
     
-    # def _ParamToList(self,paramNm):
+    # def _ArgToList(self,argNm):
         
-    def _IsParamType(self,inStr,inType):
+    def _IsArgType(self,inStr,inType):
         
         raise Exception(
             '{}{}{}{}{}{}{}'.format(
                 '\n********************ERROR********************\n',
                 'Programming error:\n',
-                '  Your program is using the inherited _MPilotFxnParent:_IsParamType() method.',
-                '  There should be a unique _IsParamType() method for the defined MPilot command.',
+                '  Your program is using the inherited _MPilotFxnParent:_IsArgType() method.',
+                '  There should be a unique _IsArgType() method for the defined MPilot command.',
                 '  Check and correct the class definition of the MPilot command: {}\n'.format(self.fxnDesc['Name']),
                 'File: {}  Line number: {}\n'.format(
                     self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
@@ -330,7 +328,7 @@ class _MPilotFxnParent(object):
                 ),
             )
     
-    # def _IsParamType(self,inStr,inType):
+    # def _IsArgType(self,inStr,inType):
                     
     def __enter__(self):
         return(self)
@@ -349,17 +347,17 @@ class _MPilotFxnParent(object):
         
     # def InitFromParsedCmd(self,parsedCmd):
     
-    def ParamTypesFromParam(self,paramNm):
+    def ArgTypesFromArg(self,argNm):
 
-        if paramNm in self.fxnDesc['ReqParams']:
-            return self.fxnDesc['ReqParams'][paramNm]
-        elif paramNm in self.fxnDesc['OptParams']:
-            return self.fxnDesc['OptParams'][paramNm]
+        if argNm in self.fxnDesc['ReqArgs']:
+            return self.fxnDesc['ReqArgs'][argNm]
+        elif argNm in self.fxnDesc['OptArgs']:
+            return self.fxnDesc['OptArgs'][argNm]
         else:
             raise Exception(
                 '{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Illegal parameter:  {}\n'.format(paramNm),
+                    'Illegal argument:  {}\n'.format(argNm),
                     'File: {}  Line number: {}\n'.format(
                         self.mptCmdStruct['cmdFileNm'],self.mptCmdStruct['lineNo']
                         ),
@@ -367,12 +365,12 @@ class _MPilotFxnParent(object):
                     ),
                 )
 
-    # def ParamTypesFromParam(self,paramNm):
+    # def ArgTypesFromArg(self,argNm):
     
     def SetRsltNm(self,nm): self.mptCmdStruct['parsedCmd']['rsltNm'] = nm
 
-    def SetParam(self,paramNm,value):
-        self.mptCmdStruct['parsedCmd']['params'][paramNm] = cp.deepcopy(value)
+    def SetArg(self,argNm,value):
+        self.mptCmdStruct['parsedCmd']['arguments'][argNm] = cp.deepcopy(value)
 
     def SetCmdFileNm(self,nm): self.mptCmdStruct['cmdFileNm'] = nm
         
@@ -383,21 +381,21 @@ class _MPilotFxnParent(object):
     def SetCleanCmdStr(self,cmdStr): self.mptCmdStruct['cleanCmdStr'] = cmdStr
         
     # MPilot Function description access
-    def ParamExists(self,nm):
+    def ArgExists(self,nm):
         
         rtrn = False
         if self.mptCmdStruct is not None:
             if 'parsedCmd' in self.mptCmdStruct:
-                rtrn = nm in self.mptCmdStruct['parsedCmd']['params']
+                rtrn = nm in self.mptCmdStruct['parsedCmd']['arguments']
         return rtrn
     
     def RsltNm(self): return self.mptCmdStruct['parsedCmd']['rsltNm']
-    
+
     def FxnNm(self): return self.fxnDesc['Name']
 
-    def FxnReqParams(self): return self.fxnDesc['ReqParams']
+    def FxnReqArgs(self): return self.fxnDesc['ReqArgs']
     
-    def FxnOptParams(self): return self.fxnDesc['OptParams']
+    def FxnOptArgs(self): return self.fxnDesc['OptArgs']
         
     def FxnDisplayName(self): return self.fxnDesc['DisplayName']
         
@@ -420,13 +418,13 @@ class _MPilotFxnParent(object):
             rtrnStr = '{}  {}: {}\n'.format(rtrnStr,'Return Type',self.fxnDesc['ReturnType'])
         if 'InputType' in self.fxnDesc:
             rtrnStr = '{}  {}: {}\n'.format(rtrnStr,'Input Type',self.fxnDesc['InputType'])
-        if 'ReqParams' in self.fxnDesc:
-            rtrnStr = '{}  Required Paramaters and data types:\n'.format(rtrnStr)
-            for argKey,argVal in self.fxnDesc['ReqParams'].items():
+        if 'ReqArgs' in self.fxnDesc:
+            rtrnStr = '{}  Required Argaters and data types:\n'.format(rtrnStr)
+            for argKey,argVal in self.fxnDesc['ReqArgs'].items():
                 rtrnStr = '{}    {}: {}\n'.format(rtrnStr,argKey,argVal)
-        if 'OptParams' in self.fxnDesc:
-            rtrnStr = '{}  Optional Paramaters and data types:\n'.format(rtrnStr)
-            for argKey,argVal in self.fxnDesc['OptParams'].items():
+        if 'OptArgs' in self.fxnDesc:
+            rtrnStr = '{}  Optional Argaters and data types:\n'.format(rtrnStr)
+            for argKey,argVal in self.fxnDesc['OptArgs'].items():
                 rtrnStr = '{}    {}: {}\n'.format(rtrnStr,argKey,argVal)
 
         return rtrnStr
@@ -456,7 +454,7 @@ class _MPilotFxnParent(object):
         rtrnStr = '{}{}\n)'.format(
             rtrnStr,
             ',\n'.join(
-                ['    {} = {}'.format(pNm,pVal) for pNm,pVal in self.ParsedCmd()['params'].items()]
+                ['    {} = {}'.format(pNm,pVal) for pNm,pVal in self.ParsedCmd()['arguments'].items()]
                 )
             )
 
@@ -470,8 +468,8 @@ class _MPilotFxnParent(object):
             self.fxnDesc['Name']
             )
 
-        paramLines = ['{} = {}'.format(k,v) for k,v in self.mptCmdStruct['parsedCmd']['params'].items()]
-        newCmdStr = '{}{}'.format(newCmdStr,',\n  '.join(paramLines))
+        argLines = ['{} = {}'.format(k,v) for k,v in self.mptCmdStruct['parsedCmd']['arguments'].items()]
+        newCmdStr = '{}{}'.format(newCmdStr,',\n  '.join(argLines))
         newCmdStr = '{}\n)'.format(newCmdStr)
         self.SetRawCmdStr(newCmdStr)
         
@@ -481,8 +479,8 @@ class _MPilotFxnParent(object):
             self.fxnDesc['Name']
             )
 
-        paramLines = ['{} = {}'.format(k,v) for k,v in self.mptCmdStruct['parsedCmd']['params'].items()]
-        newCmdStr = '{}{}'.format(newCmdStr,',\n  '.join(paramLines))
+        argLines = ['{} = {}'.format(k,v) for k,v in self.mptCmdStruct['parsedCmd']['arguments'].items()]
+        newCmdStr = '{}{}'.format(newCmdStr,',\n  '.join(argLines))
         newCmdStr = '{}\n)'.format(newCmdStr)
         self.SetCleanCmdStr(newCmdStr)
         
@@ -492,17 +490,17 @@ class _MPilotFxnParent(object):
         else:
             return None
         
-    def Params(self):
+    def Args(self):
         if self.mptCmdStruct['parsedCmd'] is not None:
-            return self.mptCmdStruct['parsedCmd']['params']
+            return self.mptCmdStruct['parsedCmd']['arguments']
         else:
             return None
         
-    def ParamByNm(self, paramNm):
+    def ArgByNm(self, argNm):
         rtrn = None
         if self.mptCmdStruct['parsedCmd'] is not None:
-            if paramNm in self.mptCmdStruct['parsedCmd']['params']:
-                rtrn = self.mptCmdStruct['parsedCmd']['params'][paramNm]
+            if argNm in self.mptCmdStruct['parsedCmd']['arguments']:
+                rtrn = self.mptCmdStruct['parsedCmd']['arguments'][argNm]
         return rtrn
 
     # Get some other things
