@@ -43,7 +43,7 @@ def index(request):
         eems_rqst_dict = {}
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
-        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", "none", "none", False, False, True)
+        eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
 
         json.dumps(eems_available_commands_json)
 
