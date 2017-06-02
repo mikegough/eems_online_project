@@ -231,7 +231,7 @@ def link(request):
     eems_rqst_dict = {}
     eems_rqst_dict["action"] = 'GetMEEMSETrees'
     my_mpilot_worker = MPilotWorker()
-    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", "none", "none", True, False, True)[1:-1])
+    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(rqst=eems_rqst_dict,id=1,srcProgNm=eems_model_modified_src_program,doFileLoad=True, rqstIsJSON=False, reset=True)[1:-1])
     print eems_meemse_tree_json
 
     eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)
@@ -373,7 +373,12 @@ def upload_form(request):
             netCDF_file = netCDF_file.replace("\\","/")
             netCDF_file_name = os.path.basename(netCDF_file)
 
-        input_epsg  = getEPSGFromNCfile(netCDF_file)
+        try:
+            input_epsg = getEPSGFromNCfile(netCDF_file)
+
+        # Assume GCS WGS84 if no crs in the netCDF file.
+        except:
+            input_epsg = 4326
 
         # Get the Extent from the NetCDF file (try y,x first)
         try:
@@ -432,10 +437,10 @@ def upload_form(request):
 
         # Run EEMS to create the image overlays and the histograms
         my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, str(input_epsg), image_overlay_size, True, False, True)
+        my_mpilot_worker.HandleRqst(rqst={"action": "RunProg"}, id=eems_model_id, srcProgNm=mpt_file_copy, outputBaseDir=output_base_dir, extent=extent_for_gdal, epsg=str(input_epsg), map_quality=image_overlay_size, doFileLoad=True, rqstIsJSON=False, reset=True)
 
         # Create the MEEMSE tree
-        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", "none", True, False, True)[1:-1])
+        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(id=eems_model_id, srcProgNm=mpt_file_copy,rqst={"action" : "GetMEEMSETrees"}, doFileLoad=True, rqstIsJSON=False, reset=True)[1:-1])
         eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
         with open(eems_meemse_tree_file, 'w') as outfile:
             json.dump(eems_meemse_tree_json, outfile, indent=3)
