@@ -41,7 +41,7 @@ def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to
   ring = ogr.Geometry(ogr.wkbLinearRing)
   for x in range(2):
     for y in range(2):
-      ring.AddPoint(extent[x], extent[2+y])
+      ring.AddPoint(float(extent[x]), float(extent[2+y]))
   poly = ogr.Geometry(ogr.wkbPolygon)
   poly.AddGeometry(ring)
   poly.Transform(transform)
