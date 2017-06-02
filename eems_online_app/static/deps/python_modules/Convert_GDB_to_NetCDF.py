@@ -49,7 +49,7 @@ def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to
 
 def rasterize(infile, outfile, pixel_size):
 
-  fill = -9999. # nodata value
+  fill = -9999999. # nodata value
   # We assume a single layer, and that all features have the same fields.
   # So we use feature 0 as a pattern for the fields to transcribe.
 
