@@ -161,7 +161,7 @@ function init(json, eems_file_name){
             layer_index=node.name.split(':')[1]
 
             if (typeof(node.data.short_desc) != 'undefined') {
-                label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
+                label.innerHTML = "<div class='EEMS_node_name' title='" + alias + "'>" + alias + "</div><br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
             } else {
                 label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='This is the operation used to create this node'> " + node.data.operation + "</div>";
             }
@@ -192,6 +192,11 @@ function init(json, eems_file_name){
                 label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
+            if (typeof node.data.Metadata != 'undefined' && typeof node.data.Metadata.Description != 'undefined') {
+                label.innerHTML += "<span class='description_span' title='" + node.data.Metadata.Description + "'><img class='description_icon_class' src='static/img/info_black.png'></span>"
+            }
+
+
             label.onclick = function(){
 
                 //Fix for nodes shooting off the screen after panning then clicking.
@@ -219,6 +224,7 @@ function init(json, eems_file_name){
             style.fontSize = '.8em';
             style.textAlign = 'center';
             style.paddingTop = '5px';
+            style.paddingBottom = '5px';
             style.paddingLeft = '15px';
             style.paddingRight = '18px';
             style.fontFamily = 'Verdana';
