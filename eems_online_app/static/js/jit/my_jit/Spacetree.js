@@ -156,8 +156,14 @@ function init(json, eems_file_name){
         //your node.
         onCreateLabel: function(label, node){
             label.id = node.id;
+            var alias;
+            if (typeof node.data.Metadata != "undefined" && node.data.Metadata.DisplayName != "undefined"){
+                alias = (node.data.Metadata.DisplayName).replace(/&nbsp;/g, " ")
+            }
+            else{
+                alias=node.name.split(':')[0]
+            }
 
-            alias=node.name.split(':')[0]
             layer_index=node.name.split(':')[1]
 
             if (typeof(node.data.short_desc) != 'undefined') {
