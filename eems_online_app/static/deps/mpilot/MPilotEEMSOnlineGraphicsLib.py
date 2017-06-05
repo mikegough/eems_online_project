@@ -172,6 +172,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             # Convert the PNG to a spatially referenced Tif in it's native CRS
             os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
 
+            # Get the extent in Web Mercator from Ken's script. Eventually only want to do this step once.
             extent_tuple = extent.split(" ")
             extent_list_for_ken=[extent_tuple[0], extent_tuple[2], extent_tuple[3], extent_tuple[1]]
             extent_wm = getExtentInDifferentCRS(extent=extent_list_for_ken,epsg=int(epsg),to_epsg=3857)
