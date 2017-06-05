@@ -85,14 +85,16 @@ class MPilotWorker(mpprog.MPilotProgram):
 
     # def _AddOutputDataCmd(self):
 
-    def _AddOutputLayerCmds(self,rsltNms):
+    def _AddOutputLayerCmds(self,colorMaps):
 
-        # Save each node's data to a graphic
-        for rsltNm in rsltNms:
+        # Save each node's data to a graphic layer
+        # colorMap has rsltNm and colorMap
+         for rsltNm,colorMap in colorMaps.items():
             parsedCmd = {}
             
             parsedCmd['rsltNm'] = '{}_RenderDone'.format(rsltNm)
             parsedCmd['cmd'] = 'RenderLayer'
+
             outfile = self.outputBaseDir + 'overlay/' + rsltNm + '.png'
             extent = self.extent
             epsg = self.epsg
@@ -105,6 +107,10 @@ class MPilotWorker(mpprog.MPilotProgram):
                 'EPSG': epsg,
                 'MapQuality': map_quality,
                 }
+
+            # if there is a color map, add it
+            if colorMap is not None:
+                parsedCmd['arguments']['ColorMap'] = colorMap
 
             self._CreateAndAddMptCmd(parsedCmd)
             # Add _legend to OutFileName (vertical legend)
@@ -167,9 +173,14 @@ class MPilotWorker(mpprog.MPilotProgram):
         # we run it, and remove the commands after the run.
 
         rsltNms = self.UnorderedCmds().keys()
-        
+
+        # Get the color maps from the metadata
+        colorMaps = OrderedDict()
+        for rsltNm in rsltNms:
+            colorMaps[rsltNm] = self.UnorderedCmds()[rsltNm].MetadataByKey('ColorMap')
+
         self._AddOutputDataCmd(rsltNms)
-        self._AddOutputLayerCmds(rsltNms)
+        self._AddOutputLayerCmds(colorMaps)
         self._AddOutputDistributionCmds(rsltNms)
 
         # Run it with output
