@@ -142,7 +142,7 @@ def run_eems(request):
     for row in cursor:
             extent = row[0]
             epsg = str(row[1])
-    extent_list = extent.replace('[','').replace(']','').split(',')
+    extent_list = extent.replace('[','').replace(']','').replace(" ", "").split(',')
     extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
     print "Extent: " + extent_for_gdal
     print "EPSG: " + epsg
