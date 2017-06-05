@@ -18,11 +18,24 @@ def getWktFromNCFile(ncfile):
 
 def getExtentFromNCFile(ncfile, coords=['lat','lon']):
   with netCDF4.Dataset(ncfile, 'r') as nc:
-    # had to rearange order. NetCDF Flipped?
-    y_min = np.amin(nc.variables[coords[0]])
-    y_max = np.amax(nc.variables[coords[0]])
-    x_min = np.amin(nc.variables[coords[1]])
-    x_max = np.amax(nc.variables[coords[1]])
+    if coords[0] == 'lat' and 'lat_bnds' in nc.variables:
+      ybnds = nc.variables['lat_bnds'][:].flatten()
+      y_min = np.amin(ybnds)
+      y_max = np.amax(ybnds)
+    else:
+      yc = nc.variables[coords[0]][:]
+      step = abs((yc[-1] - yc[0]) / (len(yc) - 1))
+      y_min = np.amin(yc) - step / 2.
+      y_max = np.amax(yc) + step / 2.
+    if coords[1] == 'lon' and 'lon_bnds' in nc.variables:
+      xbnds = nc.variables['lon_bnds'][:].flatten()
+      x_min = np.amin(xbnds)
+      x_max = np.amax(xbnds)
+    else:
+      xc = nc.variables[coords[1]][:]
+      step = abs((xc[-1] - xc[0]) / (len(xc) - 1))
+      x_min = np.amin(xc) - step / 2.
+      x_max = np.amax(xc) + step / 2.
     return [x_min, x_max, y_min, y_max]
 
 def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to_epsg=False):
@@ -49,7 +62,7 @@ def getExtentInDifferentCRS(extent=False, wkt=False, proj4=False, epsg=False, to
 
 def rasterize(infile, outfile, pixel_size):
 
-  fill = -9999999. # nodata value
+  fill = -99999. # nodata value
   # We assume a single layer, and that all features have the same fields.
   # So we use feature 0 as a pattern for the fields to transcribe.
 
