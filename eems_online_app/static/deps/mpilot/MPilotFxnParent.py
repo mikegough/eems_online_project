@@ -8,6 +8,7 @@
 
 from collections import OrderedDict
 import copy as cp
+import MPilotParseMetadata as pmd
 
 class _MPilotFxnParent(object):
 
@@ -502,6 +503,18 @@ class _MPilotFxnParent(object):
             if argNm in self.mptCmdStruct['parsedCmd']['arguments']:
                 rtrn = self.mptCmdStruct['parsedCmd']['arguments'][argNm]
         return rtrn
+
+    def MetadataByKey(self, metaDataKey):
+        rtrn = None
+        if self.mptCmdStruct['parsedCmd'] is not None:
+            if 'Metadata' in self.mptCmdStruct['parsedCmd']['arguments']:
+                parsedMetadata = pmd.ParseMetadata(self.mptCmdStruct['parsedCmd']['arguments']['Metadata'])
+                if metaDataKey in parsedMetadata:
+                    rtrn = parsedMetadata[metaDataKey]
+
+        return rtrn
+
+    # def MetadataByKey(self, metaDataKey):
 
     # Get some other things
     def ExecRslt(self):
