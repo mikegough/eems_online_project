@@ -309,7 +309,7 @@ var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot
 var changed_params_list=[];
 
 // Triggered after users clicks the settings icon created in spacetree.js
-function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments) {
+function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments,metadata_string) {
 
     // Get the current operator out of the div at the bottom of the node (used to set the selected dropdown option).
     var current_operator = $("#" + node_id + "_current_operator").html();
@@ -403,7 +403,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             });
 
             // Call function to store new eems operator and options in a dictionary
-            updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id);
+            updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id, metadata_string);
             $("#run_eems_button").removeClass("disabled");
             $("#quality_selector_div").removeClass("disabled");
             $("#map_quality").removeAttr("disabled");
@@ -416,7 +416,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 
     // ON Convert to Fuzzy operators, allow the user to toggle the histogram between the current node and the input node.
     $('input[type=radio][name=histogram_to_show]').change(function() {
-        node_id_to_show_on_histogram = $('input[name=histogram_to_show]:checked').val()
+        node_id_to_show_on_histogram = $('input[name=histogram_to_show]:checked').val();
         $("#histogram_img").attr("src", "static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id_to_show_on_histogram + ".png")
     })
 
@@ -516,9 +516,12 @@ function bind_params(node_id, children_array, node_original_operator, original_a
 
 }
 
-function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id){
+function updateEEMSOperator(node_id, alias, new_operator, required_params, new_operator_name, new_operator_id, metadata_string){
 
     // Update. Pass in new_operator_name for setting the display name.
+
+    // because the &nbsp gets replaced with a \xa0 when passed into a function, need to set it back to &nbsp. Temporary measure.
+    metadata_string=metadata_string.replace(/\xa0/g,"&nbsp");
 
     var update_cmd_dict = {};
 
@@ -527,6 +530,12 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
     update_cmd_dict["cmd"]["rsltNm"] = node_id;
     update_cmd_dict["cmd"]["cmd"] = new_operator;
     update_cmd_dict["cmd"]["arguments"] = {};
+
+    if (metadata_string){
+        update_cmd_dict["cmd"]["arguments"]["Metadata"] = metadata_string;
+    }
+
+    console.log(update_cmd_dict)
 
     // MPilot needs the list of InFieldNames as a string within brackets. A list won't work.
     if (new_operator.toLowerCase().indexOf("cvttofuzzy") == -1) {

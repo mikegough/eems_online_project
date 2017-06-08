@@ -156,15 +156,32 @@ function init(json, eems_file_name){
         //your node.
         onCreateLabel: function(label, node){
             label.id = node.id;
-            var alias;
-            if (typeof node.data.Metadata != "undefined" && node.data.Metadata.DisplayName != "undefined"){
-                alias = (node.data.Metadata.DisplayName).replace(/&nbsp;/g, " ")
-            }
-            else{
-                alias=node.name.split(':')[0]
+
+            var alias = node.name.split(':')[0]
+            var metadata_string = false;
+
+            if (typeof node.data.Metadata != "undefined" ) {
+
+                metadata_string  = "[";
+
+                $.each(node.data.Metadata, function(key,value){
+                   metadata_string  += key + ":" + value + ","
+                });
+
+                // Remove trailing comma
+                metadata_string = metadata_string.replace(/,$/, "");
+
+                //Replace spaces with &nbsp; Temporary measure.
+
+                metadata_string  += "]";
+
+                if (node.data.Metadata.DisplayName != "undefined") {
+                    alias = (node.data.Metadata.DisplayName).replace(/&nbsp;/g, " ")
+                }
+
             }
 
-            layer_index=node.name.split(':')[1]
+            layer_index=node.name.split(':')[1];
 
             if (typeof(node.data.short_desc) != 'undefined') {
                 label.innerHTML = "<div class='EEMS_node_name' title='" + alias + "'>" + alias + "</div><br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
@@ -192,7 +209,7 @@ function init(json, eems_file_name){
 
             if (node.data.operation != "Read" && node.data.operation != "EEMSRead") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
-                label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "','" + metadata_string +"')\" src='static/img/gear_icon.svg'></span>"
 
             } else {
                 label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
@@ -201,7 +218,6 @@ function init(json, eems_file_name){
             if (typeof node.data.Metadata != 'undefined' && typeof node.data.Metadata.Description != 'undefined') {
                 label.innerHTML += "<span class='description_span' title='" + node.data.Metadata.Description + "'><img class='description_icon_class' src='static/img/info_black.png'></span>"
             }
-
 
             label.onclick = function(){
 
