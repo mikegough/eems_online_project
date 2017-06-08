@@ -45,7 +45,11 @@ function upload_files(){
         },
         error: function (xhr, errmsg, err) {
 
-            console.log(xhr)
+            $("#spinner_div").hide();
+            console.log(xhr);
+            console.log(errmsg);
+            console.log(err);
+            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
         }
     });
 
@@ -90,7 +94,7 @@ function process_user_data(upload_id) {
         },
 
         success: function (response) {
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Upload Complete</span></div>");
+            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed by our server. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model. The information you entered into this form will remain open as a convenience.</span></div>");
         },
 
         error: function (xhr, errmsg, err) {
