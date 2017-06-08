@@ -56,13 +56,14 @@
 }
 
 #model_run_complete_alert {
+	height:230px
 }
 
 #model_run_complete_alert_text{
     color: #666565;
 	position: absolute;
 	font-size: 20px;
-	margin-left: 25px;
+	margin: 0px 25px;
 }
 
 #check_icon {
