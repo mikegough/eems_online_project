@@ -94,7 +94,11 @@ function process_user_data(upload_id) {
         },
 
         success: function (response) {
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed by our server. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model. The information you entered into this form will remain open as a convenience.</span></div>");
+            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model.</span></div>", function(){
+                $('#upload_form').trigger("reset");
+                $("#upload_another_file_div").show();
+            });
+            $("#upload_form").hide();
         },
 
         error: function (xhr, errmsg, err) {
@@ -106,3 +110,15 @@ function process_user_data(upload_id) {
         }
     });
 }
+
+$("#upload_another_file_button").on("click", function(){
+    // Reset form elements
+    $("#spatial_resolution_row").hide();
+    $("#upload_form").find("input").val("");
+    $("#short_description").val("");
+    $("#long_description").val("");
+    $('#submit').val('Submit');
+
+    $("#upload_form").show();
+    $("#upload_another_file_div").hide();
+});

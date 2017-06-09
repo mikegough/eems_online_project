@@ -56,14 +56,15 @@
 }
 
 #model_run_complete_alert {
-	height:230px
+	height:180px
 }
 
-#model_run_complete_alert_text{
-    color: #666565;
+#model_run_complete_alert_text {
+	color: #666565;
 	position: absolute;
 	font-size: 20px;
-	margin: 0px 25px;
+	margin: 0px 45px 0 12px;
+	text-align: justify;
 }
 
 #check_icon {
@@ -137,4 +138,15 @@
 
 #spatial_resolution_row {
 	display:none;
+}
+
+#upload_another_file_div{
+	display:none;
+	width:100%;
+	text-align:center;
+}
+
+#upload_another_file_button{
+	position: relative;
+	top: 50px;
 }
