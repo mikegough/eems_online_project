@@ -51,8 +51,8 @@ def index(request):
         # Get any filters passed in through the query string. #copy() makes the request object mutable.
         filters = request.GET.copy()
 
-        # Pull model request (link) out of the filters (handled differently). If no model request, default to model 1.
-        initial_eems_model_id = filters.pop("model", ['1'])[0]
+        # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
+        initial_eems_model_id = filters.pop("model", ['first'])[0]
 
         # GET all available EEMS Models for Dropdown.
         eems_online_models = {}
@@ -77,15 +77,18 @@ def index(request):
 
         for row in cursor:
             # Get info required to initialize the starting model (ID, NAME, EXTENT)
-            if row[0] == initial_eems_model_id:
-                initial_eems_model.append([str(row[0]), [row[1], row[2]]])
-                initial_eems_model_json = json.dumps(initial_eems_model)
-
+            if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
+                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+            elif row[0] == initial_eems_model_id:
+                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
             # GET all EEMS Models (meeting filter criteria) for Dropdown list.
             eems_online_models[str(row[0])] = []
             eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
 
+        initial_eems_model_json = json.dumps(initial_eems_model)
         eems_online_models_json=json.dumps(eems_online_models)
+
+        print initial_eems_model
 
         template = 'index.html'
         hostname_for_link = settings.HOSTNAME_FOR_LINK
