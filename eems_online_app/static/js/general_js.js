@@ -531,7 +531,7 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
     update_cmd_dict["cmd"]["cmd"] = new_operator;
     update_cmd_dict["cmd"]["arguments"] = {};
 
-    if (metadata_string){
+    if (metadata_string != 'false' && metadata_string != false){
         update_cmd_dict["cmd"]["arguments"]["Metadata"] = metadata_string;
     }
 
