@@ -58,7 +58,7 @@ def index(request):
         eems_online_models = {}
 
         if filters:
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS WHERE "
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE "
             filter_count = 0
             for k, v in filters.iteritems():
                 if filter_count > 0:
@@ -68,7 +68,7 @@ def index(request):
             query += " COLLATE NOCASE"
         else:
             # No filters or user got here from a link (show linked model as well as CBI models).
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' or ID = '%s'" % initial_eems_model_id
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' or ID = '%s'" % initial_eems_model_id
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -83,7 +83,7 @@ def index(request):
                 initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
             # GET all EEMS Models (meeting filter criteria) for Dropdown list.
             eems_online_models[str(row[0])] = []
-            eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
+            eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
 
         initial_eems_model_json = json.dumps(initial_eems_model)
         eems_online_models_json=json.dumps(eems_online_models)

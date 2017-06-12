@@ -31,14 +31,29 @@ $( document ).ready(function() {
 
     $("#files").prop('value', '');
 
-    // Add the list of available eems_online_models to the dropdown menu
+    project_list = [];
     $.each(eems_online_models_json, function(index, object){
-
         $.each(object, function(id,array){
-            var available_eems_online_model_name =  array[0];
-            var available_eems_online_model_extent =  array[1];
-            $("#eems_model_dropdown").append("<option extent='" + available_eems_online_model_extent + "' value='" + index + "'>" + available_eems_online_model_name + "</option>");
+            if ($.inArray(array[3], project_list) == -1) {
+                project_list.push(array[3]);
+            }
         })
+    });
+
+    // Add the list of available eems_online_models to the dropdown menu
+    $.each (project_list, function(index,project_label) {
+        $("#eems_model_dropdown").append("<optgroup label=" + project_label.replace(" ", "&nbsp;") +">")
+        $.each(eems_online_models_json, function (index, object) {
+                $.each(object, function (id, array) {
+                    if (array[3] == project_label ) {
+                        var available_eems_online_model_name = array[0];
+                        var available_eems_online_model_extent = array[1];
+                        var available_eems_online_model_project = array[3];
+                        $("#eems_model_dropdown").append("&nbsp;&nbsp;&nbsp;<option extent='" + available_eems_online_model_extent + "' value='" + index + "'>" + available_eems_online_model_name + "</option>");
+                    }
+                })
+        });
+        $("#eems_model_dropdown").append("</optgroup>")
     });
 
     // Set the initial model parameters

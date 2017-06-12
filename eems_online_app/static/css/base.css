@@ -869,6 +869,10 @@ ul.buttons li.selected a:hover
 	width:180px;
 }
 
+#eems_model_dropdown > option {
+	padding-left:10px;
+}
+
 .alertify-button:focus {
 	outline: none;
 	box-shadow: 0 0 0px #2B72D5 !important;
