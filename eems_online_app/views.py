@@ -54,32 +54,6 @@ def index(request):
         # Pull model request (link) out of the filters (handled differently). If no model request, default to model 1.
         initial_eems_model_id = filters.pop("model", ['1'])[0]
 
-        # Get data required for initial model. If filters, use the first record. Otherwise default to initial_eems_model
-        if filters:
-            query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS WHERE "
-            filter_count = 0
-            for k, v in filters.iteritems():
-                if filter_count > 0:
-                    query += " AND "
-                query += k + " = '" + v + "' COLLATE NOCASE"
-                filter_count += 1
-            query += " LIMIT 1"
-
-        else:
-            # No filters or users got here from a link.
-            query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS where ID = '%s'" % initial_eems_model_id
-
-        print query
-        cursor = connection.cursor()
-        cursor.execute(query)
-
-        initial_eems_model = []
-
-        for row in cursor:
-            initial_eems_model.append([str(row[0]), [row[1], row[2]]])
-
-        initial_eems_model_json = json.dumps(initial_eems_model)
-
         # GET all available EEMS Models for Dropdown.
         eems_online_models = {}
 
@@ -93,13 +67,22 @@ def index(request):
                 filter_count += 1
             query += " COLLATE NOCASE"
         else:
-            # No filters or user got here from a link.
+            # No filters or user got here from a link (show linked model as well as CBI models).
             query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' or ID = '%s'" % initial_eems_model_id
 
-        print query
+        cursor = connection.cursor()
         cursor.execute(query)
+
+        initial_eems_model = []
+
         for row in cursor:
-            eems_online_models[str(row[0])]=[]
+            # Get info required to initialize the starting model (ID, NAME, EXTENT)
+            if row[0] == initial_eems_model_id:
+                initial_eems_model.append([str(row[0]), [row[1], row[2]]])
+                initial_eems_model_json = json.dumps(initial_eems_model)
+
+            # GET all EEMS Models (meeting filter criteria) for Dropdown list.
+            eems_online_models[str(row[0])] = []
             eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
 
         eems_online_models_json=json.dumps(eems_online_models)
