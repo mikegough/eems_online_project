@@ -111,7 +111,7 @@ def get_additional_info(request):
 
     cursor = connection.cursor()
 
-    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
 
     cursor.execute(query)
 
@@ -120,12 +120,14 @@ def get_additional_info(request):
         author = row[1]
         creation_date = row[2]
         long_description = row[3]
+        project = row[4]
 
     context = {
         "name": name,
         "author": author,
         "creation_date": creation_date,
         "long_description": long_description,
+        "project": project,
     }
 
     return HttpResponse(json.dumps(context))
@@ -256,13 +258,14 @@ def link(request):
 
     cursor = connection.cursor()
 
-    query = "SELECT NAME, EXTENT, EXTENT_GCS, EPSG FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+    query = "SELECT NAME, EXTENT, EXTENT_GCS, EPSG, PROJECT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
     cursor.execute(query)
     for row in cursor:
         eems_model_name = row[0]
         eems_extent = str(row[1])
         eems_extent_gcs = str(row[2])
         epsg = str(row[3])
+        project = str(row[4])
 
     eems_model_name_user = eems_model_name.replace(" (Modified)", "") + " (Modified)"
     user = "USER"
@@ -271,7 +274,7 @@ def link(request):
     long_description = "This model is a user modified version of the original " + eems_model_name + " model, created on " + time.strftime("%d/%m/%Y") + " at " + time.strftime("%H:%M") + ". To access the original model, click the link below.<p><a title='click to access the original model' href=?model=" + str(eems_model_id) + ">" + eems_model_name + "</a>"
     todays_date = time.strftime("%d/%m/%Y")
 
-    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, EPSG)  values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, eems_extent_gcs, user, short_description, long_description, author, todays_date, epsg))
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, EPSG, PROJECT)  values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, eems_extent_gcs, user, short_description, long_description, author, todays_date, epsg, project))
 
     return HttpResponse(eems_model_modified_id)
 
@@ -298,9 +301,20 @@ def upload(request):
         user_password = request.POST.get('password')
         user_username = request.POST.get('username')
 
+
         if user_password == password and user_username == username:
+            query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
+
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+            project_list = []
+            for row in cursor:
+                if row[0] != None:
+                    project_list.append(row[0])
+            project_list_json = json.dumps(project_list)
             print "Password verified"
-            return render(request, "upload.html", {"username":username})
+            return render(request, "upload.html", {"username":username, "project_list":project_list})
         else:
             return redirect(reverse(login)+"?auth=0")
 
@@ -352,12 +366,13 @@ def upload_form(request):
     creation_date = str(request.POST.get('creation_date'))
     short_description = str(request.POST.get('short_description'))
     long_description = str(request.POST.get('long_description'))
+    project = str(request.POST.get('project'))
     try:
         resolution = float(request.POST.get('resolution'))
     except:
         resolution = 0
 
-    upload_form_celery.delay(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution)
+    upload_form_celery.delay(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution, project)
 
     return HttpResponse("Your model is being uploaded and processed. You may now close this window")
 

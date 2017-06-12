@@ -646,11 +646,12 @@ function get_additional_info(eems_model_id){
         // handle a successful response
         success: function (response) {
             var json_additional_info = JSON.parse(response)
-            model_name = json_additional_info["name"];
-            long_description = json_additional_info["long_description"];
-            author = json_additional_info["author"];
-            creation_date = json_additional_info["creation_date"];
-            alertify.alert("<div class='long_description'><div class='long_description_header'>Model: </div>" + model_name + "<br><div class='long_description_header'>Author: </div>" + author +"<br><div class='long_description_header'>" + "Creation Date: </div>" + creation_date + "</p><div class='long_description_header'>Description</div></p>" + long_description + "</div>");
+            var model_name = json_additional_info["name"];
+            var long_description = json_additional_info["long_description"];
+            var author = json_additional_info["author"];
+            var creation_date = json_additional_info["creation_date"];
+            var project = json_additional_info["project"];
+            alertify.alert("<div class='long_description'><div class='long_description_header'>Model: </div>" + model_name + "<br><div class='long_description_header'>Author: </div>" + author +"<br><div class='long_description_header'>Project: </div>" + project+ "<br><div class='long_description_header'>" + "Creation Date: </div>" + creation_date + "</p><div class='long_description_header'>Description</div></p>" + long_description + "</div>");
         },
 
         // handle a non-successful response

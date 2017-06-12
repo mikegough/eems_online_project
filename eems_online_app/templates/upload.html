@@ -61,6 +61,16 @@
             <td>Creation Date <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the date the model was created"> </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
         </tr>
         <tr>
+            <td>Project <img class="upload_field_info_icon" src="static/img/info.png" title="The project that this model is associated with. Double click in the text box to see a list of the current models."> </td><td>
+            <input type="text" list="project_list" id="project"/>
+            <datalist id="project_list" style="cursor:pointer">
+                {%   for project in project_list %}
+                        <option value={{ project }}> {{ project }}</option>
+                {%  endfor  %}
+            </datalist>
+            </td>
+        </tr>
+        <tr>
             <td>Short Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description"></textarea></td>
         </tr>
         <tr>

@@ -64,6 +64,7 @@ function process_user_data(upload_id) {
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();
     var resolution = $("#resolution").val();
+    var project = $("#project").val();
 
     /* May need to keep for manual coordinate entry override.
      var xmin = $("#xmin").val().replace(/\s+/g, '');
@@ -87,6 +88,7 @@ function process_user_data(upload_id) {
             'model_author': model_author,
             'creation_date': creation_date,
             'resolution': resolution,
+            'project':project,
             //'epsg': epsg,
             //'extent': extent,
             'short_description': short_description,
