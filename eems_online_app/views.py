@@ -46,27 +46,56 @@ def index(request):
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
         eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
-
         json.dumps(eems_available_commands_json)
 
-        # Get initial EEMS model (default to ID=1)
-        initial_eems_model_id = request.GET.get('model', 1)
+        # Get any filters passed in through the query string. #copy() makes the request object mutable.
+        filters = request.GET.copy()
 
-        query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
+        # Pull model request (link) out of the filters (handled differently). If no model request, default to model 1.
+        initial_eems_model_id = filters.pop("model", ['1'])[0]
 
+        # Get data required for initial model. If filters, use the first record. Otherwise default to initial_eems_model
+        if filters:
+            query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS WHERE "
+            filter_count = 0
+            for k, v in filters.iteritems():
+                if filter_count > 0:
+                    query += " AND "
+                query += k + " = '" + v + "' COLLATE NOCASE"
+                filter_count += 1
+            query += " LIMIT 1"
+
+        else:
+            # No filters or users got here from a link.
+            query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS where ID = '%s'" % initial_eems_model_id
+
+        print query
         cursor = connection.cursor()
         cursor.execute(query)
 
-        initial_eems_model=[]
+        initial_eems_model = []
 
         for row in cursor:
-            initial_eems_model.append([str(row[0]),[row[1], row[2]]])
+            initial_eems_model.append([str(row[0]), [row[1], row[2]]])
 
         initial_eems_model_json = json.dumps(initial_eems_model)
 
-        # GET all available EEMS Models
+        # GET all available EEMS Models for Dropdown.
         eems_online_models = {}
-        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
+
+        if filters:
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS WHERE "
+            filter_count = 0
+            for k, v in filters.iteritems():
+                if filter_count > 0:
+                    query += " AND "
+                query += k + " = '" + v + "' COLLATE NOCASE"
+                filter_count += 1
+            query += " COLLATE NOCASE"
+        else:
+            # No filters or user got here from a link.
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' or ID = '%s'" % initial_eems_model_id
+
         print query
         cursor.execute(query)
         for row in cursor:
@@ -177,17 +206,17 @@ def run_eems(request):
     print epsg
 
     # Send model information to MPilot to run EEMS.
-    try:
-        my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
-        error_code = 0
-        error_message = None
-        if not download:
-            os.remove(output_netcdf)
+    #try:
+    my_mpilot_worker = MPilotWorker()
+    my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
+    error_code = 0
+    error_message = None
+    if not download:
+        os.remove(output_netcdf)
 
-    except Exception as e:
-        error_code = 1
-        error_message = str(e)
+    #except Exception as e:
+    #    error_code = 1
+    #    error_message = str(e)
 
     context={
         "eems_model_modified_id": eems_model_modified_id,
