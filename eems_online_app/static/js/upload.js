@@ -49,7 +49,7 @@ function upload_files(){
             console.log(xhr);
             console.log(errmsg);
             console.log(err);
-            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
+            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
         }
     });
 
@@ -96,7 +96,7 @@ function process_user_data(upload_id) {
         },
 
         success: function (response) {
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model.</span></div>", function(){
+            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='../static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model.</span></div>", function(){
                 $('#upload_form').trigger("reset");
                 $("#upload_another_file_div").show();
             });
@@ -104,7 +104,7 @@ function process_user_data(upload_id) {
         },
 
         error: function (xhr, errmsg, err) {
-            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please try again.</div>")
+            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Please try again.</div>")
         },
 
         complete: function () {

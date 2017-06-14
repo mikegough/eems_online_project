@@ -9,7 +9,7 @@
 
 #table_header {
 	text-align: left !important;
-	background-color: #343F57 !important;
+	background-color: #417690 !important;
 	color: white !important;
 	font-family: arial;
 	height: 30px;
@@ -24,11 +24,19 @@
 	font-size: .7em;
 }
 
+#owner_div a {
+	color: white;
+	text-deocration:none;
+}
+
+#owner_div a:hover {
+	text-decoration:underline;
+}
+
 #upload_table td:first-child {
 	text-align: right;
 	background-color: #dbe3e7;
 	color: #506C9C;
-	font-weight: bold;
 	padding-right: 10px;
 	width: 185px;
 }
@@ -149,4 +157,9 @@
 #upload_another_file_button{
 	position: relative;
 	top: 50px;
+}
+
+#branding{
+	font-size:18px !important;
+
 }

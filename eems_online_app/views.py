@@ -30,6 +30,9 @@ from django.utils.crypto import get_random_string
         #set TK_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tk8.5
     # GDAL for projecting
 
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+
 from EEMSCvt20To30 import *
 from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
@@ -87,8 +90,6 @@ def index(request):
 
         initial_eems_model_json = json.dumps(initial_eems_model)
         eems_online_models_json=json.dumps(eems_online_models)
-
-        print initial_eems_model
 
         template = 'index.html'
         hostname_for_link = settings.HOSTNAME_FOR_LINK
@@ -279,49 +280,76 @@ def link(request):
     return HttpResponse(eems_model_modified_id)
 
 
+#@csrf_exempt
+#def login(request):
+#
+#    auth_code = request.GET.get('auth')
+#    print auth_code
+#
+#    context = {
+#        "auth_code": auth_code,
+#    }
+
+#    template = "login.html"
+#    return render(request, template, context)
+
+def logged_out(request):
+    return render(request, 'logged_out.html')
+
+#@csrf_exempt
+#@login_required
+#def upload(request):
+#
+#        password = settings.UPLOAD_PASS
+#        username = settings.UPLOAD_USERNAME
+#
+#        user_password = request.POST.get('password')
+#        user_username = request.POST.get('username')
+#
+#
+#        if user_password == password and user_username == username:
+#            query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
+#
+#            cursor = connection.cursor()
+#            cursor.execute(query)
+#
+#            project_list = []
+#            for row in cursor:
+#                if row[0] != None:
+#                    project_list.append(row[0])
+#            project_list_json = json.dumps(project_list)
+#            print "Password verified"
+#            return render(request, "upload.html", {"username":username, "project_list":project_list})
+#        else:
+#            return redirect(reverse(login)+"?auth=0")
+
 @csrf_exempt
-def login(request):
-
-    auth_code = request.GET.get('auth')
-    print auth_code
-
-    context = {
-        "auth_code": auth_code,
-    }
-
-    template = "login.html"
-    return render(request, template, context)
-
-@csrf_exempt
+@login_required
 def upload(request):
+        query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
 
-        password = settings.UPLOAD_PASS
-        username = settings.UPLOAD_USERNAME
+        cursor = connection.cursor()
+        cursor.execute(query)
 
-        user_password = request.POST.get('password')
-        user_username = request.POST.get('username')
-
-
-        if user_password == password and user_username == username:
-            query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
-
-            cursor = connection.cursor()
-            cursor.execute(query)
-
-            project_list = []
-            for row in cursor:
-                if row[0] != None:
-                    project_list.append(row[0])
-            project_list_json = json.dumps(project_list)
-            print "Password verified"
-            return render(request, "upload.html", {"username":username, "project_list":project_list})
-        else:
-            return redirect(reverse(login)+"?auth=0")
+        project_list = []
+        for row in cursor:
+            if row[0] != None:
+                project_list.append(row[0])
+        project_list_json = json.dumps(project_list)
+        print "Password verified"
+        return render(request, "upload.html", {"username":'test', "project_list":project_list})
 
 class FileUploadForm(forms.Form):
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
 @csrf_exempt
+@login_required
+def manage(request):
+    return render(request, 'manage.html')
+
+
+@csrf_exempt
+@login_required
 def upload_files(request):
 
     upload_id = get_random_string(length=32)
@@ -356,7 +384,7 @@ def upload_files(request):
     return HttpResponse(upload_id)
 
 @csrf_exempt
-
+@login_required
 def upload_form(request):
 
     upload_id = str(request.POST.get('upload_id'))
@@ -376,3 +404,5 @@ def upload_form(request):
 
     return HttpResponse("Your model is being uploaded and processed. You may now close this window")
 
+def logout(request):
+    logout(request)

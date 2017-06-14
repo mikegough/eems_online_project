@@ -29,12 +29,12 @@
 </div>
     <table id="upload_table">
         <tr>
-            <td colspan="2" id="table_header"> EEMS Online Upload Form <div id="owner_div"> Logged in as <span id="owner">{{ username }}</span></div></td>
+            <td colspan="2" id="table_header"> EEMS Online Upload Form <div id="owner_div"> <a href='/logout'>Logout</a></div></td>
         </tr>
         </tr>
         <tr>
         <tr>
-            <td>Dataset <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
+            <td>Dataset <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">
@@ -42,26 +42,26 @@
             </td>
         </tr>
         <tr id="spatial_resolution_row">
-            <td>Spatial Resolution <img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
+            <td>Spatial Resolution <img class="upload_field_info_icon" src="{% static '/img/info.png' %}" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
         </tr>
         <tr>
-            <td>Command File <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be an EEMS 2.0 command file with a .eem extension or an EEMS 3.0 command file with a .mpt extension"> </td>
+            <td>Command File <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Can either be an EEMS 2.0 command file with a .eem extension or an EEMS 3.0 command file with a .mpt extension"> </td>
             <td>
                 <input id="command_file" name="file" type="file">
                 </form>
             </td>
         </tr>
         <tr>
-            <td>Model Name <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model"> </td><td><input id="model_name" type="text"></td>
+            <td>Model Name <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the name of the model"> </td><td><input id="model_name" type="text"></td>
         </tr>
         <tr>
-            <td>Model Author <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model's author"> </td><td><input id="model_author" type="text"></td>
+            <td>Model Author <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the name of the model's author"> </td><td><input id="model_author" type="text"></td>
         </tr>
         <tr>
-            <td>Creation Date <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the date the model was created"> </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
+            <td>Creation Date <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the date the model was created"> </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
         </tr>
         <tr>
-            <td>Project <img class="upload_field_info_icon" src="static/img/info.png" title="The project that this model is associated with. Double click in the text box to see a list of the current models."> </td><td>
+            <td>Project <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="The project that this model is associated with. Double click in the text box to see a list of the current models."> </td><td>
             <input type="text" list="project_list" id="project"/>
             <datalist id="project_list" style="cursor:pointer">
                 {%   for project in project_list %}
@@ -71,10 +71,10 @@
             </td>
         </tr>
         <tr>
-            <td>Short Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description"></textarea></td>
+            <td>Short Description<img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description"></textarea></td>
         </tr>
         <tr>
-            <td>Long Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a longer description of your model"> </td><td><textarea id="long_description"></textarea></td>
+            <td>Long Description<img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Provide a longer description of your model"> </td><td><textarea id="long_description"></textarea></td>
         </tr>
         <tr>
             <td colspan="2"> <input type="button" class="button" name="submit" value="submit" id="submit" /></td>
