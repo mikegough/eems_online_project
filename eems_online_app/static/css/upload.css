@@ -154,9 +154,23 @@
 	text-align:center;
 }
 
-#upload_another_file_button{
+.big_button{
+	cursor:pointer;
 	position: relative;
 	top: 50px;
+	height:100px;
+	line-height:100px;
+	width:300px;
+	color:white;
+	border-radius:5px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:tahoma;
+	background-color:#417690
+}
+
+#logout_button {
+	background-color: #79AEC8
 }
 
 #branding{

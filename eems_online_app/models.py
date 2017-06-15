@@ -16,6 +16,7 @@ class EemsOnlineModels(models.Model):
     creation_date = models.TextField(db_column='CREATION_DATE', blank=True, null=True)  # Field name made lowercase.
     epsg = models.TextField(db_column='EPSG', blank=True, null=True)  # Field name made lowercase.
     project = models.TextField(db_column='PROJECT', blank=True, null=True)  # Field name made lowercase.
+    user = models.TextField(db_column='USER', blank=True, null=True)  # Field name made lowercase.
 
     def publish(self):
         self.save()

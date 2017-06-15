@@ -3,10 +3,10 @@
 
 {% block branding %} <span style="font-size:18px">You have sucessfully logged out</span>{% endblock %}
 
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Go to EEMS Online' %}</a></div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Back to EEMS Online' %}</a></div>{% endblock %}
 
 {% block content %}
 
-<p><a href="{% url 'admin:index' %}">{% trans 'Log in again' %}</a></p>
+<p><a href="/login">{% trans 'Log in again' %}</a></p>
 
 {% endblock %}

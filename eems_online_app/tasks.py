@@ -43,7 +43,7 @@ def xsum(numbers):
     return sum(numbers)
 
 @shared_task
-def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution,project):
+def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution,project,username):
 
         # Files have been uploaded. Process user data and form fields. Run EEMS.
 
@@ -152,7 +152,7 @@ def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,shor
 
             shutil.rmtree(upload_dir)
 
-            cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date, project))
+            cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT, USER) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date, project, username))
 
             return 1
 

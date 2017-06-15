@@ -323,10 +323,13 @@ def logged_out(request):
 #        else:
 #            return redirect(reverse(login)+"?auth=0")
 
+
 @csrf_exempt
-@login_required
+# This is the secret to forcing the user to login to see this view.
+@login_required(login_url='/admin/login/')
 def upload(request):
         query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
+        username = request.user.username
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -337,16 +340,10 @@ def upload(request):
                 project_list.append(row[0])
         project_list_json = json.dumps(project_list)
         print "Password verified"
-        return render(request, "upload.html", {"username":'test', "project_list":project_list})
+        return render(request, "upload.html", {"username": username, "project_list":project_list})
 
 class FileUploadForm(forms.Form):
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
-
-@csrf_exempt
-@login_required
-def manage(request):
-    return render(request, 'manage.html')
-
 
 @csrf_exempt
 @login_required
@@ -388,19 +385,21 @@ def upload_files(request):
 def upload_form(request):
 
     upload_id = str(request.POST.get('upload_id'))
-    owner = str(request.POST.get('owner'))
+    owner = "CBI"
     eems_model_name = request.POST.get('model_name')
     author = str(request.POST.get('model_author'))
     creation_date = str(request.POST.get('creation_date'))
     short_description = str(request.POST.get('short_description'))
     long_description = str(request.POST.get('long_description'))
     project = str(request.POST.get('project'))
+    username = str(request.POST.get('username'))
+    print username
     try:
         resolution = float(request.POST.get('resolution'))
     except:
         resolution = 0
 
-    upload_form_celery.delay(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution, project)
+    upload_form_celery.delay(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution, project, username)
 
     return HttpResponse("Your model is being uploaded and processed. You may now close this window")
 

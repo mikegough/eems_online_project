@@ -299,7 +299,6 @@ li a {
 	text-decoration: none;
 	font-family: arial;
 	font-size: .9em;
-	font-weight: bold;
 	letter-spacing: 0px;
 }
 
@@ -1136,3 +1135,9 @@ table.tableizer-table {
 	z-index: 3;
 }
 
+
+#login a {
+}
+
+#login a:hover {
+}

@@ -59,7 +59,7 @@ function process_user_data(upload_id) {
 
     $("#spinner_text").html("Processing data...");
 
-    var owner = username;
+    var username = $("#username").text();
     var model_name = $("#model_name").val();
     var model_author = $("#model_author").val();
     var creation_date = $("#creation_date").val();
@@ -83,7 +83,6 @@ function process_user_data(upload_id) {
         type: "POST", // http method
         data: {
             'upload_id': upload_id,
-            'owner': owner,
             'model_name': model_name,
             'model_author': model_author,
             'creation_date': creation_date,
@@ -93,10 +92,12 @@ function process_user_data(upload_id) {
             //'extent': extent,
             'short_description': short_description,
             'long_description': long_description,
+            'username':username
+
         },
 
         success: function (response) {
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='../static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now close this browser tab or upload another model.</span></div>", function(){
+            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='../static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now logout or upload another model.</span></div>", function(){
                 $('#upload_form').trigger("reset");
                 $("#upload_another_file_div").show();
             });
@@ -124,3 +125,10 @@ $("#upload_another_file_button").on("click", function(){
     $("#upload_form").show();
     $("#upload_another_file_div").hide();
 });
+
+$("#logout_button").on("click", function()
+    {
+        window.location.replace("logout")
+
+    }
+)
