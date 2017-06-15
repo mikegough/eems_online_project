@@ -1135,9 +1135,16 @@ table.tableizer-table {
 	z-index: 3;
 }
 
-
 #login a {
+	position: absolute;
+	float: right;
+	right: 0px;
+	font-size: .9em;
+	font-variant: small-caps;
+	color: white;
+	letter-spacing: 1px;
 }
 
 #login a:hover {
+	background-color:transparent;
 }

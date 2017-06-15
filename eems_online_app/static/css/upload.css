@@ -166,11 +166,23 @@
 	margin-left:auto;
 	margin-right:auto;
 	font-family:tahoma;
-	background-color:#417690
 }
 
 #logout_button {
 	background-color: #79AEC8
+}
+
+#logout_button:hover {
+	opacity:.9
+
+}
+
+#upload_another_file_button{
+	background-color:#417690
+}
+
+#upload_another_file_button:hover{
+	opacity:.9
 }
 
 #branding{
