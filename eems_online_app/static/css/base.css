@@ -776,7 +776,8 @@ ul.buttons li.selected a:hover
 	padding: 3px;
 	width: 650px;
 	margin-top: 40px;
-	z-index: 9999
+	z-index: 9999;
+	word-break:break-all;
 }
 
 .histogram_div {

@@ -361,7 +361,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             else {
                 $.each(eems_available_commands_json, function (index, operator) {
                     if ($.inArray(operator["DisplayName"], eems_operator_exclusions) == -1 && operator["DisplayName"].toLowerCase().indexOf("Fuzzy") == -1) {
-                        form_string += "<option cmdName='" + operator['Name']  + "' value='" + operator["Name"] + "'>" + operator["DisplayName"] + "</option>"
+                        form_string += "<option cmdName='" + operator['Name']  + "' value='" + index + "'>" + operator["DisplayName"] + "</option>"
                     }
                 });
             }
