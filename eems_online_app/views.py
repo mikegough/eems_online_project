@@ -71,7 +71,7 @@ def index(request):
             query += " COLLATE NOCASE"
         else:
             # No filters or user got here from a link (show linked model as well as CBI models).
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' or ID = '%s'" % initial_eems_model_id
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
 
         cursor = connection.cursor()
         cursor.execute(query)
