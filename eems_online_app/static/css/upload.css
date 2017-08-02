@@ -63,16 +63,37 @@
 	top: 210px !important;
 }
 
-#model_run_complete_alert {
-	height:180px
+#upload_notifications {
+	color: #666565;
+	height: 180px;
+	text-align: justify;
+	margin: 5px 30px 30px 30px;
+	height: 100%;
 }
 
 #model_run_complete_alert_text {
-	color: #666565;
-	position: absolute;
 	font-size: 20px;
-	margin: 0px 45px 0 12px;
-	text-align: justify;
+	margin-left: 20px;
+}
+
+#log_text {
+	font-size: 20px;
+	margin-left: 20px;
+}
+
+.status_icon{
+	width: 40px;
+	margin-left: 30px;
+	position: relative;
+}
+
+.status_text{
+	position: relative;
+	left: 10px;
+	top: -10px;
+	font-size: 20px;
+	width:160px;
+	display:inline-block;
 }
 
 #check_icon {
@@ -108,6 +129,10 @@
 	margin-left: 49px;
 }
 
+#processing_error_text {
+	font-size:13px;
+}
+
 #spinner_div {
 	display: none;
 	background-color: rgba(255,255,255,1);
@@ -135,9 +160,6 @@
 	font-family: tahoma;
 	top: 165px;
 	left: 11px;
-}
-
-#upload_form {
 }
 
 .upload_field_info_icon{
@@ -169,23 +191,33 @@
 }
 
 #logout_button {
-	background-color: #79AEC8
+	background-color: #79AEC8;
 }
 
-#logout_button:hover {
-	opacity:.9
-
+#go_to_eems_online_button {
+	background-color:#888aad;
 }
 
 #upload_another_file_button{
-	background-color:#417690
+	background-color:#417690;
 }
 
-#upload_another_file_button:hover{
+.big_button:hover{
 	opacity:.9
 }
 
 #branding{
 	font-size:18px !important;
-
 }
+
+.alertify-cover {
+	position: fixed;
+	z-index: 99999;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: black !important;
+	opacity: .5 !important;
+}
+

@@ -3,9 +3,7 @@ $( function() {
 } );
 
 $("#submit").click(function(e) {
-
     upload_files()
-
 });
 
 $("#data_file").on('change', function(){
@@ -21,11 +19,30 @@ $("#data_file").on('change', function(){
 
 });
 
+// Calls the view that uploads files to the server.
 function upload_files(){
 
-    $("#spinner_div").show();
+    // Initial notification. Files are uploading.
+    alertify.alert("" +
+        "<div id='upload_notifications'>" +
+            "<div id='upload_status'>" +
+                "<span class='status_text' id='upload_status_text'>Uploading Model</span>" +
+                "<img class='status_icon' id='upload_status_icon' src='../static/img/spinner.svg'>" +
+                "<span class='error_text' id='upload_error_text'></span>" +
+            "</div>" +
+        "</div>"
+        , function(){
+            if (upload_process_status == 1) {
+                $('#upload_form').trigger("reset");
+                $('#upload_form').hide();
+                $("#upload_another_file_div").show();
+            }
+        });
 
-    $("#spinner_text").html("Uploading Files...");
+    $("#alertify-ok").hide();
+
+    //$("#spinner_div").show();
+    //$("#spinner_text").html("Uploading Files...");
 
     var form = document.querySelector('#file_form');
     var data = new FormData(form);
@@ -38,9 +55,10 @@ function upload_files(){
         contentType: false,
         success:function(response){
 
-           upload_id = response
+           upload_id = response;
 
-           process_user_data(upload_id)
+           $("#upload_status_icon").attr("src", '../static/img/check.png');
+           process_user_data(upload_id);
 
         },
         error: function (xhr, errmsg, err) {
@@ -49,15 +67,26 @@ function upload_files(){
             console.log(xhr);
             console.log(errmsg);
             console.log(err);
-            alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
+            $("#processing_status_icon").attr("src", '../static/img/error.png');
+            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error uploading your files. Please try again later, or contact support.<br>" + errmsg +"</div>");
+            //alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
         }
     });
 
 }
 
+// Calls the upload_form view, which basically just hands this information off to the celery worker to run EEMS.
 function process_user_data(upload_id) {
 
-    $("#spinner_text").html("Processing data...");
+    $("#upload_notifications").append(
+        "<div id='processing_status'>" +
+        "<span class='status_text' id='processing_status_text'>Processing Model</span>" +
+        "<img class='status_icon' id='processing_status_icon' src='../static/img/spinner.svg'>" +
+        "<span id='processing_error_text'></span>" +
+        "</div>"
+    );
+
+    //$("#spinner_text").html("Processing data...");
 
     var username = $("#username").text();
     var model_name = $("#model_name").val();
@@ -97,11 +126,8 @@ function process_user_data(upload_id) {
         },
 
         success: function (response) {
-            alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='../static/img/check.png'><span id='model_run_complete_alert_text'>Your model has been received and is being processed. This may take several minutes. When complete, your model will be accessible through EEMS Online. <p>You may now logout or upload another model.</span></div>", function(){
-                $('#upload_form').trigger("reset");
-                $("#upload_another_file_div").show();
-            });
-            $("#upload_form").hide();
+            //$("#upload_form").hide();
+            check_eems_status(upload_id);
         },
 
         error: function (xhr, errmsg, err) {
@@ -109,7 +135,45 @@ function process_user_data(upload_id) {
         },
 
         complete: function () {
-            $("#spinner_div").hide()
+           // $("#spinner_div").hide(
+        }
+    });
+
+}
+
+// Poll the server to check the status of the EEMS model run.
+function check_eems_status(upload_id) {
+
+    $.ajax({
+        url: "/check_eems_status", // the endpoint
+        type: "POST", // http method
+        data: {
+            'upload_id': upload_id,
+        },
+
+        success: function (response) {
+        },
+
+        error: function (xhr, errmsg, err) {
+        },
+
+        complete: function (response) {
+            if (response.responseText == "None") {
+                console.log("Checking upload status");
+                setTimeout('check_eems_status(upload_id)', 5000);
+            }
+            else if (response.responseText == "1") {
+                $("#alertify-ok").show();
+                upload_process_status = 1;
+                $("#processing_status_icon").attr("src", '../static/img/check.png');
+            }
+            else {
+                $("#alertify-ok").show();
+                upload_process_status = 0;
+                $("#processing_error_text").html("<div id='upload_status_text'>" + response.responseText + "</div>");
+                $("#processing_status_icon").attr("src", '../static/img/error.png');
+            }
+
         }
     });
 }
@@ -121,7 +185,6 @@ $("#upload_another_file_button").on("click", function(){
     $("#short_description").val("");
     $("#long_description").val("");
     $('#submit').val('Submit');
-
     $("#upload_form").show();
     $("#upload_another_file_div").hide();
 });
@@ -131,4 +194,11 @@ $("#logout_button").on("click", function()
         window.location.replace("logout")
 
     }
-)
+);
+
+$("#go_to_eems_online_button").on("click", function()
+    {
+        window.location = "/"
+
+    }
+);

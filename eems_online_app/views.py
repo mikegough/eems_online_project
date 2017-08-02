@@ -106,13 +106,15 @@ def index(request):
 @csrf_exempt
 def get_additional_info(request):
 
+    hostname_for_link = settings.HOSTNAME_FOR_LINK
+
     eems_model_id = request.POST.get('eems_model_id')
 
     print eems_model_id
 
     cursor = connection.cursor()
 
-    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION, PROJECT, ID FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
 
     cursor.execute(query)
 
@@ -122,6 +124,9 @@ def get_additional_info(request):
         creation_date = row[2]
         long_description = row[3]
         project = row[4]
+        id = row[5]
+
+    model_url = hostname_for_link + "?model=" + id
 
     context = {
         "name": name,
@@ -129,6 +134,7 @@ def get_additional_info(request):
         "creation_date": creation_date,
         "long_description": long_description,
         "project": project,
+        "model_url": model_url,
     }
 
     return HttpResponse(json.dumps(context))
@@ -399,9 +405,22 @@ def upload_form(request):
     except:
         resolution = 0
 
-    upload_form_celery.delay(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution, project, username)
+    upload_form_celery.delay(upload_id, owner, eems_model_name, author, creation_date, short_description, long_description, resolution, project, username)
 
-    return HttpResponse("Your model is being uploaded and processed. You may now close this window")
+    return HttpResponse(1)
+
+@csrf_exempt
+def check_eems_status(request):
+    # Check the status field in the databse
+    upload_id = str(request.POST.get('upload_id'))
+    cursor = connection.cursor()
+    query = "select STATUS from EEMS_ONLINE_MODELS where ID = '%s'" % upload_id
+    cursor.execute(query)
+    try:
+        log = cursor.fetchone()[0].replace("\n", "<br />")
+    except:
+        log = None
+    return HttpResponse(log)
 
 def logout(request):
     logout(request)

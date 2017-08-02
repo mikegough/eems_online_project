@@ -22,8 +22,8 @@ urlpatterns = [
     #url(r'^login/$', RedirectView.as_view(url='/admin')),
     url(r'logout/$', auth_views.logout, {'next_page': '/logged_out'}),
     url(r'^logged_out/$', logged_out, name='logged_out'),
-    url(r'^admin/', include(admin.site.urls))
-
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^check_eems_status', check_eems_status, name='check_eems_status'),
 ]
 
 #admin.site.index_template = 'upload.html'
