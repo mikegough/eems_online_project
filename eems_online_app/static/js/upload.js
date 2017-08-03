@@ -140,9 +140,6 @@ function process_user_data(upload_id) {
             alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Please try again.</div>")
         },
 
-        complete: function () {
-        }
-
     });
 
 }
