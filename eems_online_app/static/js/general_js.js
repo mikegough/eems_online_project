@@ -90,6 +90,8 @@ $('#eems_model_dropdown').change(function(){
 
         $("#button_div").hide();
         $("#run_eems_button").addClass("disabled");
+        $("#download_label").removeClass("disabled");
+        $("#link_label").removeClass("disabled");
         //$("#download_label").addClass("disabled");
         //$("#link_label").addClass("disabled");
 
