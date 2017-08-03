@@ -166,7 +166,7 @@ def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,shor
 
             # Insert the error into the database.
             cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT, USER, STATUS, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date, project, username, str(e), upload_datetime))
-            shutil.rmtree(upload_dir)
+            #shutil.rmtree(upload_dir)
             shutil.rmtree(output_base_dir)
             print "There was an error running EEMS."
             print e
