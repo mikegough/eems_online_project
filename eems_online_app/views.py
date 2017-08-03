@@ -355,36 +355,50 @@ class FileUploadForm(forms.Form):
 @login_required
 def upload_files(request):
 
-    upload_id = get_random_string(length=32)
+    try:
+        upload_id = get_random_string(length=32)
 
-    # Make an upload directory
-    upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
-    os.mkdir(upload_dir)
+        # Make an upload directory
+        upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+        os.mkdir(upload_dir)
 
-    # Copy user files to upload directory (data + eems command file)
-    if request.method == 'POST':
-        form = FileUploadForm(files=request.FILES)
-        if form.is_valid():
-            print 'valid form'
-            files = request.FILES.getlist('file')
-            for f in files:
-                file_name = f.name
-                file_copy = upload_dir + "/" + file_name
-                with open(file_copy, 'wb+') as destination:
-                    for chunk in f.chunks():
-                        destination.write(chunk)
-                if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
-                    extension = "." + file_name.split(".")[-1]
-                    mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
-                    print mpt_file
-                    cv = Converter(file_copy, mpt_file, None, None, False)
-                    cv.ConvertScript()
-        else:
-            print 'invalid form'
-            print form.errors
+        # Copy user files to upload directory (data + eems command file)
+        if request.method == 'POST':
+            form = FileUploadForm(files=request.FILES)
+            if form.is_valid():
+                print 'valid form'
+                files = request.FILES.getlist('file')
+                for f in files:
+                    file_name = f.name
+                    file_copy = upload_dir + "/" + file_name
+                    with open(file_copy, 'wb+') as destination:
+                        for chunk in f.chunks():
+                            destination.write(chunk)
+                    if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
+                        extension = "." + file_name.split(".")[-1]
+                        mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
+                        print mpt_file
+                        cv = Converter(file_copy, mpt_file, None, None, False)
+                        cv.ConvertScript()
+            else:
+                print 'invalid form'
+                print form.errors
 
-    # Return directory name
-    return HttpResponse(upload_id)
+        # Return directory name
+        context = {
+            "status": 1,
+            "upload_id": upload_id
+        }
+
+        return HttpResponse(json.dumps(context))
+
+    except Exception, e:
+        context = {
+            "status": 0,
+            "upload_id": upload_id,
+            "error_message": str(e).replace("\n", "<br />")
+        }
+        return HttpResponse(json.dumps(context))
 
 @csrf_exempt
 @login_required

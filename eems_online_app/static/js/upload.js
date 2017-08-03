@@ -26,7 +26,7 @@ function upload_files(){
     alertify.alert("" +
         "<div id='upload_notifications'>" +
             "<div id='upload_status'>" +
-                "<span class='status_text' id='upload_status_text'>Uploading Model</span>" +
+                "<span class='status_header'>Uploading Model</span>" +
                 "<img class='status_icon' id='upload_status_icon' src='../static/img/spinner.svg'>" +
                 "<span class='error_text' id='upload_error_text'></span>" +
             "</div>" +
@@ -41,9 +41,6 @@ function upload_files(){
 
     $("#alertify-ok").hide();
 
-    //$("#spinner_div").show();
-    //$("#spinner_text").html("Uploading Files...");
-
     var form = document.querySelector('#file_form');
     var data = new FormData(form);
 
@@ -53,12 +50,21 @@ function upload_files(){
         data : data,
         processData: false,
         contentType: false,
-        success:function(response){
-
-           upload_id = response;
-
-           $("#upload_status_icon").attr("src", '../static/img/check.png');
-           process_user_data(upload_id);
+        success: function (response) {
+            var json_response = JSON.parse(response);
+            upload_id = json_response.upload_id;
+            var error_message = json_response.error_message;
+            if (typeof json_response.status != "undefined" && json_response.status == 1) {
+                upload_process_status = 1;
+                $("#upload_status_icon").attr("src", '../static/img/check.png');
+                process_user_data(upload_id);
+            }
+            else {
+                $("#alertify-ok").show();
+                upload_process_status = 0;
+                $("#upload_error_text").html("<div id='upload_status_text'>" + error_message + "<p><b>Upload ID: </b>" + upload_id + "</div>");
+                $("#upload_status_icon").attr("src", '../static/img/error.png');
+            }
 
         },
         error: function (xhr, errmsg, err) {
@@ -67,10 +73,10 @@ function upload_files(){
             console.log(xhr);
             console.log(errmsg);
             console.log(err);
-            $("#processing_status_icon").attr("src", '../static/img/error.png');
-            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error uploading your files. Please try again later, or contact support.<br>" + errmsg +"</div>");
-            //alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='../static/img/alert.png'></div>There was an error processing your request. Check to make sure that your EEMS command file is valid and free of errors.</div>")
-        }
+            upload_process_status = 0;
+            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error uploading your files. Please try again later, or contact support.<br>" + xhr.responseText.split("Request Method")[0].replace("\n","<br>") + "<p><b>Upload ID: </b>" + upload_id +"</div>");
+            $("#upload_status_icon").attr("src", '../static/img/error.png');
+        },
     });
 
 }
@@ -80,9 +86,9 @@ function process_user_data(upload_id) {
 
     $("#upload_notifications").append(
         "<div id='processing_status'>" +
-        "<span class='status_text' id='processing_status_text'>Processing Model</span>" +
+        "<span class='status_header'>Processing Model</span>" +
         "<img class='status_icon' id='processing_status_icon' src='../static/img/spinner.svg'>" +
-        "<span id='processing_error_text'></span>" +
+        "<span class='error_text' id='processing_error_text'></span>" +
         "</div>"
     );
 
@@ -135,8 +141,8 @@ function process_user_data(upload_id) {
         },
 
         complete: function () {
-           // $("#spinner_div").hide(
         }
+
     });
 
 }
@@ -149,12 +155,6 @@ function check_eems_status(upload_id) {
         type: "POST", // http method
         data: {
             'upload_id': upload_id,
-        },
-
-        success: function (response) {
-        },
-
-        error: function (xhr, errmsg, err) {
         },
 
         complete: function (response) {
@@ -170,11 +170,12 @@ function check_eems_status(upload_id) {
             else {
                 $("#alertify-ok").show();
                 upload_process_status = 0;
-                $("#processing_error_text").html("<div id='upload_status_text'>" + response.responseText + "</div>");
+                $("#processing_error_text").html("<div id='upload_status_text'>" + response.responseText + "<p><b>Upload ID: </b>" + upload_id +"</div>");
                 $("#processing_status_icon").attr("src", '../static/img/error.png');
             }
 
-        }
+        },
+
     });
 }
 

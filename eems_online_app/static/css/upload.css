@@ -87,7 +87,7 @@
 	position: relative;
 }
 
-.status_text{
+.status_header{
 	position: relative;
 	left: 10px;
 	top: -10px;
@@ -129,7 +129,7 @@
 	margin-left: 49px;
 }
 
-#processing_error_text {
+.error_text {
 	font-size:13px;
 }
 
