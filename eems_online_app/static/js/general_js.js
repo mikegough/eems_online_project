@@ -90,8 +90,8 @@ $('#eems_model_dropdown').change(function(){
 
         $("#button_div").hide();
         $("#run_eems_button").addClass("disabled");
-        $("#download_label").addClass("disabled");
-        $("#link_label").addClass("disabled");
+        //$("#download_label").addClass("disabled");
+        //$("#link_label").addClass("disabled");
 
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
 
@@ -277,8 +277,14 @@ $('#download_label').click(function(e) {
 });
 
 $('#link_label').click(function(e) {
-
-    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + eems_model_modified_id + "'>" + hostname_for_link + "?model=" + eems_model_modified_id + "</textarea></div>")
+    var link_id
+    if (eems_model_modified_id == ""){
+        link_id = eems_model_id
+    }
+    else {
+        link_id = eems_model_modified_id
+    }
+    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + link_id + "'>" + hostname_for_link + "?model=" + link_id + "</textarea></div>")
     var textBox = document.getElementById("link");
     textBox.onfocus = function() {
         textBox.select();
@@ -291,7 +297,7 @@ $('#link_label').click(function(e) {
         };
     };
 
-    if (typeof link_already_generated == 'undefined') {
+    if (typeof link_already_generated == 'undefined' && eems_model_modified_id != "") {
         $.ajax({
             url: "/link", // the endpoint
             type: "POST", // http method
@@ -308,9 +314,10 @@ $('#link_label').click(function(e) {
             }
 
         });
+
+        link_already_generated = true
     }
 
-    link_already_generated = true
 
 });
 
