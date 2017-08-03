@@ -29,3 +29,8 @@ class EemsOnlineModels(models.Model):
     class Meta:
         managed = True
         db_table = 'EEMS_ONLINE_MODELS'
+        default_permissions = ('add', 'change', 'delete', 'view')
+        # This line was the trick to allowing users to view/modify the EEMS MODEL table
+        permissions = (
+            ("read_eems", "Can Read EEMS"),
+        )

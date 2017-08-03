@@ -1,9 +1,18 @@
 from django.contrib import admin
-from .models import EemsOnlineModels
+from models import EemsOnlineModels
+from django.contrib.auth.models import Permission
+admin.site.register(Permission)
+admin.autodiscover()
+
 
 # Register your models here.
 class EEMSAdmin(admin.ModelAdmin):
     list_display = ('id', 'upload_datetime', 'name', 'user', 'status')
     ordering = ('upload_datetime',)
-
+    def get_queryset(self, request):
+        query = super(EEMSAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return query
+        else:
+            return query.filter(user=request.user.username)
 admin.site.register(EemsOnlineModels, EEMSAdmin)
