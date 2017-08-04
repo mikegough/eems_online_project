@@ -48,8 +48,9 @@ class EemsOnlineModels(models.Model):
 # Delete the eems model directory when the corresponding record is deleted.
 @receiver(pre_delete, sender=EemsOnlineModels)
 def mymodel_delete(sender, instance, **kwargs):
-    model_dir = models_dir + instance.id
-    if os.path.isdir(model_dir):
+    # Make sure there aren't any slashes in the id
+    model_dir = models_dir + instance.id.replace("/", "").replace("\\", "")
+    if os.path.isdir(model_dir) and instance.id != "":
         print model_dir
         shutil.rmtree(model_dir)
 
