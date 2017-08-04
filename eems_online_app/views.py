@@ -431,7 +431,8 @@ def check_eems_status(request):
     query = "select STATUS from EEMS_ONLINE_MODELS where ID = '%s'" % upload_id
     cursor.execute(query)
     try:
-        log = cursor.fetchone()[0].replace("\n", "<br />")
+        # Remove the exception before sending to the user.
+        log = cursor.fetchone()[0].replace("\n", "<br />").split("Traceback")[0]
     except:
         log = None
     return HttpResponse(log)

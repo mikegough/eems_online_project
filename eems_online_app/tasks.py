@@ -29,6 +29,7 @@ from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
 
 import datetime
+import traceback
 
 @shared_task
 def add(x, y):
@@ -45,19 +46,32 @@ def xsum(numbers):
     return sum(numbers)
 
 @shared_task
-def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,short_description,long_description,resolution,project,username):
+def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date, short_description, long_description, resolution, project, username):
 
         # Files have been uploaded. Process user data and form fields. Run EEMS.
 
-        image_overlay_size = "24,32"
-        upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
-
-        print "Upload dir: " + upload_dir
-
-        mpt_file = glob.glob(upload_dir + "/*.mpt")[0]
-        mpt_file = mpt_file.replace("\\","/")
-
+        cursor = connection.cursor()
+        eems_model_id = upload_id
         upload_datetime = datetime.datetime.now().isoformat()
+
+        def insert_pre_error(error_msg, traceback):
+            error = "********************ERROR********************\n\n" + error_msg
+            #traceback = traceback.format_exc().splitlines()[-1]
+            cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT, USER, STATUS, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, owner, short_description, long_description, author, creation_date, project, username, error + "\n\n" + str(traceback), upload_datetime))
+            sys.exit(1)
+
+        try:
+            image_overlay_size = "24,32"
+            upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+
+            print "Upload dir: " + upload_dir
+
+            mpt_file = glob.glob(upload_dir + "/*.mpt")[0]
+            mpt_file = mpt_file.replace("\\","/")
+
+        except IndexError:
+            error = "There was an error with the eems to mpt file conversion.\n\nPlease make sure to upload a valid eems command file with a .eem extension (for EEMS 2.0 files) or a .mpt extesion (for EEMS 3.0 files)"
+            insert_pre_error(error, traceback.format_exc())
 
         # Try FGDB first
         try:
@@ -78,46 +92,58 @@ def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,shor
 
         # Else look for NC
         except:
-            netCDF_file = glob.glob(upload_dir + "/*.nc")[0]
-            netCDF_file = netCDF_file.replace("\\","/")
-            netCDF_file_name = os.path.basename(netCDF_file)
+
+            try:
+                netCDF_file = glob.glob(upload_dir + "/*.nc")[0]
+                netCDF_file = netCDF_file.replace("\\","/")
+                netCDF_file_name = os.path.basename(netCDF_file)
+
+            except:
+                error = "There was a problem with the dataset you uploaded.\n\nPlease uploaded a valid zipped folder containing a geodatabase with a single feature class, or a valid NetCDF file."
+                #exc_type, exc_value, exc_traceback = sys.exc_info()
+                #insert_pre_error(error, exc_traceback.tb_lineno, traceback)
+                insert_pre_error(error, traceback.format_exc())
+
 
         try:
             input_epsg = getEPSGFromNCfile(netCDF_file)
 
-        # Assume GCS WGS84 if no crs in the netCDF file.
         except:
+            # Assume GCS WGS84 if no crs in the netCDF file.
             input_epsg = 4326
 
-        # Get the Extent from the NetCDF file (try y,x first)
         try:
+            # Get the Extent from the NetCDF file (try y,x first)
             extent_input_crs = getExtentFromNCFile(netCDF_file, ['y', 'x'])
+
         except:
-            extent_input_crs = getExtentFromNCFile(netCDF_file, ['lat', 'lon'])
 
-        # Restructure for database insert
-        extent_input_crs_insert = str([[extent_input_crs[2],extent_input_crs[0]],[extent_input_crs[3],extent_input_crs[1]]])
+            try:
+                extent_input_crs = getExtentFromNCFile(netCDF_file, ['lat', 'lon'])
+            except:
+                error = "There was a problem extracting the coordinate system information from the dataset you uploaded.\n\nPlease uploaded a NetCDF file with a x,y or lat,lon variables, or a feature class with the coordinate system properly defined."
+                insert_pre_error(error, traceback.format_exc())
 
-        # Restructure for GDAL
-        extent_for_gdal = str(extent_input_crs[0]) + " " + str(extent_input_crs[3]) + " " + str(extent_input_crs[1]) + " " + str(extent_input_crs[2])
+        try:
+            # Restructure for database insert
+            extent_input_crs_insert = str([[extent_input_crs[2],extent_input_crs[0]],[extent_input_crs[3],extent_input_crs[1]]])
 
-        # Get Web Mercator Extent from input CRS
-        extent_wm = getExtentInDifferentCRS(extent_input_crs,False,False,input_epsg,3857)
-        #print "Extent WebMercator: ", extent_wm
+            # Restructure for GDAL
+            extent_for_gdal = str(extent_input_crs[0]) + " " + str(extent_input_crs[3]) + " " + str(extent_input_crs[1]) + " " + str(extent_input_crs[2])
 
-        # Get GCS Extent from Web Mercator Extent
-        extent_gcs = getExtentInDifferentCRS(extent_wm,False,False,3857,4326)
-        extent_gcs_insert = str([[extent_gcs[2],extent_gcs[0]],[extent_gcs[3],extent_gcs[1]]])
+            # Get Web Mercator Extent from input CRS
+            extent_wm = getExtentInDifferentCRS(extent_input_crs,False,False,input_epsg,3857)
+            #print "Extent WebMercator: ", extent_wm
 
-        cursor = connection.cursor()
-        # Create a new record in the datatabase for the new model. Used to get from last id in DB. Caused problems.
-        #query = "SELECT MAX(CAST(ID as integer)) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
-        #cursor.execute(query)
-        #max_id = cursor.fetchone()[0]
-        #eems_model_id =  str(int(max_id) + 1)
-        eems_model_id = upload_id
+            # Get GCS Extent from Web Mercator Extent
+            extent_gcs = getExtentInDifferentCRS(extent_wm,False,False,3857,4326)
+            extent_gcs_insert = str([[extent_gcs[2],extent_gcs[0]],[extent_gcs[3],extent_gcs[1]]])
 
-        output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
+            output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
+
+        except:
+            error = "There was a problem getting the extent from dataset you uploaded.\n\nPlease make sure the dataset you upload is in a standard coordinate reference system."
+            insert_pre_error(error, traceback.format_exc())
 
         try:
 
@@ -170,6 +196,5 @@ def upload_form_celery(upload_id,owner,eems_model_name,author,creation_date,shor
             shutil.rmtree(output_base_dir)
             print "There was an error running EEMS."
             print e
-
             return e
 
