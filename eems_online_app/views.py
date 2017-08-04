@@ -417,7 +417,7 @@ def upload_form(request):
     try:
         resolution = float(request.POST.get('resolution'))
     except:
-        resolution = 0
+        resolution = 1000
 
     upload_form_celery.delay(upload_id, owner, eems_model_name, author, creation_date, short_description, long_description, resolution, project, username)
 
