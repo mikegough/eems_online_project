@@ -200,3 +200,10 @@ $("#go_to_eems_online_button").on("click", function()
 
     }
 );
+
+$("#go_to_admin_page_button").on("click", function()
+    {
+        window.location = "/admin"
+
+    }
+);

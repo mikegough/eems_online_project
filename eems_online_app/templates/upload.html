@@ -17,17 +17,12 @@
 
 </head>
 <body>
+<div id="upload_header"> <span id="header_title"> <a href="/">EEMS Online</a></span><div id="header_links">Welcome, <span id="username"><strong>{{ username }}</strong></span> / <a href="/">EEMS Online</a> / <a href='/admin'> Admin</a> / <a href="/admin/password_change/">Change Password </a> / <a href='/logout'> Log out</a> </div></div>
 <div id="upload_form">
-<div id="spinner_div">
-    <div><img id="spinner_img" src="{% static 'img/spinner.svg' %}"></div> <p/>
-    <div id="spinner_text">Uploading Model...</div>
-</div>
     <table id="upload_table">
         <tr>
-            <td colspan="2" id="table_header"> EEMS Online Upload Form <div id="owner_div">Logged in as <span id="username">{{ username }}</span> | <a href='/logout'> Logout</a> | <a href='/admin'> Admin</a> | <a href="/">Back to EEMS Online</a></div></td>
+            <td colspan="2" id="table_header"> Model Upload Form </td>
         </tr>
-        </tr>
-        <tr>
         <tr>
             <td>Dataset <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
             <td>
@@ -80,6 +75,8 @@
     <div id="upload_another_file_button" class="big_button">Upload another EEMS Model</div>
     <br>
     <div id="go_to_eems_online_button" class="big_button">Go to EEMS Online</div>
+    <br>
+    <div id="go_to_admin_page_button" class="big_button">Go to the Admin page</div>
     <br>
     <div id="logout_button" class="big_button">Logout</div>
 </div>
