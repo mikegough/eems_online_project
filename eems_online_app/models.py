@@ -2,8 +2,17 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
+from django.conf import settings
+import os
+import shutil
+base_dir = settings.BASE_DIR
+static_dir = settings.STATIC_URL
+models_dir = base_dir + "/eems_online_app" + static_dir + "eems/models/"
+
+# Create your models here.
 class EemsOnlineModels(models.Model):
     id = models.TextField(db_column='ID', primary_key=True)  # Field name made lowercase.
     name = models.TextField(db_column='NAME', blank=True, null=True)  # Field name made lowercase.
@@ -35,3 +44,12 @@ class EemsOnlineModels(models.Model):
         permissions = (
             ("read_eems", "Can Read EEMS"),
         )
+
+# Delete the eems model directory when the corresponding record is deleted.
+@receiver(pre_delete, sender=EemsOnlineModels)
+def mymodel_delete(sender, instance, **kwargs):
+    model_dir = models_dir + instance.id
+    if os.path.isdir(model_dir):
+        print model_dir
+        shutil.rmtree(model_dir)
+
