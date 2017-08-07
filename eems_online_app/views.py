@@ -356,6 +356,7 @@ class FileUploadForm(forms.Form):
 def upload_files(request):
 
     try:
+        user = request.user.username
         upload_id = get_random_string(length=32)
 
         # Make an upload directory
@@ -398,9 +399,10 @@ def upload_files(request):
         upload_datetime = datetime.datetime.now(timezone('US/Pacific')).isoformat()
         error = str(e).replace("\n", "<br />")
 
-        # Don't have additional information at this point. AJAX request sends files, not username, project, etc.
+        # Don't have additional information at this point. AJAX request sends files, can't get project, model_name, etc.
+        # Model Name must be empty string, not NULL, otherwise, server error when clicking model id on the admin page.
         cursor = connection.cursor()
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s)", (upload_id, 0, str(e), upload_datetime))
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, USER, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s)", (upload_id, "", user, 0, str(e), upload_datetime))
 
         context = {
             "status": 0,
