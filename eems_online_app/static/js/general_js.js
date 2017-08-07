@@ -214,7 +214,7 @@ function run_eems(download) {
             eems_model_modified_id = response.eems_model_modified_id;
             if (response.error_code == '1'){
                 var error_message = response.error_message;
-                alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div id='error_alert_text'>Error: " + error_message + "</div></div>")
+                alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div class='error_text' >" + error_message + "</div></div>")
             }
             else {
                 if (! download) {
