@@ -38,6 +38,7 @@ from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
 
 import fileinput
+import datetime
 
 from tasks import *
 
@@ -374,6 +375,7 @@ def upload_files(request):
                     with open(file_copy, 'wb+') as destination:
                         for chunk in f.chunks():
                             destination.write(chunk)
+                    #Convert .eem file to .mpt file.
                     if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
                         extension = "." + file_name.split(".")[-1]
                         mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
@@ -393,11 +395,20 @@ def upload_files(request):
         return HttpResponse(json.dumps(context))
 
     except Exception, e:
+
+        upload_datetime = datetime.datetime.now().isoformat()
+        error = str(e).replace("\n", "<br />")
+
+        # Don't have additional information at this point. AJAX request sends files, not username, project, etc.
+        cursor = connection.cursor()
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s)", (upload_id, 0, str(e), upload_datetime))
+
         context = {
             "status": 0,
             "upload_id": upload_id,
-            "error_message": str(e).replace("\n", "<br />")
+            "error_message": error
         }
+
         return HttpResponse(json.dumps(context))
 
 @csrf_exempt
@@ -425,17 +436,32 @@ def upload_form(request):
 
 @csrf_exempt
 def check_eems_status(request):
-    # Check the status field in the databse
+
+    # Check the status field in the database. Front end will keep trying until the status is 1 (success) or 0 (error).
     upload_id = str(request.POST.get('upload_id'))
     cursor = connection.cursor()
-    query = "select STATUS from EEMS_ONLINE_MODELS where ID = '%s'" % upload_id
+    query = "select STATUS, LOG from EEMS_ONLINE_MODELS where ID = '%s'" % upload_id
     cursor.execute(query)
+
     try:
-        # Remove the exception before sending to the user.
-        log = cursor.fetchone()[0].replace("\n", "<br />").split("Traceback")[0]
+        # Can't call cursor.fetchone() twice. Second attempt will always be empty. Call once then parse.
+        results = cursor.fetchone()
+        status = results[0]
+        log = results[1].replace("\n", "<br />").split("Traceback")[0] # Remove the exception before sending to the user.
+        print log
+
     except:
+        status = None
         log = None
-    return HttpResponse(log)
+        print "No database record yet. Front end will check again."
+
+    context = {
+            "status": status,
+            "upload_id": upload_id,
+            "error_message": log
+       }
+
+    return HttpResponse(json.dumps(context))
 
 def logout(request):
     logout(request)

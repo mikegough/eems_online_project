@@ -27,6 +27,7 @@ class EemsOnlineModels(models.Model):
     project = models.TextField(db_column='PROJECT', blank=True, null=True)  # Field name made lowercase.
     user = models.TextField(db_column='USER', blank=True, null=True)  # Field name made lowercase.
     status = models.TextField(db_column='STATUS', blank=True, null=True)  # Field name made lowercase.
+    log = models.TextField(db_column='LOG', blank=True, null=True)  # Field name made lowercase.
     upload_datetime = models.TextField(db_column='UPLOAD_DATETIME', blank=True, null=True)  # Field name made lowercase.
 
     def publish(self):

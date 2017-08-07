@@ -155,11 +155,13 @@ function check_eems_status(upload_id) {
         },
 
         complete: function (response) {
-            if (response.responseText == "None") {
+            responseText = JSON.parse(response.responseText)
+
+            if (responseText.status == null) {
                 console.log("Checking upload status");
                 setTimeout('check_eems_status(upload_id)', 5000);
             }
-            else if (response.responseText == "1") {
+            else if (responseText.status == "1") {
                 $("#alertify-ok").show();
                 upload_process_status = 1;
                 $("#processing_status_icon").attr("src", '../static/img/check.png');
@@ -167,7 +169,7 @@ function check_eems_status(upload_id) {
             else {
                 $("#alertify-ok").show();
                 upload_process_status = 0;
-                $("#processing_error_text").html("<div id='upload_status_text'>" + response.responseText + "<p><b>Upload ID: </b>" + upload_id +"</div>");
+                $("#processing_error_text").html("<div id='upload_status_text'>" + responseText.error_message + "<p><b>Upload ID: </b>" + upload_id +"</div>");
                 $("#processing_status_icon").attr("src", '../static/img/error.png');
             }
 
