@@ -8,7 +8,7 @@ admin.autodiscover()
 class EEMSAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
-    list_filter = ('user', 'author', 'project', 'status')
+    list_filter = ('owner', 'user', 'author', 'project', 'status')
     list_display = ('id', 'upload_datetime', 'name', 'project', 'user', 'status', 'log')
     ordering = ('upload_datetime',)
     def get_queryset(self, request):
