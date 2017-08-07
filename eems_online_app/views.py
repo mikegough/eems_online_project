@@ -201,17 +201,17 @@ def run_eems(request):
     print epsg
 
     # Send model information to MPilot to run EEMS.
-    #try:
-    my_mpilot_worker = MPilotWorker()
-    my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
-    error_code = 0
-    error_message = None
-    if not download:
-        os.remove(output_netcdf)
+    try:
+        my_mpilot_worker = MPilotWorker()
+        my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
+        error_code = 0
+        error_message = None
+        if not download:
+            os.remove(output_netcdf)
 
-    #except Exception as e:
-    #    error_code = 1
-    #    error_message = str(e)
+    except Exception as e:
+        error_code = 1
+        error_message = str(e).replace("\n", "<br />")
 
     context={
         "eems_model_modified_id": eems_model_modified_id,
