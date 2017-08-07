@@ -38,7 +38,6 @@ from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
 
 import fileinput
-import datetime
 
 from tasks import *
 
@@ -396,7 +395,7 @@ def upload_files(request):
 
     except Exception, e:
 
-        upload_datetime = datetime.datetime.now().isoformat()
+        upload_datetime = datetime.datetime.now(timezone('US/Pacific')).isoformat()
         error = str(e).replace("\n", "<br />")
 
         # Don't have additional information at this point. AJAX request sends files, not username, project, etc.

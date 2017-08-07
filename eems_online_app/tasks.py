@@ -29,6 +29,7 @@ from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
 
 import datetime
+from pytz import timezone
 import traceback
 
 @shared_task
@@ -52,7 +53,7 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
 
         cursor = connection.cursor()
         eems_model_id = upload_id
-        upload_datetime = datetime.datetime.now().isoformat()
+        upload_datetime = datetime.datetime.now(timezone('US/Pacific')).isoformat()
 
         def insert_pre_error(error_msg, traceback):
             error = "********************ERROR********************\n\n" + error_msg
