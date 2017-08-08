@@ -1,14 +1,70 @@
+$(document).ready(function() {
+
+    // Form validation (text based entries)
+    var required_message = " This is a required field";
+    $("#upload_form_text").validate({
+        rules: {
+            model_name: "required",
+            model_author: "required",
+            project: "required",
+            short_description: "required",
+        },
+        messages: {
+            model_name: required_message,
+            model_author: required_message,
+            project: required_message,
+            short_description: required_message,
+        },
+        success: function(label,element) {
+            label.parent().removeClass('error');
+            label.remove();
+        },
+    });
+
+    $('#submit').on("click", function() {
+        $("label").remove();
+        if (! $("#data_file").val()){
+            $("#data_file").addClass('error')
+        }
+        if (! $("#command_file").val()){
+            $("#command_file").addClass('error')
+        }
+        var file_form_valid = $("#file_form").valid();
+        var upload_form_valid = $("#upload_form_text").valid();
+
+        // If all form validation requirements are met, proceed to upload files.
+        if (upload_form_valid && file_form_valid && $("#data_file").val() && $("#command_file").val()) {
+            upload_files()
+        }
+    });
+});
+
 $( function() {
     $( "#creation_date" ).datepicker();
 } );
 
-$("#submit").click(function(e) {
-    upload_files()
+$("#command_file").on('change', function(){
+
+    $("#command_file").removeClass('error');
+
+    var filename = $("#command_file").val();
+
+    if (["eem", "eems", "mpt"].indexOf(filename.toLowerCase().split('.').pop()) == -1){
+        $("#command_file").val('');
+        alert("File must either have a .eem or .mpt file extension")
+    }
 });
 
 $("#data_file").on('change', function(){
 
-    var filename = $('input[type=file]').val();
+    $("#data_file").removeClass('error');
+
+    var filename = $("#data_file").val();
+
+    if (["nc", "zip"].indexOf(filename.toLowerCase().split('.').pop()) == -1){
+        $("#data_file").val('');
+        alert("File must either have a .zip or .nc file extension")
+    }
 
     if (filename.indexOf(".zip") != -1){
         $("#spatial_resolution_row").show();
@@ -78,7 +134,6 @@ function upload_files(){
             $("#upload_status_icon").attr("src", '../static/img/error.png');
         },
     });
-
 }
 
 // Calls the upload_form view, which basically just hands this information off to the celery worker to run EEMS.

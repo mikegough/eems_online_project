@@ -260,3 +260,26 @@ body {
 	opacity: .5 !important;
 }
 
+input.error {
+   	border:2px solid red;
+	box-shadow: 0px 0px 4px red;
+}
+
+textarea.error {
+	border:2px solid red;
+	box-shadow: 0px 0px 4px red;
+}
+
+label.error {
+	color: red;
+}
+
+.asterisk{
+	color:red;
+}
+
+#required_message{
+	color: gray;
+	float: left;
+	margin-left: 35px;
+}
