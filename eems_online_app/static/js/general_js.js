@@ -126,6 +126,10 @@ $('#eems_model_dropdown').change(function(){
                 var json_model = results;
                 init(json_model, eems_online_model_name);
             });
+
+             if (typeof last_map_click  != "undefined" && last_map_click){
+                on_map_click(last_map_click)
+            }
         }
 
         current_arguments_dict={};
@@ -229,6 +233,10 @@ function run_eems(download) {
                 eems_model_id_for_map_display = eems_model_modified_id;
                 swapImageOverlay(last_layer_clicked, eems_model_id_for_map_display);
                 $("#run_eems_div").addClass("disabled");
+            }
+
+            if (typeof last_map_click  != "undefined" && last_map_click){
+                on_map_click(last_map_click)
             }
         },
         error: function (xhr, errmsg, err) {

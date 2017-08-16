@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^logged_out/$', logged_out, name='logged_out'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^check_eems_status', check_eems_status, name='check_eems_status'),
+    url(r'^get_raster_data', get_raster_data, name='get_raster_data'),
 ]
 
 #admin.site.index_template = 'upload.html'

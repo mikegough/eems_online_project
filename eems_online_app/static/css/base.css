@@ -120,7 +120,7 @@ h4 {
 	height: calc(100% - 22.5px);
 	margin: 0 auto;
 	position: absolute;
-	cursor: move;
+	cursor: url('../img/map_cursor.png')0 0, auto;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -1151,4 +1151,25 @@ table.tableizer-table {
 
 #login a:hover {
 	background-color:transparent;
+}
+
+.eems_value {
+	color: #4b4b4b;
+	display: inline-block;
+	position: absolute;
+	bottom: 20px;
+	right: 0px;
+	font-size: .85em;
+	font-style: italic;
+	font-weight: bold;
+	float: right;
+	background-color: #f0f0f0;
+	box-shadow: -1px -1px 2px #4e4e4e;
+	padding: 0px 4px;
+	border-radius: 4px 0px 0px 0px;
+}
+
+.eems_value_spinner{
+	height:15px;
+	padding-top:2px;
 }

@@ -76,7 +76,7 @@ function init(json, eems_file_name){
         //set overridable=true for styling individual
         //nodes or edges
         Node: {
-            height: 70,
+            height: 90,
             width: 159,
             type: 'rectangle',
             color: '#B6BFD3',
@@ -132,6 +132,8 @@ function init(json, eems_file_name){
 
             // Remove logic to show eems value in top node
             Log.write("")
+
+            update_tree_values(json_eems_results);
         },
 
         onPlaceLabel: function(label, node, controllers){
@@ -239,7 +241,7 @@ function init(json, eems_file_name){
             //Width + Padding should equal the node width to prevent formatting issues.
             var style = label.style;
             style.width = 125 + 'px';
-            style.height = 65 + 'px';
+            style.height = 80 + 'px';
             style.cursor = 'pointer';
             style.color = '#000000';
             style.fontWeight = 'normal';

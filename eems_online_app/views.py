@@ -36,10 +36,19 @@ from django.contrib.auth.decorators import login_required
 from EEMSCvt20To30 import *
 from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
+import numpy
 
 import fileinput
 
 from tasks import *
+
+from rasterstats import zonal_stats
+from rasterstats import point_query
+import rasterio
+import netCDF4
+from osgeo import ogr
+from osgeo import osr
+import glob
 
 @csrf_exempt
 def index(request):
@@ -206,8 +215,9 @@ def run_eems(request):
         my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
         error_code = 0
         error_message = None
-        if not download:
-            os.remove(output_netcdf)
+        # Can't delete if user is going to be getting the value out of modifield model runs.
+        #if not download:
+        #    os.remove(output_netcdf)
 
     except Exception as e:
         error_code = 1
@@ -466,3 +476,83 @@ def check_eems_status(request):
 
 def logout(request):
     logout(request)
+
+
+@csrf_exempt
+def get_raster_data(request):
+
+    wkt = request.POST.get('wkt')
+    model_id = str(request.POST.get('model_id'))
+    original_model_id = str(request.POST.get('original_model_id'))
+    raster = glob.glob(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data/results.nc' % model_id)[0]
+
+    nc_dataset = netCDF4.Dataset(raster)
+    nc_vars = nc_dataset.variables
+    nc_var_keys = nc_vars.keys()
+    vars_to_remove = ['lat', 'lon', 'x', 'y', 'crs']
+    for var_to_remove in vars_to_remove:
+        if var_to_remove in nc_var_keys:
+            nc_var_keys.remove(var_to_remove)
+
+    cursor = connection.cursor()
+    query = "select EPSG from EEMS_ONLINE_MODELS where ID = '%s'" % original_model_id
+    cursor.execute(query)
+    dst_epsg = int(cursor.fetchone()[0])
+
+    # Project WKT if not in GCS WGS84
+    if dst_epsg != 4326:
+         # Project WKT using ogr
+        geom = ogr.CreateGeometryFromWkt(wkt)
+        source = osr.SpatialReference()
+        source.ImportFromEPSG(4326)
+        target = osr.SpatialReference()
+        target.ImportFromEPSG(dst_epsg)
+        transform = osr.CoordinateTransformation(source, target)
+        geom.Transform(transform)
+        wkt = geom.ExportToWkt()
+
+    results = {}
+
+    # Get values out of NetCDF file
+    # NetCDF4 version
+    try:
+        lats = nc_dataset.variables['lat'][:]
+        lons = nc_dataset.variables['lon'][:]
+    except:
+        lats = nc_dataset.variables['y'][:]
+        lons = nc_dataset.variables['x'][:]
+
+    lon_target = float(wkt.split("(")[1].split(" ")[0])
+    lat_target = float(wkt.split("(")[1].split(" ")[1].replace(")", ""))
+
+    lon_index = numpy.abs(lons - lon_target).argmin()
+    lat_index = numpy.abs(lats - lat_target).argmin()
+
+    for var in nc_var_keys:
+
+        # Determine NoData value
+        this_nc_var = nc_dataset.variables[var]
+        if "_FillValue" in this_nc_var.ncattrs():
+            no_data_val = getattr(this_nc_var, "_FillValue")
+        elif "no_data_value" in this_nc_var.ncattrs():
+            no_data_val = getattr(this_nc_var, "no_data_value")
+
+        var_array = numpy.array(nc_dataset.variables[var])
+        value = var_array[lat_index, lon_index]
+        print var, value
+        if value not in [no_data_val, 9999]:
+            results[var] = round(value, 2)
+        else:
+            results[var] = "No Data"
+
+     # rasterstats version. Does not work on Webfaction (probably because no GDAL netCDF support)
+#    for var in nc_var_keys:
+#        raster_with_var = r'file://NETCDF:%s:%s' % (raster, var)
+#        with rasterio.open(raster_with_var) as src:
+#            transform = src.transform
+#            array = src.read(1)
+#            value = point_query(wkt, array, affine=transform)[0]
+#            results[var] = round(value, 2)
+
+    return HttpResponse(json.dumps(results))
+

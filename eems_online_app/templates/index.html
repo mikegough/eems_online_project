@@ -71,8 +71,12 @@
         <div id="map_container">
            <div id="button_div">
                <ul id="button_list" class="buttons" data-persist="false">
-                   <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000)">Original</a></li>
-                   <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000)">Modified</a></li>
+                   <!--
+                   <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000); on_map_click(last_map_click)">Original</a></li>
+                   <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000); on_map_click(last_map_click)">Modified</a></li>
+                   -->
+                   <li id="map_original_button"><a>Original</a></li>
+                   <li id="map_modified_button" class="selected"><a>Modified</a></li>
                </ul>
            </div>
            <div id="map"></div>
