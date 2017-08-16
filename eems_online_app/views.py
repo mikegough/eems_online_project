@@ -540,7 +540,7 @@ def get_raster_data(request):
         var_array = numpy.array(nc_dataset.variables[var])
         value = var_array[lat_index, lon_index]
         print var, value
-        if value not in [no_data_val, 9999]:
+        if value not in [no_data_val, 9999, -9999]:
             results[var] = round(value, 2)
         else:
             results[var] = "No Data"
