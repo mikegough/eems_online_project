@@ -1129,7 +1129,14 @@ table.tableizer-table {
 
 #cbi_logo{
 	float: left;
-	margin: 20px 20px 20px 0px;
+	margin: 28px 20px 20px 0px;
+	width:159px;
+}
+
+#staff_logo{
+	float: left;
+	margin: 10px 20px 20px 0px;
+	width:159px;
 }
 
 #splitter {
