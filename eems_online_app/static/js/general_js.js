@@ -92,8 +92,6 @@ $('#eems_model_dropdown').change(function(){
         $("#run_eems_button").addClass("disabled");
         $("#download_label").removeClass("disabled");
         $("#link_label").removeClass("disabled");
-        //$("#download_label").addClass("disabled");
-        //$("#link_label").addClass("disabled");
 
         overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
 
@@ -187,15 +185,23 @@ function load_eems_user_model(eems_filename, eems_file_contents) {
 $("#run_eems_button").click(function(){run_eems(0)});
 
 // Send the user defined changes to the back end and run EEMS.
+// Moved model run to a celery task. This function gets the process started, then calls the check_eems_model_run status function to check the status of the celery task.
 function run_eems(download) {
 
-    $("#run_eems_button").addClass("disabled");
-    $("#quality_selector_div").addClass("disabled");
-    $('#map_quality').attr('disabled', 'disabled');
+    if (! download ){
+        $("#spinner_text").html("Running EEMS...")
+    }
+    else {
+        $("#spinner_text").html("Preparing data for download....")
+    }
+
+    disable_buttons()
+
     var map_quality = $("#map_quality").val();
 
     eems_operator_changes_string = JSON.stringify(eems_bundled_commands);
 
+    // Send the model changes to the run_eems view, which will quickly call the celery task to run the model.
     return $.ajax({
         url: "/run_eems", // the endpoint
         type: "POST", // http method
@@ -207,42 +213,7 @@ function run_eems(download) {
             'map_quality': map_quality
         },
         success: function (task_id) {
-            //var response = JSON.parse(json_response);
-            //eems_model_modified_id = response.eems_model_modified_id;
             check_eems_model_run_status(task_id, download)
-            /*
-             if (response.error_code == '1'){
-             var error_message = response.error_message;
-             alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div class='error_text' >" + error_message + "</div></div>")
-             }
-             else {
-             if (! download) {
-             alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
-             }
-             console.log("EEMS Model ID: " + eems_model_modified_id);
-             console.log("EEMS Command Modifications: ");
-             console.log(JSON.stringify(eems_bundled_commands, null, 2));
-             $("#download_label").removeClass("disabled");
-             $("#link_label").removeClass("disabled");
-             $("#button_div").show();
-             eems_model_id_for_map_display = eems_model_modified_id;
-             swapImageOverlay(last_layer_clicked, eems_model_id_for_map_display);
-             $("#run_eems_div").addClass("disabled");
-             }
-
-             if (typeof last_map_click  != "undefined" && last_map_click){
-             on_map_click(last_map_click)
-             }
-             },
-             error: function (xhr, errmsg, err) {
-             var error_message = xhr.responseText;
-             //var eems_error =  error_message.split("\n")[1]
-             alertify.alert("<div class='error_message_context'>There was an error processing your request. If the problem persists, please reload the page.<div class='error_message'>Error: " + error_message + "</div></div>")
-             },
-             complete: function(){
-             $("#spinner_div").hide()
-             }
-             */
         }
     });
 }
@@ -250,18 +221,12 @@ function run_eems(download) {
 var is_download;
 var this_task_id;
 
+// Check the status of the celery task.
 function check_eems_model_run_status(task_id, download) {
 
     is_download = download;
     this_task_id = task_id;
     $("#spinner_div").show()
-
-    if (! download ){
-        $("#spinner_text").html("Running EEMS...")
-    }
-    else {
-        $("#spinner_text").html("Preparing data for download....")
-    }
 
     return $.ajax({
         url: "/check_eems_model_run_status", // the endpoint
@@ -274,32 +239,28 @@ function check_eems_model_run_status(task_id, download) {
 
             var state = response.responseText;
 
-            // Celery task is still running, check status again
+            // if state is PENDING, the celery task is still running, check status again
             if (state == "PENDING") {
-                console.log("Model Run Status = PENDING");
+                console.log("PENDING");
                 setTimeout('check_eems_model_run_status(this_task_id, is_download)', 5000);
             }
-            // Celery task is done.
+            // Celery task is done (will happen on success or failure of EEMS model run).
             else {
                 results = JSON.parse(response.responseText)
                 eems_model_modified_id = results.eems_model_modified_id;
-                if (response.error_code == '1') {
-                    var error_message = response.error_message;
+
+                // Handle an EEMS model run error.
+                if (results.error_code == '1') {
+                    var error_message = results.error_message;
                     alertify.alert("<div id='error_alert'><div id='alert_icon_div'><img id='alert_icon' src='static/img/alert.png'></div>There was an error processing your request. Please refer to the error log below for information on how to correct the error.<div class='error_text' >" + error_message + "</div></div>")
+                    enable_buttons();
                 }
                 else {
                     if (!download) {
-                        $("#spinner_div").hide()
                         alertify.alert("<div id='model_run_complete_alert'><img id='check_icon' src='static/img/check.png'><span id='model_run_complete_alert_text'>Model Run Complete</span></div>")
                         eems_model_id_for_map_display = eems_model_modified_id;
                         swapImageOverlay(last_layer_clicked, eems_model_id_for_map_display);
-                        $("#download_label").removeClass("disabled");
-                        $("#link_label").removeClass("disabled");
-                        $("#button_div").show();
-                        $("#run_eems_div").addClass("disabled");
-                        console.log("EEMS Model ID: " + eems_model_modified_id);
-                        console.log("EEMS Command Modifications: ");
-                        console.log(JSON.stringify(eems_bundled_commands, null, 2));
+                        enable_buttons();
                     }
                     else{
                         download_results(eems_model_modified_id);
@@ -310,11 +271,14 @@ function check_eems_model_run_status(task_id, download) {
                     on_map_click(last_map_click)
                 }
 
+                console.log("EEMS Model ID: " + eems_model_modified_id);
+                console.log("EEMS Command Modifications: ");
+                console.log(JSON.stringify(eems_bundled_commands, null, 2));
+
             }
         },
         error: function (xhr, errmsg, err) {
             var error_message = xhr.responseText;
-            //var eems_error =  error_message.split("\n")[1]
             alertify.alert("<div class='error_message_context'>There was an error processing your request. If the problem persists, please reload the page.<div class='error_message'>Error: " + error_message + "</div></div>")
         },
     });
@@ -347,16 +311,27 @@ function download_results(eems_model_modified_id){
             alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
         },
         complete: function () {
-            $("#spinner_div").hide()
-            $("#download_file").attr("src", "static/img/download.png");
-            $("#download_label").removeClass("disabled");
-            $("#quality_selector_div").removeClass("disabled");
-            $('#map_quality').removeAttr('disabled');
-            $("#link_label").removeClass("disabled");
+
+            enable_buttons();
+
         }
 
     });
 
+}
+
+function enable_buttons() {
+    $("#spinner_div").hide()
+    $("#download_label").removeClass("disabled");
+    $("#link_label").removeClass("disabled");
+    $("#button_div").show();
+    $("#run_eems_div").addClass("disabled");
+}
+
+function disable_buttons(){
+    $("#run_eems_button").addClass("disabled");
+    $("#quality_selector_div").addClass("disabled");
+    $('#map_quality').attr('disabled', 'disabled');
 }
 
 /*

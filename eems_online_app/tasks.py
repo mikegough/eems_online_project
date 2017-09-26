@@ -204,7 +204,6 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
 @shared_task
 def run_eems_celery(eems_model_id, eems_model_modified_id, eems_operator_changes_string, eems_operator_changes_dict, download, map_quality):
 
-
     original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
 
     # Get the extent of the original EEMS model. Used to project PNG in GDAL.

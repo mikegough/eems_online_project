@@ -174,6 +174,7 @@ def run_eems(request):
 
     return HttpResponse(task_id)
 
+
 @csrf_exempt
 def check_eems_model_run_status(request):
 
@@ -182,13 +183,13 @@ def check_eems_model_run_status(request):
 
     print state
 
-    if state == "SUCCESS":
-        results = run_eems_celery.AsyncResult(task_id).get()
-        return HttpResponse(results)
-
-    else:
+    if state == "PENDING":
         return HttpResponse(state)
 
+    else:
+        # Get the output from the run_eems_celery task (model run ID and error status).
+        results = run_eems_celery.AsyncResult(task_id).get()
+        return HttpResponse(results)
 
 
 @csrf_exempt
