@@ -731,6 +731,7 @@ $("#save_icon").on('click', function() {
 });
 
 $("#expand_icon").on('click', function(){
+    $( "#meemse_container" ).resizable({ disabled: true });
     st.onClick(st.root);
     $("#meemse_container").addClass("fixed_meemse");
     $("#canvas_controls").addClass("fixed_canvas_controls");
