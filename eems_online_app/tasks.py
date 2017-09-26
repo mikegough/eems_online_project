@@ -201,3 +201,70 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
             print e
             return e
 
+@shared_task
+def run_eems_celery(eems_model_id, eems_model_modified_id, eems_operator_changes_string, eems_operator_changes_dict, download, map_quality):
+
+
+    original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
+
+    # Get the extent of the original EEMS model. Used to project PNG in GDAL.
+    cursor = connection.cursor()
+    query = "SELECT EXTENT, EPSG FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    cursor.execute(query)
+    for row in cursor:
+            extent = row[0]
+            epsg = str(row[1])
+    extent_list = extent.replace('[','').replace(']','').replace(" ", "").split(',')
+    extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
+    print "Extent: " + extent_for_gdal
+    print "EPSG: " + epsg
+
+    # If this is the first run, create the user output directories.
+    if eems_model_modified_id == '':
+        eems_model_modified_id = get_random_string(length=32)
+
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
+        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_modified_id)
+
+        # Copy the mpt file to the user output directory
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+        shutil.copyfile(original_mpt_file, mpt_file_copy)
+
+    else:
+        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+
+    output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
+    output_netcdf = output_base_dir + '/data/results.nc'
+
+    print mpt_file_copy
+    print eems_operator_changes_dict
+    print output_base_dir
+    print extent_for_gdal
+    print epsg
+
+    # Send model information to MPilot to run EEMS.
+    try:
+        my_mpilot_worker = MPilotWorker()
+        my_mpilot_worker.HandleRqst(eems_operator_changes_dict, eems_model_modified_id, output_base_dir, extent_for_gdal, epsg, map_quality, mpt_file_copy, True, False, True)
+        error_code = 0
+        error_message = None
+        # Can't delete if user is going to be getting the value out of modifield model runs.
+        #if not download:
+        #    os.remove(output_netcdf)
+
+    except Exception as e:
+        error_code = 1
+        error_message = str(e).replace("\n", "<br />")
+
+    context={
+        "eems_model_modified_id": eems_model_modified_id,
+        "error_code": error_code,
+        "error_message": error_message
+    }
+
+    return json.dumps(context)
+

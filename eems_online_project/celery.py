@@ -9,7 +9,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eems_online_project.settings')
 
 from django.conf import settings  # noqa
 
-app = Celery('eems_online_project')
+app = Celery('eems_online_project',
+             broker='amqp://guest:guest@127.0.0.1:5672//',
+             backend='rpc://')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.

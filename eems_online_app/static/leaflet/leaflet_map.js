@@ -159,12 +159,16 @@ function update_tree_values(json_eems_results) {
 $("#map_original_button").on("click", function(){
     swapImageOverlay(last_layer_clicked,eems_model_id,1000);
     eems_model_id_for_map_display = eems_model_id;
-    on_map_click(last_map_click);
+    if (typeof last_map_click != "undefined") {
+        on_map_click(last_map_click);
+    }
 });
 
 $("#map_modified_button").on("click", function(){
     swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000);
     eems_model_id_for_map_display = eems_model_modified_id;
-    on_map_click(last_map_click);
+    if (typeof last_map_click != "undefined") {
+        on_map_click(last_map_click);
+    }
 });
 
