@@ -224,9 +224,12 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         origin = self.ArgByNm('Origin') if self.ArgByNm('Origin') is not None else 'lower'
 
+        norm = mpl.colors.Normalize(vmin=minVal,vmax=maxVal)
+
         myImg = ax1.imshow(
             dataObj.ExecRslt(),
             aspect='auto',
+            norm=norm,
             interpolation='nearest',
             origin=origin
             )
@@ -245,7 +248,6 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         # now the key
         fig = plt.figure(figsize=(8,1))
         ax1 = fig.add_axes([0.02,0.3,0.96,0.7])
-        norm = mpl.colors.Normalize(vmin=minVal,vmax=maxVal)
         cb = mpl.colorbar.ColorbarBase(
             ax1,
             cmap=cmap,
