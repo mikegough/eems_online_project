@@ -85,13 +85,6 @@ $( document ).ready(function() {
 
 });
 
-L.Map.prototype.panToOffset = function (latlng, offset, options) {
-    var x = this.latLngToContainerPoint(latlng).x - offset[0]
-    var y = this.latLngToContainerPoint(latlng).y - offset[1]
-    var point = this.containerPointToLatLng([x, y])
-    return this.setView(point, this._zoom, { pan: options })
-}
-
 // Change model (drop-down)
 $('#eems_model_dropdown').change(function(){
 
@@ -100,16 +93,20 @@ $('#eems_model_dropdown').change(function(){
         $("#download_label").removeClass("disabled");
         $("#link_label").removeClass("disabled");
 
-        overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
+        var overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
 
         // First one will zoom to extent
-        map.fitBounds(overlay_bounds)
+        map.fitBounds(overlay_bounds, {animate: false, pan: { duration: 0 }});
 
         // Second one will scoot it to the left by 700px
         map.fitBounds(overlay_bounds, {
-                //left, top
-                paddingTopLeft: [700, 0],
-                paddingbottomRight: [0, 0]
+            //left, top
+            paddingTopLeft: [700, 0],
+            paddingbottomRight: [0, 0],
+            animate: false,
+            pan: {
+                duration: 0
+            }
         });
 
         eems_model_modified_id = '';
@@ -150,8 +147,20 @@ $('#eems_model_dropdown').change(function(){
         current_arguments_dict={};
 
         reset_eems_bundled_commands()
-    }
-);
+
+        // Second one will scoot it to the left by 700px
+        map.fitBounds(overlay_bounds, {
+            //left, top
+            paddingTopLeft: [700, 0],
+            paddingbottomRight: [0, 0],
+            animate: false,
+            pan: {
+                duration: 0
+            }
+        });
+
+
+});
 
 // File upload button
 $('input:file').change(function(e){
