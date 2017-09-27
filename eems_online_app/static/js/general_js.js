@@ -93,7 +93,7 @@ $('#eems_model_dropdown').change(function(){
         $("#download_label").removeClass("disabled");
         $("#link_label").removeClass("disabled");
 
-        var overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
+        overlay_bounds = JSON.parse($(this).find('option:selected').attr('extent'));
 
         // First one will zoom to extent
         map.fitBounds(overlay_bounds, {animate: false, pan: { duration: 0 }});
