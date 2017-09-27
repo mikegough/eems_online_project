@@ -130,7 +130,7 @@ function upload_files(){
             console.log(errmsg);
             console.log(err);
             upload_process_status = 0;
-            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error uploading your files. Please try again later, or contact support.<br>" + xhr.responseText.split("Request Method")[0].replace("\n","<br>") + "<p><b>Upload ID: </b>" + upload_id +"</div>");
+            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error transfering your files to the server. Please try again later, or contact support.<br></div>");
             $("#upload_status_icon").attr("src", '../static/img/error.png');
         },
     });
