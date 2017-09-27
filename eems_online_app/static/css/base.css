@@ -615,8 +615,11 @@ li a.active {
 	padding-left: 5px;
 }
 
-#form_table td:first-child{
+#form_table td{
 	vertical-align:top;
+}
+
+#form_table td:first-child{
 	max-width:330px;
 	padding-left:10px;
 }
@@ -624,6 +627,18 @@ li a.active {
 #form_div {
 	width: 550px;
 	padding: 0px 0px 0px 0px;
+}
+
+#node_name{
+	max-width: 330px;
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+
+#input_nodes {
+	max-width: 330px;
+	overflow-x: auto;
+	font-size: .9em;
 }
 
 .info {
