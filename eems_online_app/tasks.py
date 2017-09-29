@@ -95,12 +95,19 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
         except:
 
             try:
+                netcdf_zip = glob.glob(upload_dir + "/*.zip")
+                if netcdf_zip:
+                    print "HERE"
+                    zip_ref = zipfile.ZipFile(netcdf_zip[0], 'r')
+                    zip_ref.extractall(upload_dir)
+                    zip_ref.close()
+
                 netCDF_file = glob.glob(upload_dir + "/*.nc")[0]
                 netCDF_file = netCDF_file.replace("\\","/")
                 netCDF_file_name = os.path.basename(netCDF_file)
 
             except:
-                error = "There was a problem with the dataset you uploaded.\n\nPlease uploaded a valid zipped folder containing a geodatabase with a single feature class, or a valid NetCDF file."
+                error = "There was a problem with the dataset you uploaded.\n\nPlease upload a valid zipped folder containing a geodatabase with a single feature class, or a valid NetCDF file."
                 #exc_type, exc_value, exc_traceback = sys.exc_info()
                 #insert_pre_error(error, exc_traceback.tb_lineno, traceback)
                 insert_pre_error(error, traceback.format_exc())

@@ -326,36 +326,54 @@ class FileUploadForm(forms.Form):
 @login_required
 def upload_files(request):
 
+    # Check to see if this is a SSH upload
     try:
-        user = request.user.username
-        upload_id = get_random_string(length=32)
+        ssh_dir_name = json.loads(request.body)["ssh_dir_name"]
 
-        # Make an upload directory
-        upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
-        os.mkdir(upload_dir)
+    except:
+        ssh_dir_name = False
 
-        # Copy user files to upload directory (data + eems command file)
-        if request.method == 'POST':
-            form = FileUploadForm(files=request.FILES)
-            if form.is_valid():
-                print 'valid form'
-                files = request.FILES.getlist('file')
-                for f in files:
-                    file_name = f.name
-                    file_copy = upload_dir + "/" + file_name
-                    with open(file_copy, 'wb+') as destination:
-                        for chunk in f.chunks():
-                            destination.write(chunk)
-                    #Convert .eem file to .mpt file.
-                    if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
-                        extension = "." + file_name.split(".")[-1]
-                        mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
-                        print mpt_file
-                        cv = Converter(file_copy, mpt_file, None, None, False)
-                        cv.ConvertScript()
-            else:
-                print 'invalid form'
-                print form.errors
+    try:
+        if ssh_dir_name:
+            upload_id = ssh_dir_name
+            upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+            eems_command_file = glob.glob(upload_dir + "/*.eem")[0]
+            eems_command_file_name = os.path.basename(eems_command_file)
+            if eems_command_file:
+                extension = "." + eems_command_file.split(".")[-1]
+                mpt_file = upload_dir + "/" + eems_command_file_name.replace(extension, ".mpt").replace("\\", "/")
+                cv = Converter(eems_command_file, mpt_file, None, None, False)
+                cv.ConvertScript()
+
+        else:
+            user = request.user.username
+            upload_id = get_random_string(length=32)
+            # Make an upload directory
+            upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+            os.mkdir(upload_dir)
+
+            # Copy user files to upload directory (data + eems command file)
+            if request.method == 'POST':
+                form = FileUploadForm(files=request.FILES)
+                if form.is_valid():
+                    print 'valid form'
+                    files = request.FILES.getlist('file')
+                    for f in files:
+                        file_name = f.name
+                        file_copy = upload_dir + "/" + file_name
+                        with open(file_copy, 'wb+') as destination:
+                            for chunk in f.chunks():
+                                destination.write(chunk)
+                        #Convert .eem file to .mpt file.
+                        if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
+                            extension = "." + file_name.split(".")[-1]
+                            mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
+                            print mpt_file
+                            cv = Converter(file_copy, mpt_file, None, None, False)
+                            cv.ConvertScript()
+                else:
+                    print 'invalid form'
+                    print form.errors
 
         # Return directory name
         context = {

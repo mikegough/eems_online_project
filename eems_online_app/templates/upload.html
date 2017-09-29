@@ -26,7 +26,7 @@
             <td colspan="2" id="table_header"> Model Upload Form </td>
         </tr>
         <tr>
-            <td>Dataset<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
+            <td>Dataset<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension, a zipped NetCDF file, or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip). Note that large files may not upload succesfully (The size limit is currently estimated to be around 800MB)."></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">
@@ -69,7 +69,16 @@
         <tr>
             <td>Long Description<img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Provide a longer description of your model"> </td><td><textarea id="long_description" name="long_description"></textarea></td>
         </tr>
+        <!-- Uncomment to allow for SFTP uploads of large datasets.
+            Need to SFTP a directory containing a .eem file and an EEMS model to the uploads directory on the server.
+            Users then fills out the form as normal. Currently need to supply a fake dataset and command file in the upload form.
+        -->
+        <!--
+            <tr>
+                <td>SSH Upload Directory <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="For manual SSH upload of files that are too large to upload through this web form. Leave this field empty for regular uploads. Contact tech support for help with using this feature."> </td><td><input type="text" id="ssh_dir_name" name="ssh_dir_name"></input> (Leave this field empty for regular uploads)</td>
+            </tr>
         <tr>
+        -->
             <td colspan="2"><span id="required_message"><span class="asterisk">*</span> Indicates a required field</span><input type="button" class="button" name="submit" value="submit" id="submit" /></td>
         </tr>
     </form>

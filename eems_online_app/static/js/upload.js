@@ -34,7 +34,15 @@ $(document).ready(function() {
 
         // If all form validation requirements are met, proceed to upload files.
         if (upload_form_valid && file_form_valid && $("#data_file").val() && $("#command_file").val()) {
-            upload_files()
+            var ssh_dir_name = $("#ssh_dir_name").val()
+            // See if the files have been manually transferred through ssh.
+            if (typeof ssh_dir_name != "undefined"  && ssh_dir_name != "") {
+                var upload_method = 'ssh'
+            }
+            else {
+                var upload_method = 'web'
+            }
+            upload_files(upload_method)
         }
     });
 });
@@ -76,7 +84,7 @@ $("#data_file").on('change', function(){
 });
 
 // Calls the view that uploads files to the server.
-function upload_files(){
+function upload_files(upload_method){
 
     // Initial notification. Files are uploading.
     alertify.alert("" +
@@ -98,7 +106,19 @@ function upload_files(){
     $("#alertify-ok").hide();
 
     var form = document.querySelector('#file_form');
-    var data = new FormData(form);
+
+    // If uploading through web form.
+    if (upload_method == "web") {
+        data = new FormData(form);
+     }
+
+    // If uploading through SSH
+    else if (upload_method == "ssh") {
+        var ssh_dir_name = $("#ssh_dir_name").val();
+        data = JSON.stringify(
+            { "ssh_dir_name": ssh_dir_name }
+        )
+    }
 
     $.ajax({
         url : "/upload_files",
@@ -130,7 +150,7 @@ function upload_files(){
             console.log(errmsg);
             console.log(err);
             upload_process_status = 0;
-            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error transfering your files to the server. Please try again later, or contact support.<br></div>");
+            $("#upload_error_text").html("<div id='upload_status_text'>" + "There was an error uploading your files to the server. Note that large datasets (>800mb) may not transfer successfully. If your are uploading a NetCDF file, try zipping the nc file. If your model still fails to upload, try again later or contact technical support.<br></div>");
             $("#upload_status_icon").attr("src", '../static/img/error.png');
         },
     });
