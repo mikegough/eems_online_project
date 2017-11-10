@@ -320,8 +320,6 @@ $('#download_label').click(function(e) {
 // Since the netcdf file gets deleted after a model run, this will rerun EEMS and not delete the netCDF file.
 function download_results(eems_model_modified_id){
 
-    $("#download_file").attr("src", "static/img/spinner.gif");
-
     $.ajax({
         url: "/download", // the endpoint
         type: "POST", // http method
