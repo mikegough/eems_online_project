@@ -55,15 +55,27 @@ from celery.result import AsyncResult
 @csrf_exempt
 def index(request):
 
+        subdomain = request.get_host().split(".")[0]
+        template_dir = settings.BASE_DIR + os.sep + "eems_online_app" + os.sep + "templates"
+        custom_template = template_dir + os.sep + subdomain + ".html"
+
+        # if subdomain is used (e.g., cec.eemsonline.org), search for a template with the subdomain name.
+        if os.path.isfile(custom_template):
+            template = subdomain + ".html"
+            #filters = {'project': subdomain}
+            filters = {'project': 'cec'}
+        else:
+            template = "index.html"
+            filters = request.GET.copy()
+
+        # Get any filters passed in through the query string. #copy() makes the request object mutable.
+
         # Get a json file of all the EEMS commands
         eems_rqst_dict = {}
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
         eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
         json.dumps(eems_available_commands_json)
-
-        # Get any filters passed in through the query string. #copy() makes the request object mutable.
-        filters = request.GET.copy()
 
         # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
         initial_eems_model_id = filters.pop("model", ['first'])[0]
@@ -72,7 +84,7 @@ def index(request):
         eems_online_models = {}
 
         if filters:
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE "
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND "
             filter_count = 0
             for k, v in filters.iteritems():
                 if filter_count > 0:
@@ -102,7 +114,6 @@ def index(request):
         initial_eems_model_json = json.dumps(initial_eems_model)
         eems_online_models_json=json.dumps(eems_online_models)
 
-        template = 'index.html'
         hostname_for_link = settings.HOSTNAME_FOR_LINK
         context = {
             #'eems_available_commands_dict': eems_available_commands,
