@@ -64,8 +64,8 @@ def index(request):
         if os.path.isfile(custom_template):
             hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
             template = subdomain + ".html"
-            #filters = {'project': subdomain}
-            filters = {'project': 'cec'}
+            filters = {'project': subdomain}
+            #filters = {'project': 'cec'}
         else:
             hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
             template = "index.html"
