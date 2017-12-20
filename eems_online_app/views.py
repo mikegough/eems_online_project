@@ -64,8 +64,8 @@ def index(request):
         if os.path.isfile(custom_template):
             hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
             template = subdomain + ".html"
-            filters = {'project': subdomain}
-            #filters = {'project': 'cec'}
+            #filters = {'project': subdomain}
+            filters = {'project': 'cec'}
         else:
             hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
             template = "index.html"
@@ -87,7 +87,7 @@ def index(request):
         eems_online_models = {}
 
         if filters:
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND "
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
             filter_count = 0
             for k, v in filters.iteritems():
                 if filter_count > 0:

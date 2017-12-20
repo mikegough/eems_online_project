@@ -989,16 +989,13 @@ ul.buttons li.selected a:hover
 #home {
 }
 
-
-.center_text_block{
+.center_text_block {
 	display: none;
-	height: calc(100% - 160px);
 	position: absolute;
 	top: 60px;
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
-	width: 1000px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: justify;
@@ -1022,7 +1019,6 @@ ul.buttons li.selected a:hover
 #contact{
 	white-space:nowrap;
 	display:none;
-	height: calc(100% - 160px);
 	position: absolute;
 	top: 106px;
 	padding: 20px 60px 100px 60px;
@@ -1168,10 +1164,16 @@ table.tableizer-table {
 	z-index: 3;
 }
 
-#login a {
+#login {
 	position: absolute;
-	float: right;
 	right: 0px;
+	font-family: arial;
+	top: 0px;
+	margin-top: 8px;
+	margin-right: 8px;
+}
+
+#login a {
 	font-size: .9em;
 	font-variant: small-caps;
 	color: white;
