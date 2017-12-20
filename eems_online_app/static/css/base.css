@@ -990,7 +990,7 @@ ul.buttons li.selected a:hover
 }
 
 
-#about {
+.center_text_block{
 	display: none;
 	height: calc(100% - 160px);
 	position: absolute;
@@ -1013,7 +1013,7 @@ ul.buttons li.selected a:hover
 	padding: 40px 50px;
 }
 
-#about h2 {
+.center_text_block h2 {
 	background-color: #e6e6e6;
 	padding: 20px;
 	border-radius: 5px;
@@ -1028,6 +1028,14 @@ ul.buttons li.selected a:hover
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
+}
+
+#project_contents {
+	width: 1010px;
+	margin-left: auto;
+	margin-right: auto;
+	box-shadow: 0px 0px 20px 2px #595959;
+	padding: 40px 50px;
 }
 
 figure {

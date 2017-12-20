@@ -55,20 +55,23 @@ from celery.result import AsyncResult
 @csrf_exempt
 def index(request):
 
+        # Custom Templates for subdomains (e.g., cec.eemsonline.org)
         subdomain = request.get_host().split(".")[0]
         template_dir = settings.BASE_DIR + os.sep + "eems_online_app" + os.sep + "templates"
         custom_template = template_dir + os.sep + subdomain + ".html"
 
-        # if subdomain is used (e.g., cec.eemsonline.org), search for a template with the subdomain name.
+        # If subdomain is used, search for a template with the subdomain name.
         if os.path.isfile(custom_template):
+            hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
             template = subdomain + ".html"
-            #filters = {'project': subdomain}
-            filters = {'project': 'cec'}
+            filters = {'project': subdomain}
+            #filters = {'project': 'cec'}
         else:
+            hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
             template = "index.html"
+            # Get any filters passed in through the query string. #copy() makes the request object mutable.
             filters = request.GET.copy()
 
-        # Get any filters passed in through the query string. #copy() makes the request object mutable.
 
         # Get a json file of all the EEMS commands
         eems_rqst_dict = {}
@@ -114,7 +117,6 @@ def index(request):
         initial_eems_model_json = json.dumps(initial_eems_model)
         eems_online_models_json=json.dumps(eems_online_models)
 
-        hostname_for_link = settings.HOSTNAME_FOR_LINK
         context = {
             #'eems_available_commands_dict': eems_available_commands,
             'initial_eems_model_json': initial_eems_model_json,

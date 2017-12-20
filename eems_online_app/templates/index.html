@@ -60,14 +60,17 @@
     </div>
     <div id="nav_bar">
         <ul>
-            <li><a id="home_link" class="active" >Home</a></li>
-            <li><a id="about_link">About</a></li>
-            <li><a id="contact_link">Contact</a></li>
-            <li id="login"><a href='/login'>login</a></li>
+            <li><a id="home_link" class="active" show="home">Home</a></li>
+            <li><a id="about_link" show="about" >About</a></li>
+            <li><a id="contact_link" show="contact">Contact</a></li>
         </ul>
     </div>
 
-    <div id="home">
+    <div id="login_div">
+        <li id="login"><a href='/login'>login</a></li>
+    </div>
+
+    <div id="home" class="navdiv">
         <div id="map_container">
            <div id="button_div">
                <ul id="button_list" class="buttons" data-persist="false">
@@ -161,7 +164,7 @@
         </div>
     </div>
 
-    <div id="about">
+    <div id="about" class="navdiv center_text_block">
         <div id="about_contents">
             <h2>What is EEMS Online?<div id="manual"><a title="Click to download the EEMS 2.0 desktop manual" href="static/docs/EEMS2.0_Manual.pdf" download><img id="manual_icon" src="/static/img/manual.png"><br>EEMS Manual</a></div></h2>
             EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="http://consbio.org">Conservation Biology Institute (CBI)</a>. It is designed to allow the user to explore, modify, and run models constructed within the Environmental Evaluation Modeling System (EEMS),
@@ -239,7 +242,7 @@
 
     </div>
 
-    <div id="contact">
+    <div id="contact" class="navdiv">
         <img id="cbi_logo" src="/static/img/logo.gif">
         <h2>Conservation Biology Institute</h2>
         </p>

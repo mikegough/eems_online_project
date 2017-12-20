@@ -83,6 +83,26 @@ $( document ).ready(function() {
     eems_bundled_commands["cmds"] = [];
     eems_children_dict = {}
 
+      // Navigation menu functions.
+    $("#nav_bar li a").click(function () {
+
+        // Remove active class from other tabs.
+        $("#nav_bar a").removeClass('active');
+
+        // Add active class to the current tab.
+        $(this).addClass('active');
+
+        // Hide other divs
+        $('.navdiv').each(function () {
+            $(this).hide();
+        });
+
+        // Show the clicked div
+        var div_to_show = $(this).attr('show');
+        $("#" + div_to_show).show();
+
+    });
+
 });
 
 // Change model (drop-down)
@@ -807,31 +827,4 @@ function get_additional_info(eems_model_id){
         }
     });
 }
-
-$("#about_link").on('click', function(){
-    $("#about").show();
-    $("#home").hide();
-    $("#contact").hide();
-    $("#about_link").addClass('active');
-    $("#home_link").removeClass('active');
-    $("#contact_link").removeClass('active')
-});
-
-$("#home_link").on('click', function(){
-    $("#about").hide();
-    $("#home").show();
-    $("#contact").hide();
-    $("#about_link").removeClass('active');
-    $("#home_link").addClass('active');
-    $("#contact_link").removeClass('active')
-});
-
-$("#contact_link").on('click', function(){
-    $("#about").hide();
-    $("#home").hide();
-    $("#contact").show();
-    $("#about_link").removeClass('active');
-    $("#home_link").removeClass('active');
-    $("#contact_link").addClass('active');
-});
 

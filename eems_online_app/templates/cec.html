@@ -55,20 +55,23 @@
 <body>
 
     <div id="header">
-        <div id="title"><span id="title_inner"><a href="/">EEMS Online</a></span></div>
+        <div id="title"><span id="title_inner"><a href="http://eemsonline.org">EEMS Online</a></span></div>
         <div id="cec_img"><a href="http://www.energy.ca.gov/" target="_blank"><img src="{%  static 'img/custom/cec_w.png' %}"></a></div>
     </div>
     <div id="nav_bar">
         <ul>
-            <li><a id="home_link" class="active" >Home</a></li>
-            <li><a id="about_link">About</a></li>
-            <li><a id="project_link">Project</a></li>
-            <li><a id="contact_link">Contact</a></li>
-            <li id="login"><a href='/login'>login</a></li>
+            <li><a id="home_link" class="active" show="home">Home</a></li>
+            <li><a id="about_link" show="about" >About</a></li>
+            <li><a id="contact_link" show="contact">Contact &nbsp</a></li>
+            <li><a id="project_link" show="project">Project Information</a></li>
         </ul>
     </div>
 
-    <div id="home">
+    <div id="login_div">
+        <li id="login"><a href='/login'>login</a></li>
+    </div>
+
+    <div id="home" class="navdiv">
         <div id="map_container">
            <div id="button_div">
                <ul id="button_list" class="buttons" data-persist="false">
@@ -162,7 +165,7 @@
         </div>
     </div>
 
-    <div id="about">
+    <div id="about" class="navdiv center_text_block">
         <div id="about_contents">
             <h2>What is EEMS Online?<div id="manual"><a title="Click to download the EEMS 2.0 desktop manual" href="static/docs/EEMS2.0_Manual.pdf" download><img id="manual_icon" src="/static/img/manual.png"><br>EEMS Manual</a></div></h2>
             EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="http://consbio.org">Conservation Biology Institute (CBI)</a>. It is designed to allow the user to explore, modify, and run models constructed within the Environmental Evaluation Modeling System (EEMS),
@@ -239,11 +242,20 @@
         </div>
 
     </div>
-    <div id ="project">
-       test
+    <div id ="project" class="navdiv center_text_block">
+        <div id="project_contents">
+            <h2>About the CEC Project </h2>
+            <img id="cec_project_img" src="/static/img/custom/renewable.jpg">
+            CBI is providing science and technical support to assist the California Energy Commission (CEC) in planning the state's future energy needs, which includes achieving aggressive renewable energy goals with minimal damage to natural systems. Building off of previous work completed for the Desert Renewable Energy Conservation Plan (DRECP), CBI is working to improve access and transparency of scientific data, maps and analysis. As a subset of the work, CBI is supporting the  Renewable Energy Transmission Initiative 2.0 (RETI). RETI, according to the CEC, "is an open, transparent, and science-based process that will explore the abundant renewable generation resources in California and throughout the West, consider critical land use and environmental constraints, and identify potential transmission opportunities that could access and integrate renewable energy with the most environmental, economic, and community benefits."
+            <p>
+            CBI is developing additional data, models, tools, and technical assistance that align with statewide energy and climate change adaptation planning. This work extends the information and tools previously built for the DRECP planning region to other areas of the state particularly in areas with high renewable energy potential.
+            <p>
+            Climate change and related impacts such as drought and wildfire are growing concerns throughout the state. In response, CBI is developing additional datasets and visualization applications to put this information into statewide context. CBI will deliver this data and information to the CEC and other California State agencies.
+
+        </div>
     </div>
 
-    <div id="contact">
+    <div id="contact" class="navdiv">
         <img id="cbi_logo" src="/static/img/logo.gif">
         <h2>Conservation Biology Institute</h2>
         </p>

@@ -13,6 +13,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb7711', end
 	margin-left: 20px;
 }
 
+#cec_project_img {
+	float: right;
+	margin: 0px 30px;
+	width: 400px;
+}
+
 #title {
 	line-height: 69px;
 	font-variant: all-petite-caps;
@@ -25,8 +31,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb7711', end
 	text-shadow: 0 0 0 black;
 	float: left;
 	position: relative;
-	padding-left: 36px;
-	padding-right: 36px;
+	padding-left: 40px;
+	padding-right: 40px;
 	background-color: #245269;
 }
 
