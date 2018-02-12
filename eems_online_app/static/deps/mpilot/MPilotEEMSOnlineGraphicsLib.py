@@ -12,6 +12,7 @@ import gc
 import gdal
 driver = gdal.GetDriverByName("PNG")
 from Convert_GDB_to_NetCDF import *
+from django.conf import settings
 
 class HistoDist(mpefp._MPilotEEMSFxnParent):
 
@@ -170,7 +171,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             epsg = self.ArgByNm('EPSG')
 
             # Convert the PNG to a spatially referenced Tif in it's native CRS
-            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
+            os.system(settings.GDAL_BINARY_DIR + os.sep + "gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
 
             # Get the extent in Web Mercator from Ken's script. Eventually only want to do this step once.
             extent_tuple = extent.split(" ")
@@ -185,7 +186,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
             # Project the tif to Web Mercator using the extent from Ken's script above to trim the excess no data values.
             # Alignment issues crop up if this is step is not performed because the resulting PNG has a border of NoData whitespace.
-            os.system("gdalwarp -te " + extent_wm_string + " -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
+            os.system(settings.GDAL_BINARY_DIR + os.sep + "gdalwarp -te " + extent_wm_string + " -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
             #os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
 
             src_ds = gdal.Open(warp_tiff)
