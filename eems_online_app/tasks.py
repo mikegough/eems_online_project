@@ -206,6 +206,7 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
             shutil.rmtree(output_base_dir)
             print "There was an error running EEMS."
             print e
+            traceback.print_exc()
             return e
 
 @shared_task
