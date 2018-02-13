@@ -191,13 +191,23 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
             json_string = my_mpilot_worker.HandleRqst(id=eems_model_id, srcProgNm=mpt_file_copy,rqst={"action" : "GetMEEMSETrees"}, doFileLoad=True, rqstIsJSON=False, reset=True)[1:-1]
             print json_string
             print "Loading JSON"
-            eems_meemse_tree_json = json.loads(json_string)
-            eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
-            with open(eems_meemse_tree_file, 'w') as outfile:
-                json.dump(eems_meemse_tree_json, outfile, indent=3)
+            try:
+                eems_meemse_tree_json = json.loads(json_string)
+                eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
+                with open(eems_meemse_tree_file, 'w') as outfile:
+                    json.dump(eems_meemse_tree_json, outfile, indent=3)
+
+            except:
+                shutil.rmtree(output_base_dir)
+                error_message = "There was an error converting the EEMS command file to JSON"
+                print error_message
+                traceback.print_exc()
+                cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT, USER, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date, project, username, 0, error_message, upload_datetime))
+                return error_message
 
             cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, PROJECT, USER, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date, project, username, 1, success_message, upload_datetime))
 
+            # If successful, remove upload dir.
             shutil.rmtree(upload_dir)
 
             return 1
