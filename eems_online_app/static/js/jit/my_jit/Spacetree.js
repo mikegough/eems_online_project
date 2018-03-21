@@ -280,16 +280,13 @@ function init(json, eems_file_name){
                     //assign a node color based on
                     //how many children it has
                     //node.data.$color = ['#aaa', '#baa', '#caa', '#daa', '#eaa', '#faa'][count];
-                    node.data.$color = ['#AAAAAA','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0'][count];
-                    node.data.$color = ['#AAAAAA','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3'][count];
-                    /*
+                    //node.data.$color = ['#AAAAAA','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3'][count];
                     if (count == 0){
-                        node.data.$color = '#aaa';
+                        node.data.$color = '#AAAAAA';
                     }
                     else{
-                        node.data.$color = '#baa';
+                        node.data.$color = '#B6BFD3';
                     }
-                    */
                 }
             }
         },
