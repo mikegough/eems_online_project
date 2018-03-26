@@ -12,6 +12,11 @@
     initial_eems_model_json = {{ initial_eems_model_json | safe }};
     hostname_for_link = "{{ hostname_for_link }}";
 
+    if (initial_eems_model_json.length == 0) {
+        alert('The EEMS model you are trying to access does not exist or has been deleted by the author.\n\nPlease click "OK" and select a different model from the dropdown menu.');
+        window.location.replace(hostname_for_link);
+    }
+
     </script>
 
     <!-- Leaflet -->
