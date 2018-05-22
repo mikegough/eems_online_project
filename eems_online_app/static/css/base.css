@@ -1204,3 +1204,8 @@ table.tableizer-table {
 	height:15px;
 	padding-top:2px;
 }
+
+#LegendHeader{
+	width: 400px;
+	overflow-x: hidden;
+}
