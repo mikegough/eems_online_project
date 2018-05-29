@@ -819,7 +819,7 @@ function get_additional_info(eems_model_id){
             var creation_date = json_additional_info["creation_date"];
             var project = json_additional_info["project"];
             var model_url = json_additional_info["model_url"];
-            alertify.alert("<div class='long_description'><div class='long_description_header'>Model: </div>" + model_name + "<br><div class='long_description_header'>Author: </div>" + author +"<br><div class='long_description_header'>Project: </div>" + project+ "<br><div class='long_description_header'>" + "Creation Date: </div>" + creation_date + "<br><div class='long_description_header'>Model URL: </div><a href='" + model_url + "'>" + model_url + "</a></p><div class='long_description_header'>Description</div></p>" + long_description + "</div>");
+            alertify.alert("<div class='long_description'><div class='long_description_header'>Model: </div>" + model_name + "<br><div class='long_description_header'>Author: </div>" + author +"<br><div class='long_description_header'>Project: </div>" + project+ "<br><div class='long_description_header'>" + "Creation Date: </div>" + creation_date + "<br><div class='long_description_header'>Model URL: </div><a href='http://" + model_url + "'>http://" + model_url + "</a></p><div class='long_description_header'>Description</div></p>" + long_description + "</div>");
         },
 
         // handle a non-successful response
