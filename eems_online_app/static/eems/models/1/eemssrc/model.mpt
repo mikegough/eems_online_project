@@ -1,5 +1,5 @@
 AvailableWaterCapacity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = AvailableWaterCapacity
 )
 LowAvailableWaterCapacityFz = CvtToFuzzy(
@@ -8,7 +8,7 @@ LowAvailableWaterCapacityFz = CvtToFuzzy(
     FalseThreshold = 10
 )
 WaterErodibilityIndex = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = WaterErodibilityIndex
 )
 HighWaterErodibilityFz = CvtToFuzzy(
@@ -17,7 +17,7 @@ HighWaterErodibilityFz = CvtToFuzzy(
     FalseThreshold = 0
 )
 WindErodibilityGroup = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = WindErodibilityGroup
 )
 HighWindErodibilityFz = CvtToFuzzy(
@@ -26,7 +26,7 @@ HighWindErodibilityFz = CvtToFuzzy(
     FalseThreshold = 7
 )
 DepthToBedrock = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = DepthToBedrock
 )
 LowDepthToBedrockFz = CvtToFuzzy(
@@ -35,7 +35,7 @@ LowDepthToBedrockFz = CvtToFuzzy(
     FalseThreshold = 15
 )
 SoilpH = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = SoilpH
 )
 ExtremeSoilpHFz = CvtToFuzzyCurve(
@@ -44,7 +44,7 @@ ExtremeSoilpHFz = CvtToFuzzyCurve(
     FuzzyValues = [1,0,-1,-1,0,1]
 )
 Salinity = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = Salinity
 )
 HighSalinityFz = CvtToFuzzy(
@@ -53,7 +53,7 @@ HighSalinityFz = CvtToFuzzy(
     FalseThreshold = 8
 )
 NLCDClass = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = NLCDClass,
     DataType = Integer
 )
@@ -64,7 +64,7 @@ IsNotBarrenFz = CvtToFuzzyCat(
     DefaultFuzzyValue = 1
 )
 PotentialEvapoTrans = EEMSRead(
-    InFileName = F:/Projects2/EEMS_Online/tasks/web_applications/eems_online_django/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
+    InFileName = /home/consbio/webapps/eems/eems_online_project/eems_online_app/static/eems/models/1/data/CASiteSensitivity.nc,
     InFieldName = PotentialEvapoTrans
 )
 HighPotentialEvapoTransFz = CvtToFuzzy(

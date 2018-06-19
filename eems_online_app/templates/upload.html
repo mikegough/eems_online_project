@@ -26,7 +26,7 @@
             <td colspan="2" id="table_header"> Model Upload Form </td>
         </tr>
         <tr>
-            <td>Dataset<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension, a zipped NetCDF file, or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip). Note that large files may not upload succesfully (The size limit is currently estimated to be around 800MB)."></td>
+            <td>Dataset<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension, a zipped NetCDF file, or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip). Note that large files may not upload successfully (The size limit is currently estimated to be around 800MB). Note also that only coordinate systems/projections supported by GDAL out-of-the box are allowed. USA_Contiguous_Albers_Equal_Area_Conic_USGS_version is not currently a supported coordinate system."></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">

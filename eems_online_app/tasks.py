@@ -150,7 +150,7 @@ def upload_form_celery(upload_id, owner, eems_model_name, author, creation_date,
             output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
 
         except:
-            error = "There was a problem getting the extent from dataset you uploaded.\n\nPlease make sure the dataset you upload is in a standard coordinate reference system."
+            error = "There was a problem getting the extent from dataset you uploaded.\n\nPlease make sure the dataset you upload is in a standard coordinate reference system. Only those that are supported by GDAL out-of-the box will work. For example, USA_Contiguous_Albers_Equal_Area_Conic_USGS_version is not a supported CRS. Project to a standard/supported CRS prior to upload (e.g., USA_Contiguous_Albers_Equal_Area_Conic)."
             insert_pre_error(error, traceback.format_exc())
 
         try:
