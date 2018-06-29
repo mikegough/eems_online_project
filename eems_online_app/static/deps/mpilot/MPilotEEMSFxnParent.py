@@ -269,7 +269,7 @@ class _MPilotEEMSFxnParent(mpfp._MPilotFxnParent):
                 if not re.match(r'^[+-]{0,1}[0-9]+$',theStr):
                     return False
             elif theType == 'Positive Integer':
-                if not re.match(r'^[+]{0,1}^[0-9]$',theStr):
+                if not re.match(r'^[+]{0,1}^[0-9]+$',theStr):
                     return False
                 else:
                     if int(theStr) < 1:
