@@ -16,7 +16,7 @@ class EEMSRead(mpefp._MPilotEEMSFxnParent):
     def __init__(
         self,
         mptCmdStruct=None,
-        dataType='Float',
+        dataType=None,
         isDataLayer=False
         ):
 
