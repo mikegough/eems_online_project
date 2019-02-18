@@ -301,17 +301,11 @@ li a:hover:not(.active) {
      box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
 }
 
-/*
 li a.active {
-    color: white;
-    background-color: #4CAF50;
-}
-*/
-
-li a.active {
-	color: #3C3C3C;
+	color: #5d5d5d;
 	font-weight: bold;
 	background-color: white;
+	box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.1), -2px 2px 5px 1px rgba(0, 0, 0, 0.1);
 }
 
 #control_panel_and_meemse_container {
@@ -998,7 +992,7 @@ ul.buttons li.selected a:hover
 	top: 60px;
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
-	color: #3C3C3C;
+    color: #333;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: justify;
@@ -1017,6 +1011,7 @@ ul.buttons li.selected a:hover
 	background-color: #e6e6e6;
 	padding: 20px;
 	border-radius: 5px;
+	color: #5d5d5d;
 }
 
 #contact{

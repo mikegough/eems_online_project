@@ -1,7 +1,3 @@
-#home{
-	display:none;
-}
-
 #project{
 	display:block;
 }
@@ -21,8 +17,12 @@
 }
 
 #nav_bar ul{
-	/*background-color:#E06525;*/
-	background-color: #E36831
+	background-color:#E36831;
+	background-color:#E06525;
+	background-color:#D45F22;
+	background-color:#426D86;
+	background-color:#647680;
+	background-color:#7B614A;
 }
 
 .center_text_block_contents li{

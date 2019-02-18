@@ -1,4 +1,5 @@
 // Initialize EEMS model if first time clicking on the model tab.
+JitInitializationComplete=true
 var click_once = false;
 $("#home_link").on("click", function(){
     if (! click_once) {
