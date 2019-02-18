@@ -13,10 +13,6 @@ a{
 	cursor:pointer
 }
 
-a:hover{
-	text-decoration:underline;
-}
-
 #header {
 	background-color: #445272;
 	position: fixed;
@@ -302,13 +298,20 @@ li a {
 }
 
 li a:hover:not(.active) {
-    background-color: #ddd;
-    color: black;
+     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
 }
 
+/*
 li a.active {
     color: white;
     background-color: #4CAF50;
+}
+*/
+
+li a.active {
+	color: #3C3C3C;
+	font-weight: bold;
+	background-color: white;
 }
 
 #control_panel_and_meemse_container {
@@ -1002,12 +1005,12 @@ ul.buttons li.selected a:hover
 	width: calc(100% - 140px);
 }
 
-#about_contents {
+.center_text_block_contents {
 	width: 1010px;
-	margin-left: auto;
-	margin-right: auto;
-	box-shadow: 0px 0px 20px 2px #595959;
-	padding: 40px 50px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 50px;
+	overflow: auto;
 }
 
 .center_text_block h2 {
@@ -1024,14 +1027,6 @@ ul.buttons li.selected a:hover
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
-}
-
-#project_contents {
-	width: 1010px;
-	margin-left: auto;
-	margin-right: auto;
-	box-shadow: 0px 0px 20px 2px #595959;
-	padding: 40px 50px;
 }
 
 figure {
@@ -1208,4 +1203,9 @@ table.tableizer-table {
 #LegendHeader{
 	width: 400px;
 	overflow-x: hidden;
+}
+
+.leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-control-zoom {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	border: 0px;
 }
