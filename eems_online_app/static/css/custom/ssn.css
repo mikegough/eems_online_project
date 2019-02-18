@@ -1,0 +1,108 @@
+#home{
+	display:none;
+}
+
+#project{
+	display:block;
+}
+
+#header {
+    background: #1D4B27;
+}
+
+#title {
+	color: white;
+	font-family: helvetica;
+	font-size: 30px;
+	line-height: 60px;
+	font-weight: bold;
+	/* margin-left: 20px; */
+	padding-left: 110px;
+}
+
+#nav_bar ul{
+	/*background-color:#E06525;*/
+	background-color: #E36831
+}
+
+.center_text_block_contents li{
+	float:none;
+}
+
+li a {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 10px 16px;
+	text-decoration: none;
+	font-family: arial;
+	font-size: .9em;
+	letter-spacing: 0px;
+}
+
+/*
+li a.active {
+	color: white;
+	background-color: #4CAF50;
+}
+*/
+
+#ssn_logo {
+	height: 50px;
+	top: 8px;
+	position: absolute;
+}
+
+#eems_div {
+	line-height: 16px;
+	font-variant: all-petite-caps;
+	font-size: 1.2em;
+	font-family: Helvetica;
+	letter-spacing: 1px;
+	text-indent: 0px;
+	text-shadow: 0 0 0 black;
+	float: left;
+	position: relative;
+	margin-right: 6px;
+	float: right;
+	margin-right: 5px;
+	top: 17px;
+}
+
+#eems_link{
+	color:white;
+	float:left;
+	font-weight: Bold;
+}
+
+#eems_link:hover {
+	text-decoration: none;
+
+}
+
+#eems_logo {
+	height: 40px;
+	float: right;
+}
+
+#powered_by {
+	font-size: .7em;
+	letter-spacing: 5.1px;
+	font-weight: normal;
+}
+
+#project_img {
+	float: left;
+	margin: 0px 20px 10px 0px;
+}
+
+#report{
+	display:none;
+}
+
+.header_image {
+	width: 400px
+}
+
+
+

@@ -99,6 +99,7 @@ $( document ).ready(function() {
 
         // Show the clicked div
         var div_to_show = $(this).attr('show');
+        console.log(div_to_show)
         $("#" + div_to_show).show();
 
     });
