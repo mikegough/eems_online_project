@@ -58,9 +58,10 @@ def index(request):
         # Custom Templates for subdomains (e.g., cec.eemsonline.org)
         subdomain = request.get_host().split(".")[0]
 
+        # subdomain: ["html template name", "Project Name"]
         subdomain_template_map = {
-            "cec": ["cec", "cec"],
-            "ssn": ["ssn", "fisher"]
+            "cec": ["cec", "CEC"],
+            "ssn": ["ssn", ("Fisher", "CEC")]
         }
 
         if subdomain in subdomain_template_map:
@@ -92,9 +93,11 @@ def index(request):
             for k, v in filters.iteritems():
                 if filter_count > 0:
                     query += " AND "
-                query += k + " = '" + v + "' COLLATE NOCASE"
+                if isinstance(v, tuple):
+                    query += k + " in " + str(v) + " COLLATE NOCASE"
+                else:
+                    query += k + " = '" + v + "' COLLATE NOCASE"
                 filter_count += 1
-            query += " COLLATE NOCASE"
         else:
             # No filters or user got here from a link (show linked model as well as CBI models).
             query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
