@@ -2,6 +2,9 @@
 	display:block;
 }
 
+#home{
+	display:none;
+}
 #header {
     background: #1D4B27;
 }
