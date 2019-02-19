@@ -526,10 +526,17 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     //Create an empty div for operator params
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</td><td>";
+
+    var conversion_curve_path = "static/eems/models/" + eems_model_id_for_map_display + "/conversion_curves/" + node_id + ".png";
+    var has_conversion_curve = check_file_existence(conversion_curve_path);
+
     if (histogram_toggle){
         form_string += "<div id='histogram_to_show_div'>";
-        form_string += "<input checked name='histogram_to_show' type='radio' value='" + node_id + "'>This Node";
-        form_string += "<input name='histogram_to_show' type='radio' value='" + children_array[0] + "'>Input Node";
+        form_string += "<input checked name='histogram_to_show' type='radio' value='/histogram/" + node_id + "'>This Node";
+        form_string += "<input name='histogram_to_show' type='radio' value='/histogram/" + children_array[0] + "'>Input Node";
+        if (has_conversion_curve) {
+            form_string += "<input name='histogram_to_show' type='radio' value='/conversion_curves/" + node_id + "'>Conversion Curve";
+        }
         form_string += "</div>";
     }
     form_string +=  "<div class='histogram_div'><img id='histogram_img' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
@@ -581,7 +588,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     // ON Convert to Fuzzy operators, allow the user to toggle the histogram between the current node and the input node.
     $('input[type=radio][name=histogram_to_show]').change(function() {
         node_id_to_show_on_histogram = $('input[name=histogram_to_show]:checked').val();
-        $("#histogram_img").attr("src", "static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id_to_show_on_histogram + ".png")
+        $("#histogram_img").attr("src", "static/eems/models/" + eems_model_id_for_map_display + node_id_to_show_on_histogram + ".png")
     });
 
     // Pick appropriate operators to show & bind change event
@@ -617,7 +624,6 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
 current_arguments_dict={};
 
 function bind_params(node_id, children_array, node_original_operator, original_arguments) {
-
 
     // Operator specific options. Happens on dropdown change. Triggered when the user first clicks the gear AND on subsequent operator changes.
     $("#new_operator_select").on("change", function () {
@@ -845,3 +851,20 @@ function get_additional_info(eems_model_id){
     });
 }
 
+function check_file_existence(file_path){
+    var file_exists = false;
+    $.ajax({
+        url: file_path,
+        type:'HEAD',
+        async: false,
+        error: function()
+        {
+            file_exists = false
+        },
+        success: function()
+        {
+            file_exists = true
+        }
+    });
+    return file_exists
+}
