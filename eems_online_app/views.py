@@ -61,7 +61,7 @@ def index(request):
         # subdomain: ["html template name", "Project Name"]
         subdomain_template_map = {
             "cec": ["cec", "CEC"],
-            "ssn": ["ssn", ("Fisher", "CEC")]
+            "ssn": ["ssn", ("Fisher")]
         }
 
         if subdomain in subdomain_template_map:
