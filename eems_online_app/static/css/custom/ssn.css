@@ -19,6 +19,7 @@
 	padding-left: 110px;
 }
 
+
 #nav_bar ul{
 	background-color:#E36831;
 	background-color:#E06525;
@@ -26,6 +27,9 @@
 	background-color:#426D86;
 	background-color:#647680;
 	background-color:#7B614A;
+	background-color:#6D3811;
+	background-color:#5378AD;
+	background-color:#E06525;
 }
 
 .center_text_block_contents li{
@@ -38,7 +42,7 @@ li a {
 	text-align: center;
 	padding: 10px 16px;
 	text-decoration: none;
-	font-family: arial;
+	font-family: Verdana;
 	font-size: .9em;
 	letter-spacing: 0px;
 }
@@ -49,10 +53,13 @@ li a.active {
 	background-color: #4CAF50;
 }
 */
+li a.active {
+	color: #545454;
+}
 
 #ssn_logo {
 	height: 50px;
-	top: 8px;
+	top: 10px;
 	position: absolute;
 }
 
@@ -122,5 +129,60 @@ and (min-resolution:.001dpcm) {
 	width: 400px
 }
 
+.center_text_block {
+	display: none;
+	position: absolute;
+	top: 50px;
+	padding: 20px 60px 100px 60px;
+	font-family: tahoma;
+	color: #333;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: justify;
+	width: calc(100% - 140px);
+}
 
+.center_text_block h2 {
+	background-color: #e6e6e6;
+	padding: 18px;
+	border-radius: 0px;
+	color: #5d5d5d;
+	margin-bottom: 35px;
+    font-family: verdana;
+	font-size:1.3em;
+
+}
+
+#contact {
+	white-space: nowrap;
+	display: none;
+	position: absolute;
+	top: 106px;
+	padding: 20px 60px 100px 60px;
+	font-family: tahoma;
+	color: #5d5d5d;
+}
+
+#footer {
+	font-size: 12px;
+	font-family: verdana;
+	color: #5d5d5d;
+	bottom: 0px;
+	right: 0px;
+	position: fixed;
+	text-align: right;
+	z-index: 9999999;
+	width: 101%;
+	background-color: #E6E6E6;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-right: 20px;
+	padding-top: 2px;
+	line-height: 13px;
+	opacity: 0.9;
+}
+
+#footer a {
+	color: #5d5d5d;
+}
 
