@@ -68,9 +68,9 @@ li a.active {
 	position: relative;
 	margin-right: 6px;
 	float: right;
-	margin-right: 5px;
 	top: 17px;
 }
+
 
 #eems_link{
 	color:white;
@@ -90,8 +90,23 @@ li a.active {
 
 #powered_by {
 	font-size: .7em;
-	letter-spacing: 5.1px;
 	font-weight: normal;
+	/* Letter spacing, browser specific, below */
+}
+
+/* Lettter spacing for Firefox */
+@-moz-document url-prefix() {
+	#powered_by{
+		letter-spacing:5px !important;
+	}
+}
+
+/* Lettter spacing for Chrome */
+@media screen and (-webkit-min-device-pixel-ratio:0)
+and (min-resolution:.001dpcm) {
+	#powered_by{
+		letter-spacing:4px
+	}
 }
 
 #project_img {
