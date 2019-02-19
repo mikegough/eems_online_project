@@ -5,7 +5,7 @@ var map = L.map('map', {
 ).setView([37,-126.5], 6);
 
 // Basemaps
-//topographic=L.esri.basemapLayer("Topographic").addTo(map);
+topographic=L.esri.basemapLayer("Topographic").addTo(map);
 gray=L.esri.basemapLayer("Gray")
 national_geographic=L.esri.basemapLayer("NationalGeographic")
 imagery=L.esri.basemapLayer("Imagery")
