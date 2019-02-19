@@ -57,7 +57,6 @@ def index(request):
 
         # Custom Templates for subdomains (e.g., cec.eemsonline.org)
         subdomain = request.get_host().split(".")[0]
-        subdomain = "ssn"
 
         subdomain_template_map = {
             "cec": ["cec", "cec"],

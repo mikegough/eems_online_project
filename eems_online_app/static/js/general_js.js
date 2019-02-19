@@ -472,7 +472,7 @@ var eems_operator_exclusions=["Read", "Copy", "EEMSRead", "EEMSWrite", "FuzzyNot
 var changed_params_list=[];
 
 // Triggered after users clicks the settings icon created in spacetree.js
-function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments,metadata_string) {
+function changeEEMSOperator(node_id, alias, node_original_operator, children_string, original_arguments,metadata_string,node_description) {
 
     // Get the current operator out of the div at the bottom of the node (used to set the selected dropdown option).
     var current_operator = $("#" + node_id + "_current_operator").html();
@@ -527,14 +527,14 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     form_string += "<form id='eems_operator_params'></form>";
     form_string += "</td><td>";
     if (histogram_toggle){
-        form_string += "<div id='histogram_to_show_div'>"
+        form_string += "<div id='histogram_to_show_div'>";
         form_string += "<input checked name='histogram_to_show' type='radio' value='" + node_id + "'>This Node";
         form_string += "<input name='histogram_to_show' type='radio' value='" + children_array[0] + "'>Input Node";
         form_string += "</div>";
     }
     form_string +=  "<div class='histogram_div'><img id='histogram_img' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
     form_string += "</div>";
-    form_string += "</td></tr></table>"
+    form_string += "</td></tr></table>";
 
     // Create and open the tool dialog box. On confirm store the new operator data in a dictionary.
     alertify.confirm(form_string, function (e, str) {
@@ -582,8 +582,7 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
     $('input[type=radio][name=histogram_to_show]').change(function() {
         node_id_to_show_on_histogram = $('input[name=histogram_to_show]:checked').val();
         $("#histogram_img").attr("src", "static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id_to_show_on_histogram + ".png")
-    })
-
+    });
 
     // Pick appropriate operators to show & bind change event
     bind_params(node_id, children_array, node_original_operator, original_arguments);
@@ -597,6 +596,22 @@ function changeEEMSOperator(node_id, alias, node_original_operator, children_str
             return $(this).text().toLowerCase() == current_operator.toLowerCase();
         }
     }).prop('selected', true).change();
+
+    // Create the node description button and the div to contain the text.
+    // length must be > 1 on the node description to display (to account for single spaces and other single characters).
+    if (typeof(node_description != "undefined") && node_description.length > 1) {
+
+        $(".alertify-buttons").append("<button id='view_node_description' class='alertify-button alertify-button-ok'>View Node Description</button>");
+        $(".alertify-buttons").append("<div style='display:none' id='node_description'>" + node_description + "</div>");
+        $("#view_node_description").on("click", function () {
+            $("#node_description").toggle();
+            $(this).text(function(i, text){
+                    return text === "Hide Node Description" ? "View Node Description" : "Hide Node Description";
+            })
+
+        })
+    }
+
 }
 
 current_arguments_dict={};
@@ -688,6 +703,8 @@ function updateEEMSOperator(node_id, alias, new_operator, required_params, new_o
 
     // because the &nbsp gets replaced with a \xa0 when passed into a function, need to set it back to &nbsp. Temporary measure.
     metadata_string=metadata_string.replace(/\xa0/g,"&nbsp");
+
+    console.log(metadata_string)
 
     var update_cmd_dict = {};
 
