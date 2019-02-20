@@ -8,6 +8,16 @@
 #header {
     background: #1D4B27;
 	background: #44573E;
+	background: #436554;
+	background: #3a5a4a;
+
+}
+
+.partners_table{
+	float:right
+}
+.partners_table img{
+	height:80px;
 }
 
 #title {
@@ -33,6 +43,10 @@
 	background-color:#6D3811;
 	background-color:#5378AD;
 	background-color:#E06525;
+	background-color:#B18D69;
+	background-color:#B66355;
+	background-color:#A2675A;
+	background-color:#B2693C;
 }
 
 .center_text_block_contents li{
