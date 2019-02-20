@@ -220,7 +220,7 @@ function init(json, eems_file_name){
                 label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "','" + metadata_string + "','" + node_description + "')\" src='static/img/gear_icon.svg'></span>"
 
             } else {
-                label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "','" + node_description + "')\" src='static/img/gear_icon.svg'></span>"
             }
 
             if (typeof node.data.Metadata != 'undefined' && typeof node.data.Metadata.Description != 'undefined') {
