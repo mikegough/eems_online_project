@@ -462,9 +462,20 @@ $('#link_label').click(function(e) {
 
 });
 
-function showHistogram(node_id, alias) {
+function showHistogram(node_id, alias, node_description) {
         form_string =  "<div class='histogram_div' ><img class='histogram_img_read' src='static/eems/models/" + eems_model_id_for_map_display + "/histogram/" + node_id + ".png'></div>";
         alertify.alert(form_string)
+        if (typeof(node_description != "undefined") && node_description.length > 1) {
+
+            $(".alertify-buttons").append("<button id='view_node_description' style='right: 20px' class='alertify-button alertify-button-ok'>View Node Description</button>");
+            $(".alertify-buttons").append("<div style='display:none' id='node_description'>" + node_description + "</div>");
+            $("#view_node_description").on("click", function () {
+                $("#node_description").toggle();
+                $(this).text(function(i, text){
+                    return text === "Hide Node Description" ? "View Node Description" : "Hide Node Description";
+                })
+            })
+        }
 }
 
 var eems_operator_changes={};
