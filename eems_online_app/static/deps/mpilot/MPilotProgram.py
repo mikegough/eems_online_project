@@ -52,6 +52,7 @@ class MPilotProgram(object):
         # dependency
 
         for rsltNm,mpCmd in self.unorderedMPCmds.items():
+
             if mpCmd.DependencyNms() is not None:
                 if not set(mpCmd.DependencyNms()).issubset(set(self.unorderedMPCmds)):
                     raise Exception(
@@ -297,9 +298,8 @@ class MPilotProgram(object):
         
         if self.orderedMPCmds is None:
             self._OrderCmds()
-        print self.orderedMPCmds.items()
+            
         for mpCmdNm,mpCmd in self.orderedMPCmds.items():
-            print mpCmd.CleanCmdStr()
             mpCmd.Exec(self.rslts)
 
     def Rslts(self):
@@ -308,7 +308,12 @@ class MPilotProgram(object):
             rtrn[rsltKey] = rsltObj.ExecRslt()
         return rtrn
 
+    def RsltByNm(self,nm):
+        return self.rslts[nm].ExecRslt()
+
     def CmdByNm(self,nm):
         return self.unorderedMPCmds[nm]
+
+    def ClearRslts(self): self.rslts = {}
 
 # class MPilotProgram(object):

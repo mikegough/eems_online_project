@@ -76,7 +76,7 @@ function init(json, eems_file_name){
         //set overridable=true for styling individual
         //nodes or edges
         Node: {
-            height: 70,
+            height: 90,
             width: 159,
             type: 'rectangle',
             color: '#B6BFD3',
@@ -132,6 +132,8 @@ function init(json, eems_file_name){
 
             // Remove logic to show eems value in top node
             Log.write("")
+
+            update_tree_values(json_eems_results);
         },
 
         onPlaceLabel: function(label, node, controllers){
@@ -157,11 +159,34 @@ function init(json, eems_file_name){
         onCreateLabel: function(label, node){
             label.id = node.id;
 
-            alias=node.name.split(':')[0]
-            layer_index=node.name.split(':')[1]
+            var alias = node.name.split(':')[0]
+            var metadata_string = false;
+
+            if (typeof node.data.Metadata != "undefined" ) {
+
+                metadata_string  = "[";
+
+                $.each(node.data.Metadata, function(key,value){
+                   metadata_string  += key + ":" + value + ","
+                });
+
+                // Remove trailing comma
+                metadata_string = metadata_string.replace(/,$/, "");
+
+                //Replace spaces with &nbsp; Temporary measure.
+
+                metadata_string  += "]";
+
+                if (node.data.Metadata.DisplayName != "undefined") {
+                    alias = (node.data.Metadata.DisplayName).replace(/&nbsp;/g, " ")
+                }
+
+            }
+
+            layer_index=node.name.split(':')[1];
 
             if (typeof(node.data.short_desc) != 'undefined') {
-                label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
+                label.innerHTML = "<div class='EEMS_node_name' title='" + alias + "'>" + alias + "</div><br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='" + node.data.short_desc + "'> " + node.data.operation + "</div>";
             } else {
                 label.innerHTML = alias + "<br>" + "<div id='" + node.id + "_current_operator' class='EEMS_Tree_Operation' title='This is the operation used to create this node'> " + node.data.operation + "</div>";
             }
@@ -186,10 +211,14 @@ function init(json, eems_file_name){
 
             if (node.data.operation != "Read" && node.data.operation != "EEMSRead") {
                 /*label.innerHTML += "<span id='close_span' title='Click to change the EEMS operations'><img id='close_icon' onclick=\"remove_node('" + label.id + "')\" src='static/img/close.svg'></span>"*/
-                label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "')\" src='static/img/gear_icon.svg'></span>"
+                label.innerHTML += "<span id='modify_span' title='Click to make changes to this operator'><img class='modify_icon_class' id='modify_icon' onclick=\"changeEEMSOperator('" + node.id + "','" + alias + "','" + node.data.operation + "','" + eems_children_dict[node.id] + "','" + argument_string + "','" + metadata_string +"')\" src='static/img/gear_icon.svg'></span>"
 
             } else {
                 label.innerHTML += "<span id='modify_span' title='Click to view the histogram'><img class='modify_icon_class' id='modify_icon' onclick=\"showHistogram('" + node.id + "','" + alias + "')\" src='static/img/gear_icon.svg'></span>"
+            }
+
+            if (typeof node.data.Metadata != 'undefined' && typeof node.data.Metadata.Description != 'undefined') {
+                label.innerHTML += "<span class='description_span' title='" + node.data.Metadata.Description + "'><img class='description_icon_class' src='static/img/info_black.png'></span>"
             }
 
             label.onclick = function(){
@@ -212,13 +241,14 @@ function init(json, eems_file_name){
             //Width + Padding should equal the node width to prevent formatting issues.
             var style = label.style;
             style.width = 125 + 'px';
-            style.height = 65 + 'px';
+            style.height = 80 + 'px';
             style.cursor = 'pointer';
             style.color = '#000000';
             style.fontWeight = 'normal';
             style.fontSize = '.8em';
             style.textAlign = 'center';
             style.paddingTop = '5px';
+            style.paddingBottom = '5px';
             style.paddingLeft = '15px';
             style.paddingRight = '18px';
             style.fontFamily = 'Verdana';
@@ -250,16 +280,13 @@ function init(json, eems_file_name){
                     //assign a node color based on
                     //how many children it has
                     //node.data.$color = ['#aaa', '#baa', '#caa', '#daa', '#eaa', '#faa'][count];
-                    node.data.$color = ['#AAAAAA','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0','#B2BCD0'][count];
-                    node.data.$color = ['#AAAAAA','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3'][count];
-                    /*
+                    //node.data.$color = ['#AAAAAA','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3','#B6BFD3'][count];
                     if (count == 0){
-                        node.data.$color = '#aaa';
+                        node.data.$color = '#AAAAAA';
                     }
                     else{
-                        node.data.$color = '#baa';
+                        node.data.$color = '#B6BFD3';
                     }
-                    */
                 }
             }
         },

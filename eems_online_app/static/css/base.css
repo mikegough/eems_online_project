@@ -35,7 +35,6 @@ a:hover{
 	font-size: 2.3em;
 	color: #FFF !important;
 	text-shadow: 0px 0px 1px black;
-	width: 250px;
 	font-family: tahoma;
 	font-weight: Bold;
 	letter-spacing: 1px;
@@ -94,6 +93,9 @@ a:hover{
     border-style: solid;
 }
 
+.EEMS_node_name {
+}
+
 input, select {
     font-size:0.9em;
 }
@@ -117,7 +119,7 @@ h4 {
 	height: calc(100% - 22.5px);
 	margin: 0 auto;
 	position: absolute;
-	cursor: move;
+	cursor: url('../img/map_cursor.png')0 0, auto;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -296,7 +298,6 @@ li a {
 	text-decoration: none;
 	font-family: arial;
 	font-size: .9em;
-	font-weight: bold;
 	letter-spacing: 0px;
 }
 
@@ -544,6 +545,19 @@ li a.active {
    height:16px;
 }
 
+.description_span {
+	cursor: help;
+	position: absolute;
+	float: right;
+	top: 3px;
+	left: 3px;
+	z-index: 99999999999999;
+}
+
+.description_icon_class {
+	height: 15px;
+}
+
 #weighted_union_table td {
     padding-right:3px;
 }
@@ -554,7 +568,7 @@ li a.active {
 }
 
 #alert_icon {
-	width: 100px;
+	width: 70px;
 	position: relative;
 	top: -10px;
 	left: -10px;
@@ -568,10 +582,13 @@ li a.active {
 	padding-right: 30px;
 }
 
-#error_alert_text {
-	color: red;
-	margin-top: 10px;
-	margin-left: 49px;
+.error_text {
+	font-size: 13px;
+	color: #666565;
+	margin: 10px 0px 0px 70px;
+	height: 100%;
+	width: 500px;
+	word-wrap: break-word;
 }
 
 #model_run_complete_alert {
@@ -597,8 +614,11 @@ li a.active {
 	padding-left: 5px;
 }
 
-#form_table td:first-child{
+#form_table td{
 	vertical-align:top;
+}
+
+#form_table td:first-child{
 	max-width:330px;
 	padding-left:10px;
 }
@@ -606,6 +626,18 @@ li a.active {
 #form_div {
 	width: 550px;
 	padding: 0px 0px 0px 0px;
+}
+
+#node_name{
+	max-width: 330px;
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+
+#input_nodes {
+	max-width: 330px;
+	overflow-x: auto;
+	font-size: .9em;
 }
 
 .info {
@@ -761,7 +793,8 @@ ul.buttons li.selected a:hover
 	padding: 3px;
 	width: 650px;
 	margin-top: 40px;
-	z-index: 9999
+	z-index: 9999;
+	word-break:break-all;
 }
 
 .histogram_div {
@@ -851,6 +884,10 @@ ul.buttons li.selected a:hover
 
 #eems_model_dropdown {
 	width:180px;
+}
+
+#eems_model_dropdown > option {
+	padding-left:10px;
 }
 
 .alertify-button:focus {
@@ -952,16 +989,13 @@ ul.buttons li.selected a:hover
 #home {
 }
 
-
-#about {
+.center_text_block {
 	display: none;
-	height: calc(100% - 160px);
 	position: absolute;
 	top: 60px;
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
-	width: 1000px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: justify;
@@ -976,7 +1010,7 @@ ul.buttons li.selected a:hover
 	padding: 40px 50px;
 }
 
-#about h2 {
+.center_text_block h2 {
 	background-color: #e6e6e6;
 	padding: 20px;
 	border-radius: 5px;
@@ -985,12 +1019,19 @@ ul.buttons li.selected a:hover
 #contact{
 	white-space:nowrap;
 	display:none;
-	height: calc(100% - 160px);
 	position: absolute;
 	top: 106px;
 	padding: 20px 60px 100px 60px;
 	font-family: tahoma;
 	color: #3C3C3C;
+}
+
+#project_contents {
+	width: 1010px;
+	margin-left: auto;
+	margin-right: auto;
+	box-shadow: 0px 0px 20px 2px #595959;
+	padding: 40px 50px;
 }
 
 figure {
@@ -1106,7 +1147,14 @@ table.tableizer-table {
 
 #cbi_logo{
 	float: left;
-	margin: 20px 20px 20px 0px;
+	margin: 28px 20px 20px 0px;
+	width:159px;
+}
+
+#staff_logo{
+	float: left;
+	margin: 10px 20px 20px 0px;
+	width:159px;
 }
 
 #splitter {
@@ -1116,3 +1164,48 @@ table.tableizer-table {
 	z-index: 3;
 }
 
+#login {
+	position: absolute;
+	right: 0px;
+	font-family: arial;
+	top: 0px;
+	margin-top: 8px;
+	margin-right: 8px;
+}
+
+#login a {
+	font-size: .9em;
+	font-variant: small-caps;
+	color: white;
+	letter-spacing: 1px;
+}
+
+#login a:hover {
+	background-color:transparent;
+}
+
+.eems_value {
+	color: #4b4b4b;
+	display: inline-block;
+	position: absolute;
+	bottom: 20px;
+	right: 0px;
+	font-size: .85em;
+	font-style: italic;
+	font-weight: bold;
+	float: right;
+	background-color: #f0f0f0;
+	box-shadow: -1px -1px 2px #4e4e4e;
+	padding: 0px 4px;
+	border-radius: 4px 0px 0px 0px;
+}
+
+.eems_value_spinner{
+	height:15px;
+	padding-top:2px;
+}
+
+#LegendHeader{
+	width: 400px;
+	overflow-x: hidden;
+}

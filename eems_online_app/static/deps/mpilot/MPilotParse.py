@@ -1,19 +1,39 @@
 from collections import OrderedDict
+import MPilotParseMetadata as pmd
 import re
 import copy as cp
 
-# MPilot parser
-#
-# Functions to:
-#
-#  Parse a file into commands
-#  Parse a string into commands
-#  Parse a command into parameters
-#
-# tjs 2016.06.20
-#    Started
-# tjs 2016.11.04
-#    Added parsing of a string
+'''
+MPilot parser
+
+Functions to:
+
+ Parse a file into commands
+ Parse a string into commands
+ Parse a command into arguments
+
+tjs 2016.06.20
+  Started
+tjs 2016.11.04
+  Added parsing of a string
+tjs 2017.05.11
+  Added limited support for metadata. Metadata
+  is of the form:
+  
+  Metadata = [key1:value1,...,keyn:valuen]
+
+  Although much of what has been put into place in MPilotParseMetadata.py
+  supports heirarchical metadata with quoted values, of the form:
+
+  Metadata = [key1:value1,key2:[key21,value21,key22:"value22 with spaces, and chars#"],...,keyn:valuen]
+
+  Time did not permit the modifications to functions in this file to implement that.
+
+  In the next round of revisions, I will change the parsing to handle the nested/quoted
+  metadata. This will likely involve a more tokenized approach to the command as a whole.
+  Work towards this end in the now unused file NewParse.py
+
+'''
 
 def ParseStringToCommands(
     inStr,
@@ -37,11 +57,12 @@ def ParseStringToCommands(
     # Basically a finite state machine to build individual commands
     
     for inLine in inStr.split('\n'):
+
         inLineCnt +=1
 
         cleanLine = re.sub('#.*$','',inLine)
         cleanLine = re.sub('\s+','',cleanLine)
-
+        
         # Only start gathering a command where
         # a command starts
         if rawCmd == '':
@@ -50,7 +71,7 @@ def ParseStringToCommands(
             else:
                 mptCmdStructstartLineNum = inLineCnt
 
-        rawCmd += inLine
+        rawCmd = '{}{}\n'.format(rawCmd,inLine)
 
         for charNdx in range(len(cleanLine)):
             cleanCmd += cleanLine[charNdx]
@@ -82,6 +103,8 @@ def ParseStringToCommands(
 
                 else:
 
+                    cleanCmd = re.sub(',+([\]\)])',r'\1',cleanCmd)
+                    
                     mptCmdStructTmp = ({
                         'cmdFileNm':objNm,
                         'lineNo':mptCmdStructstartLineNum,
@@ -89,7 +112,8 @@ def ParseStringToCommands(
                         'cleanCmdStr':cleanCmd,
                         })
 
-                    mptCmdStructTmp['parsedCmd'] = ParseCommandToParams(mptCmdStructTmp)
+                    mptCmdStructTmp['parsedCmd'] = ParseCommandToArgs(mptCmdStructTmp)
+                    
                     rsltNm = mptCmdStructTmp['parsedCmd']['rsltNm']
 
                     if mptCmdStructTmp['parsedCmd']['rsltNm'] in mptCmdStructs:
@@ -114,13 +138,14 @@ def ParseStringToCommands(
         # for charNdx in range(len(cleanLine)):
     # for inLine in inStr.split('\n'):
 
-    if cleanCmd != '':
+    #    if cleanCmd != '':
+    if rawCmd != '':
         raise Exception(
             '{}{}{}{}'.format(
                 '\n********************ERROR********************\n',
-                'Incomplete command in file\n',
+                'Incomplete command in file:\n',
                 '  input: {}, line {}:\n'.format(objNm,mptCmdStructstartLineNum),
-                '  {}\n'.format(rawCmd),
+                'Command:\n{}\n'.format(rawCmd),
                 )
             )
 
@@ -142,7 +167,7 @@ def ParseFileToCommands(inFDef):
 
 # def ParseFileToCommands(inFDef):
 
-def ParseCommandToParams(mptCmdStruct):
+def ParseCommandToArgs(mptCmdStruct):
     # mptCmdStruct is a dict:
     # 'lineNo': the command's line within the input file
     # 'rawCmdStr': the command string as it appeared in the input
@@ -153,7 +178,7 @@ def ParseCommandToParams(mptCmdStruct):
     # strip white space
     cmdStr = re.sub('\s+','',mptCmdStruct['cleanCmdStr'])
 
-    # parse the command string into result, command name, and parameters
+    # parse the command string into result, command name, and arguments
     exprParse = re.match(r'\s*([^\s]+.*=){0,1}\s*([^\s]+.*)\s*\(\s*(.*)\s*\)',cmdStr)
 
     if not exprParse or len(exprParse.groups()) != 3:
@@ -194,64 +219,87 @@ def ParseCommandToParams(mptCmdStruct):
 
     parsedCmd['cmd'] = exprParse.groups()[1].strip()
 
-    # Parse out the parameters
-    paramStr = exprParse.groups()[2]
-    paramPairs = []
-    while paramStr != '':
-        paramPairMatchObj = re.match(r'\s*([^=]*=\s*\[[^\[]*\])\s*,*\s*(.*)',paramStr)
-        if paramPairMatchObj:
-            paramPairs.append(paramPairMatchObj.groups()[0])
-            paramStr = paramPairMatchObj.groups()[1]
+    # Parse out the arguments
+    argStr = exprParse.groups()[2]
+    argPairs = []
+
+    while argStr != '':
+        argPairMatchObj = re.match(r'\s*([^=]*=\s*\[[^\[]*\])\s*,*\s*(.*)',argStr)
+        if argPairMatchObj:
+            argPairs.append(argPairMatchObj.groups()[0])
+            argStr = argPairMatchObj.groups()[1]
         else:
-            paramPairMatchObj = re.match(r'\s*([^=,]*=\s*[^,]*)\s*,*\s*(.*)',paramStr)
-            if paramPairMatchObj:
-                paramPairs.append(paramPairMatchObj.groups()[0])
-                paramStr = paramPairMatchObj.groups()[1]
+            argPairMatchObj = re.match(r'\s*([^=,]*=\s*[^,]*)\s*,*\s*(.*)',argStr)
+            if argPairMatchObj:
+                argPairs.append(argPairMatchObj.groups()[0])
+                argStr = argPairMatchObj.groups()[1]
             else:
                 raise Exception(
                     '{}{}{}{}{}'.format(
                         '\n********************ERROR********************\n',
-                        'Invalid parameter specification.\n',
+                        'Invalid argument specification.\n',
                         'File: {}  Line number: {}\n'.format(mptCmdStruct['cmdFileNm'],mptCmdStruct['lineNo']),
-                        'Section of command: {}\n'.format(paramStr),
+                        'Section of command: {}\n'.format(argStr),
                         'Full command:\n{}\n'.format(mptCmdStruct['rawCmdStr']),
                         )
                     )
 
-        # if paramPair:...else:
+        # if argPair:...else:
 
-    # while paramStr != '':
+    # while argStr != '':
 
-    parsedCmd['params'] = OrderedDict()
-    for paramPair in paramPairs:
+    parsedCmd['arguments'] = OrderedDict()
+    for argPair in argPairs:
 
-        paramTokens = re.split(r'\s*=\s*',paramPair)
+        argTokens = re.split(r'\s*=\s*',argPair,2)
 
-        paramTokens[0] = paramTokens[0].strip()
-        paramTokens[1] = paramTokens[1].strip()
+        argTokens[0] = argTokens[0].strip()
+        argTokens[1] = argTokens[1].strip()
 
-        paramTokens[1] = re.sub(r'\s*\[\s*','[',paramTokens[1])
-        paramTokens[1] = re.sub(r'\s*\]\s*',']',paramTokens[1])
-        paramTokens[1] = re.sub(r'\s*,\s*',',',paramTokens[1])
+        argTokens[1] = re.sub(r'\s*\[\s*','[',argTokens[1])
+        argTokens[1] = re.sub(r'\s*\]\s*',']',argTokens[1])
+        argTokens[1] = re.sub(r'\s*,\s*',',',argTokens[1])
 
-        if (len(paramTokens) != 2
-            or paramTokens[0] == ''
-            or paramTokens[1] == ''
-            or paramTokens[0] in parsedCmd
+        if (len(argTokens) != 2
+            or argTokens[0] == ''
+            or argTokens[1] == ''
+            or argTokens[0] in parsedCmd
             ):
 
             raise Exception(
                 '{}{}{}{}'.format(
                     '\n********************ERROR********************\n',
-                    'Invalid parameter specification. Line number {}\n'.format(mptCmdStruct['lineNo']),
-                    'Parameter specification: {}\n'.format(paramPair),
+                    'Invalid argument specification. Line number {}\n'.format(mptCmdStruct['lineNo']),
+                    'Argument specification: {}\n'.format(argPair),
                     'Full command:\n{}\n'.format(mptCmdStruct['rawCmdStr']),
                     )
                 )
 
-        parsedCmd['params'][paramTokens[0]] = paramTokens[1]
+        parsedCmd['arguments'][argTokens[0]] = argTokens[1]
+            
+    # for argPair in argPairs:
 
     return parsedCmd
 
-# def ParseCommandToParams(inCmd):
+# def ParseCommandToArgs(inCmd):
     
+def StringSpaceClean(inStr):
+    '''
+    When we split on quotes, we will get an odd number of
+     strings if we have an even number of quotes, with odd
+     indexed strings being quoted strings. We can strip
+     spaces out of the strings that were not quoted (i.e,
+     even indexed strings). Then we just join the split strings
+     back together with quotes to get the stripping we were after.
+     '''
+
+    splitStr = inStr.split('"')
+    if len(splitStr) %2 != 1:
+        raise Exception('Unmatched quotes')
+    for ndx in xrange(0, len(splitStr), 2):
+        splitStr[ndx] = re.sub('\s+','',splitStr[ndx])
+
+    # newlines to spaces
+    return('"'.join(splitStr).replace('\n',' '))
+
+# def StringSpaceCleaner(inStr):

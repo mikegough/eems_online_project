@@ -11,6 +11,8 @@ import re
 import gc
 import gdal
 driver = gdal.GetDriverByName("PNG")
+from Convert_GDB_to_NetCDF import *
+from django.conf import settings
 
 class HistoDist(mpefp._MPilotEEMSFxnParent):
 
@@ -30,12 +32,12 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Creates a histogram for a variable\'s distribution'
         self.fxnDesc['ReturnType'] = 'Boolean'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             'XMin':'Float',
             'XMax':'Float',
@@ -48,30 +50,30 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
 
-        dataObj = executedObjects[self.ValFromParamByNm('InFieldName')]
+        dataObj = executedObjects[self.ValFromArgByNm('InFieldName')]
         self._ValidateIsDataLayer(dataObj)
 
-        outFNm = self.ParamByNm('OutFileName')
+        outFNm = self.ArgByNm('OutFileName')
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
 
-        xMin = self.ValFromParamByNm('XMin')
+        xMin = self.ValFromArgByNm('XMin')
         if xMin is None:
             if dataObj.DataType() == 'Fuzzy':
                 xMin = self.fuzzyMin
             else:
                 xMin = dataObj.ExecRslt().min()
 
-        xMax = self.ValFromParamByNm('XMax')
+        xMax = self.ValFromArgByNm('XMax')
         if xMax is None:
             if dataObj.DataType() == 'Fuzzy':
                 xMax = self.fuzzyMax
@@ -79,26 +81,26 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
                 xMax = dataObj.ExecRslt().max()
 
         # YMax must be set if we are going to use y limits
-        yMax = self.ValFromParamByNm('YMax')
-        yMin = self.ValFromParamByNm('yMin')
+        yMax = self.ValFromArgByNm('YMax')
+        yMin = self.ValFromArgByNm('yMin')
         if yMax is not None:
             if yMin is None: yMin = 0.
             ax1.set_ylim(yMin,yMax)
 
-        if self.ValFromParamByNm('Color') is not None:
-            faceColor = self.ValFromParamByNm('Color')
+        if self.ValFromArgByNm('Color') is not None:
+            faceColor = self.ValFromArgByNm('Color')
         else:
             faceColor = 'grey'
 
-            hist = plt.hist(
-                dataObj.ExecRslt().ravel().compressed(),
-                bins=50,
-                range=(xMin,xMax),
-                facecolor = faceColor,
-            )
+        hist = plt.hist(
+            dataObj.ExecRslt().ravel().compressed(),
+            bins=50,
+            range=(xMin,xMax),
+            facecolor = faceColor,
+        )
         ax1.set_xlabel('Value')
         ax1.set_ylabel('Count')
-        ax1.set_title('Distribution for {}'.format(self.ValFromParamByNm('InFieldName')))
+        ax1.set_title('Distribution for {}'.format(self.ValFromArgByNm('InFieldName')))
         
         if outFNm is None:
             outFNm = tf.mktemp(suffix='.png')
@@ -137,12 +139,12 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Renders a layer'
         self.fxnDesc['ReturnType'] = 'Boolean'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name',
             'OutFileName':'File Name',
             }
-        self.fxnDesc['OptParams'] = {
-            'MetaData':'Any',
+        self.fxnDesc['OptArgs'] = {
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             'ColorMap':'Any',
             'Origin':'Any',
@@ -152,8 +154,8 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
@@ -165,12 +167,27 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             warp_tiff = input_basename + "_warp.tiff"
             output_png = input_basename + ".png"
 
-            extent = self.ParamByNm('Extent')
-            epsg = self.ParamByNm('EPSG')
+            extent = self.ArgByNm('Extent')
+            epsg = self.ArgByNm('EPSG')
 
-            os.system("gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
+            # Convert the PNG to a spatially referenced Tif in it's native CRS
+            os.system(settings.GDAL_BINARY_DIR + os.sep + "gdal_translate -a_ullr " + extent + " -a_srs EPSG:" + epsg + " " + outFNm + " " + trans_tiff )
 
-            os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " +  trans_tiff + " " + warp_tiff)
+            # Get the extent in Web Mercator from Ken's script. Eventually only want to do this step once.
+            extent_tuple = extent.split(" ")
+            extent_list_for_ken=[extent_tuple[0], extent_tuple[2], extent_tuple[3], extent_tuple[1]]
+            extent_wm = getExtentInDifferentCRS(extent=extent_list_for_ken,epsg=int(epsg),to_epsg=3857)
+
+            # Restructure the Web Mercator extent for input to GDAL
+            print "extent_wm"
+            print extent_wm
+            extent_wm_string = str(extent_wm[0]) + " " + str(extent_wm[2]) + " " + str(extent_wm[1]) + " " + str(extent_wm[3])
+            print extent_wm_string
+
+            # Project the tif to Web Mercator using the extent from Ken's script above to trim the excess no data values.
+            # Alignment issues crop up if this is step is not performed because the resulting PNG has a border of NoData whitespace.
+            os.system(settings.GDAL_BINARY_DIR + os.sep + "gdalwarp -te " + extent_wm_string + " -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
+            #os.system("gdalwarp -s_srs EPSG:" + epsg + " -t_srs EPSG:3857 " + trans_tiff + " " + warp_tiff)
 
             src_ds = gdal.Open(warp_tiff)
 
@@ -184,10 +201,10 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         
     def Exec(self,executedObjects):
 
-        dataObj = executedObjects[self.ValFromParamByNm('InFieldName')]
+        dataObj = executedObjects[self.ValFromArgByNm('InFieldName')]
         self._ValidateIsDataLayer(dataObj)
 
-        outFNm = self.ParamByNm('OutFileName')
+        outFNm = self.ArgByNm('OutFileName')
 
         if dataObj.DataType() == 'Fuzzy':
             minVal = self.fuzzyMin
@@ -196,21 +213,24 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
             minVal = dataObj.ExecRslt().min()
             maxVal = dataObj.ExecRslt().max()
 
-        map_quality = self.ParamByNm('MapQuality')
+        map_quality = self.ArgByNm('MapQuality')
         w = int(map_quality.split(',')[0])
         h = int(map_quality.split(',')[1])
         fig = plt.figure(figsize=(w,h))
         ax1 = fig.add_axes([0,0,1,1])
         ax1.axis('off')
 
-        cmap = self.ValFromParamByNm('ColorMap')
+        cmap = self.ValFromArgByNm('ColorMap')
         if cmap is None: cmap = 'RdYlBu_r'
 
-        origin = self.ParamByNm('Origin') if self.ParamByNm('Origin') is not None else 'lower'
+        origin = self.ArgByNm('Origin') if self.ArgByNm('Origin') is not None else 'lower'
+
+        norm = mpl.colors.Normalize(vmin=minVal,vmax=maxVal)
 
         myImg = ax1.imshow(
             dataObj.ExecRslt(),
             aspect='auto',
+            norm=norm,
             interpolation='nearest',
             origin=origin
             )
@@ -229,7 +249,6 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         # now the key
         fig = plt.figure(figsize=(8,1))
         ax1 = fig.add_axes([0.02,0.3,0.96,0.7])
-        norm = mpl.colors.Normalize(vmin=minVal,vmax=maxVal)
         cb = mpl.colorbar.ColorbarBase(
             ax1,
             cmap=cmap,
@@ -253,7 +272,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         #     minVal = dataObj.ExecRslt().min()
         #     maxVal = dataObj.ExecRslt().max()
 
-        # ax1.tick_params(
+        # ax1.tick_args(
         #         axis='both',
         #         which='both',
         #         bottom=False,
@@ -266,7 +285,7 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
         #         labelright=False
         #         )
 
-        # origin = self.ParamByNm('Origin') if self.ParamByNm('Origin') is not None else 'lower'
+        # origin = self.ArgByNm('Origin') if self.ArgByNm('Origin') is not None else 'lower'
             
         # myImg = ax1.imshow(
         #     dataObj.ExecRslt(),
@@ -277,17 +296,17 @@ class RenderLayer(mpefp._MPilotEEMSFxnParent):
 
         # myImg.set_clim(minVal,maxVal)
 
-        # cmap = self.ValFromParamByNm('ColorMap')
+        # cmap = self.ValFromArgByNm('ColorMap')
         # if cmap is None: cmap = 'RdYlBu'
 
         # myImg.set_cmap(cmap)
 
         # # We don't want a title
-        # # ax1.set_title('{}'.format(self.ValFromParamByNm('InFieldName')))
+        # # ax1.set_title('{}'.format(self.ValFromArgByNm('InFieldName')))
 
         # # if DoSeparate key is not specified or is false, it will be printed
         
-        # if not self.ParamByNm('DoSeparateKey') == 'True':
+        # if not self.ArgByNm('DoSeparateKey') == 'True':
         #     cbar = fig.colorbar(myImg)
         
         # plt.savefig(outFNm)
@@ -321,13 +340,13 @@ class ScatterXY(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Creates a scatter plot for two fields'
         self.fxnDesc['ReturnType'] = 'Boolean'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'XFieldName':'Field Name',
             'YFieldName':'Field Name'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             }
         
@@ -335,20 +354,20 @@ class ScatterXY(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('XFieldName') + self._ParamToList('YFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('XFieldName') + self._ArgToList('YFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
         
     def Exec(self,executedObjects):
         
-        xDataObj = executedObjects[self.ValFromParamByNm('XFieldName')]
-        yDataObj = executedObjects[self.ValFromParamByNm('YFieldName')]
+        xDataObj = executedObjects[self.ValFromArgByNm('XFieldName')]
+        yDataObj = executedObjects[self.ValFromArgByNm('YFieldName')]
         self._ValidateIsDataLayer(xDataObj)
         self._ValidateIsDataLayer(yDataObj)
 
-        outFNm = self.ParamByNm('OutFileName')
+        outFNm = self.ArgByNm('OutFileName')
 
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
@@ -370,15 +389,15 @@ class ScatterXY(mpefp._MPilotEEMSFxnParent):
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
 
-        ax1.set_xlabel(self.ValFromParamByNm('XFieldName'))
-        ax1.set_ylabel(self.ValFromParamByNm('YFieldName'))
+        ax1.set_xlabel(self.ValFromArgByNm('XFieldName'))
+        ax1.set_ylabel(self.ValFromArgByNm('YFieldName'))
 
         ax1.set_xlim(xMinVal,xMaxVal)
         ax1.set_ylim(yMinVal,yMaxVal)
         
         ax1.set_title('{} vs {}'.format(
-            self.ValFromParamByNm('YFieldName'),
-            self.ValFromParamByNm('XFieldName')
+            self.ValFromArgByNm('YFieldName'),
+            self.ValFromArgByNm('XFieldName')
             )
             )
 

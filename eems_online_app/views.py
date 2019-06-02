@@ -30,51 +30,93 @@ from django.utils.crypto import get_random_string
         #set TK_LIBRARY=C:\Python27\ArcGIS10.3\tcl\tk8.5
     # GDAL for projecting
 
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+
 from EEMSCvt20To30 import *
 from Convert_GDB_to_NetCDF import *
 from MPilotOnlineWorker import *
+import numpy
 
 import fileinput
 
+from tasks import *
+
+from rasterstats import zonal_stats
+from rasterstats import point_query
+import rasterio
+import netCDF4
+from osgeo import ogr
+from osgeo import osr
+import glob
+
+from celery.result import AsyncResult
+
 @csrf_exempt
 def index(request):
+
+        # Custom Templates for subdomains (e.g., cec.eemsonline.org)
+        subdomain = request.get_host().split(".")[0]
+        template_dir = settings.BASE_DIR + os.sep + "eems_online_app" + os.sep + "templates"
+        custom_template = template_dir + os.sep + subdomain + ".html"
+
+        # If subdomain is used, search for a template with the subdomain name.
+        if os.path.isfile(custom_template):
+            hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
+            template = subdomain + ".html"
+            filters = {'project': subdomain}
+            #filters = {'project': 'cec'}
+        else:
+            hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
+            template = "index.html"
+            # Get any filters passed in through the query string. #copy() makes the request object mutable.
+            filters = request.GET.copy()
+
 
         # Get a json file of all the EEMS commands
         eems_rqst_dict = {}
         eems_rqst_dict["action"] = 'GetAllCmdInfo'
         my_mpilot_worker = MPilotWorker()
-        eems_available_commands_json = my_mpilot_worker.HandleRqst("none", "none", eems_rqst_dict, "none", "none", "none", "none", False, False, True)
-
+        eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
         json.dumps(eems_available_commands_json)
 
-        # Get initial EEMS model (default to ID=1)
-        initial_eems_model_id = request.GET.get('model', 1)
+        # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
+        initial_eems_model_id = filters.pop("model", ['first'])[0]
 
-        query = "SELECT ID, NAME, EXTENT_GCS FROM EEMS_ONLINE_MODELS where ID = '%s'" % (initial_eems_model_id)
+        # GET all available EEMS Models for Dropdown.
+        eems_online_models = {}
+
+        if filters:
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
+            filter_count = 0
+            for k, v in filters.iteritems():
+                if filter_count > 0:
+                    query += " AND "
+                query += k + " = '" + v + "' COLLATE NOCASE"
+                filter_count += 1
+            query += " COLLATE NOCASE"
+        else:
+            # No filters or user got here from a link (show linked model as well as CBI models).
+            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
 
         cursor = connection.cursor()
         cursor.execute(query)
 
-        initial_eems_model=[]
+        initial_eems_model = []
 
         for row in cursor:
-            initial_eems_model.append([str(row[0]),[row[1], row[2]]])
+            # Get info required to initialize the starting model (ID, NAME, EXTENT)
+            if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
+                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+            elif row[0] == initial_eems_model_id:
+                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+            # GET all EEMS Models (meeting filter criteria) for Dropdown list.
+            eems_online_models[str(row[0])] = []
+            eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
 
         initial_eems_model_json = json.dumps(initial_eems_model)
-
-        # GET all available EEMS Models
-        eems_online_models = {}
-        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION FROM EEMS_ONLINE_MODELS where OWNER = 'CBI' or ID = '%s'" % (initial_eems_model_id)
-        print query
-        cursor.execute(query)
-        for row in cursor:
-            eems_online_models[str(row[0])]=[]
-            eems_online_models[str(row[0])].append([row[1], row[2], row[3]])
-
         eems_online_models_json=json.dumps(eems_online_models)
 
-        template = 'index.html'
-        hostname_for_link = settings.HOSTNAME_FOR_LINK
         context = {
             #'eems_available_commands_dict': eems_available_commands,
             'initial_eems_model_json': initial_eems_model_json,
@@ -88,13 +130,15 @@ def index(request):
 @csrf_exempt
 def get_additional_info(request):
 
+    hostname_for_link = settings.HOSTNAME_FOR_LINK
+
     eems_model_id = request.POST.get('eems_model_id')
 
     print eems_model_id
 
     cursor = connection.cursor()
 
-    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
+    query="SELECT NAME, AUTHOR, CREATION_DATE, LONG_DESCRIPTION, PROJECT, ID FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
 
     cursor.execute(query)
 
@@ -103,12 +147,18 @@ def get_additional_info(request):
         author = row[1]
         creation_date = row[2]
         long_description = row[3]
+        project = row[4]
+        id = row[5]
+
+    model_url = hostname_for_link + "?model=" + id
 
     context = {
         "name": name,
         "author": author,
         "creation_date": creation_date,
         "long_description": long_description,
+        "project": project,
+        "model_url": model_url,
     }
 
     return HttpResponse(json.dumps(context))
@@ -133,68 +183,27 @@ def run_eems(request):
     print "Modified Model ID: " + eems_model_modified_id
     print "Changes: " + json.dumps(eems_operator_changes_dict, indent=2)
 
-    original_mpt_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_id)
+    task_id = run_eems_celery.delay(eems_model_id, eems_model_modified_id, eems_operator_changes_string, eems_operator_changes_dict, download, map_quality)
 
-    # Get the extent of the original EEMS model. Used to project PNG in GDAL.
-    cursor = connection.cursor()
-    query = "SELECT EXTENT, EPSG FROM EEMS_ONLINE_MODELS where ID = '%s'" % (eems_model_id)
-    cursor.execute(query)
-    for row in cursor:
-            extent = row[0]
-            epsg = str(row[1])
-    extent_list = extent.replace('[','').replace(']','').split(',')
-    extent_for_gdal = extent_list[1] + " " + extent_list[2] + " " + extent_list[3] + " " + extent_list[0]
-    print "Extent: " + extent_for_gdal
-    print "EPSG: " + epsg
+    return HttpResponse(task_id)
 
-    # If this is the first run, create the user output directories.
-    if eems_model_modified_id == '':
-        eems_model_modified_id = get_random_string(length=32)
 
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_modified_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_modified_id)
+@csrf_exempt
+def check_eems_model_run_status(request):
 
-        # Copy the mpt file to the user output directory
-        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
-        shutil.copyfile(original_mpt_file, mpt_file_copy)
+    task_id = request.POST.get('eems_model_run_task_id')
+    state = run_eems_celery.AsyncResult(task_id).state
+
+    print state
+
+    if state == "PENDING":
+        return HttpResponse(state)
 
     else:
-        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/eemssrc/model.mpt'.format(eems_model_modified_id)
+        # Get the output from the run_eems_celery task (model run ID and error status).
+        results = run_eems_celery.AsyncResult(task_id).get()
+        return HttpResponse(results)
 
-    output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/'.format(eems_model_modified_id)
-    output_netcdf = output_base_dir + '/data/results.nc'
-
-    print mpt_file_copy
-    print eems_operator_changes_dict
-    print output_base_dir
-    print extent_for_gdal
-    print epsg
-
-
-    # Send model information to MPilot to run EEMS.
-    try:
-        my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_modified_id, mpt_file_copy, eems_operator_changes_dict, output_base_dir, extent_for_gdal, epsg, map_quality, True, False, True)
-        error_code = 0
-        error_message = None
-        if not download:
-            os.remove(output_netcdf)
-
-    except Exception as e:
-        error_code = 1
-        error_message = str(e)
-
-    context={
-        "eems_model_modified_id": eems_model_modified_id,
-        "error_code": error_code,
-        "error_message": error_message
-    }
-
-    return HttpResponse(json.dumps(context))
 
 @csrf_exempt
 def download(request):
@@ -231,7 +240,7 @@ def link(request):
     eems_rqst_dict = {}
     eems_rqst_dict["action"] = 'GetMEEMSETrees'
     my_mpilot_worker = MPilotWorker()
-    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(1, eems_model_modified_src_program, eems_rqst_dict, "none", "none", "none", "none", True, False, True)[1:-1])
+    eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(rqst=eems_rqst_dict,id=1,srcProgNm=eems_model_modified_src_program,doFileLoad=True, rqstIsJSON=False, reset=True)[1:-1])
     print eems_meemse_tree_json
 
     eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_modified_id)
@@ -240,13 +249,14 @@ def link(request):
 
     cursor = connection.cursor()
 
-    query = "SELECT NAME, EXTENT, EXTENT_GCS, EPSG FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
+    query = "SELECT NAME, EXTENT, EXTENT_GCS, EPSG, PROJECT FROM EEMS_ONLINE_MODELS where id = '%s'" % eems_model_id
     cursor.execute(query)
     for row in cursor:
         eems_model_name = row[0]
         eems_extent = str(row[1])
         eems_extent_gcs = str(row[2])
         epsg = str(row[3])
+        project = str(row[4])
 
     eems_model_name_user = eems_model_name.replace(" (Modified)", "") + " (Modified)"
     user = "USER"
@@ -255,191 +265,286 @@ def link(request):
     long_description = "This model is a user modified version of the original " + eems_model_name + " model, created on " + time.strftime("%d/%m/%Y") + " at " + time.strftime("%H:%M") + ". To access the original model, click the link below.<p><a title='click to access the original model' href=?model=" + str(eems_model_id) + ">" + eems_model_name + "</a>"
     todays_date = time.strftime("%d/%m/%Y")
 
-    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, EPSG)  values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, eems_extent_gcs, user, short_description, long_description, author, todays_date, epsg))
+    cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE, EPSG, PROJECT)  values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_modified_id, eems_model_name_user, eems_extent, eems_extent_gcs, user, short_description, long_description, author, todays_date, epsg, project))
 
     return HttpResponse(eems_model_modified_id)
 
 
+#@csrf_exempt
+#def login(request):
+#
+#    auth_code = request.GET.get('auth')
+#    print auth_code
+#
+#    context = {
+#        "auth_code": auth_code,
+#    }
+
+#    template = "login.html"
+#    return render(request, template, context)
+
+def logged_out(request):
+    return render(request, 'logged_out.html')
+
+#@csrf_exempt
+#@login_required
+#def upload(request):
+#
+#        password = settings.UPLOAD_PASS
+#        username = settings.UPLOAD_USERNAME
+#
+#        user_password = request.POST.get('password')
+#        user_username = request.POST.get('username')
+#
+#
+#        if user_password == password and user_username == username:
+#            query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
+#
+#            cursor = connection.cursor()
+#            cursor.execute(query)
+#
+#            project_list = []
+#            for row in cursor:
+#                if row[0] != None:
+#                    project_list.append(row[0])
+#            project_list_json = json.dumps(project_list)
+#            print "Password verified"
+#            return render(request, "upload.html", {"username":username, "project_list":project_list})
+#        else:
+#            return redirect(reverse(login)+"?auth=0")
+
+
 @csrf_exempt
-def login(request):
-
-    auth_code = request.GET.get('auth')
-    print auth_code
-
-    context = {
-        "auth_code": auth_code,
-    }
-
-    template = "login.html"
-    return render(request, template, context)
-
-@csrf_exempt
+# This is the secret to forcing the user to login to see this view.
+@login_required(login_url='/admin/login/')
 def upload(request):
+        query = "SELECT DISTINCT PROJECT FROM EEMS_ONLINE_MODELS"
+        username = request.user.username
 
-        password = settings.UPLOAD_PASS
-        username = settings.UPLOAD_USERNAME
+        cursor = connection.cursor()
+        cursor.execute(query)
 
-        user_password = request.POST.get('password')
-        user_username = request.POST.get('username')
-
-        if user_password == password and user_username == username:
-            print "Password verified"
-            return render(request, "upload.html", {"username":username})
-        else:
-            return redirect(reverse(login)+"?auth=0")
+        project_list = []
+        for row in cursor:
+            if row[0] != None:
+                project_list.append(row[0])
+        project_list_json = json.dumps(project_list)
+        print "Password verified"
+        return render(request, "upload.html", {"username": username, "project_list":project_list})
 
 class FileUploadForm(forms.Form):
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
 @csrf_exempt
+@login_required
 def upload_files(request):
 
-    upload_id = get_random_string(length=32)
+    # Check to see if this is a SSH upload
+    try:
+        ssh_dir_name = json.loads(request.body)["ssh_dir_name"]
 
-    # Make an upload directory
-    upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
-    os.mkdir(upload_dir)
+    except:
+        ssh_dir_name = False
 
-    # Copy user files to upload directory (data + eems command file)
-    if request.method == 'POST':
-        form = FileUploadForm(files=request.FILES)
-        if form.is_valid():
-            print 'valid form'
-            files = request.FILES.getlist('file')
-            for f in files:
-                file_name = f.name
-                file_copy = upload_dir + "/" + file_name
-                with open(file_copy, 'wb+') as destination:
-                    for chunk in f.chunks():
-                        destination.write(chunk)
-                if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
-                    extension = "." + file_name.split(".")[-1]
-                    mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
-                    print mpt_file
-                    cv = Converter(file_copy, mpt_file, None, None, False)
-                    cv.ConvertScript()
+    try:
+        if ssh_dir_name:
+            upload_id = ssh_dir_name
+            upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+            eems_command_file = glob.glob(upload_dir + "/*.eem")[0]
+            eems_command_file_name = os.path.basename(eems_command_file)
+            if eems_command_file:
+                extension = "." + eems_command_file.split(".")[-1]
+                mpt_file = upload_dir + "/" + eems_command_file_name.replace(extension, ".mpt").replace("\\", "/")
+                cv = Converter(eems_command_file, mpt_file, None, None, False)
+                cv.ConvertScript()
+
         else:
-            print 'invalid form'
-            print form.errors
+            user = request.user.username
+            upload_id = get_random_string(length=32)
+            # Make an upload directory
+            upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+            os.mkdir(upload_dir)
 
-    # Return directory name
-    return HttpResponse(upload_id)
+            # Copy user files to upload directory (data + eems command file)
+            if request.method == 'POST':
+                form = FileUploadForm(files=request.FILES)
+                if form.is_valid():
+                    print 'valid form'
+                    files = request.FILES.getlist('file')
+                    for f in files:
+                        file_name = f.name
+                        file_copy = upload_dir + "/" + file_name
+                        with open(file_copy, 'wb+') as destination:
+                            for chunk in f.chunks():
+                                destination.write(chunk)
+                        #Convert .eem file to .mpt file.
+                        if file_name.endswith((".eem", ".eems", ".EEM", ".EEMS")):
+                            extension = "." + file_name.split(".")[-1]
+                            mpt_file = upload_dir + "/" + file_name.replace(extension, ".mpt").replace("\\", "/")
+                            print mpt_file
+                            cv = Converter(file_copy, mpt_file, None, None, False)
+                            cv.ConvertScript()
+                else:
+                    print 'invalid form'
+                    print form.errors
+
+        # Return directory name
+        context = {
+            "status": 1,
+            "upload_id": upload_id
+        }
+
+        return HttpResponse(json.dumps(context))
+
+    except Exception, e:
+
+        upload_datetime = datetime.datetime.now(timezone('US/Pacific')).isoformat()
+        error = str(e).replace("\n", "<br />")
+
+        # Don't have additional information at this point. AJAX request sends files, can't get project, model_name, etc.
+        # Model Name must be empty string, not NULL, otherwise, server error when clicking model id on the admin page.
+        cursor = connection.cursor()
+        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, USER, STATUS, LOG, UPLOAD_DATETIME) values (%s,%s,%s,%s,%s,%s)", (upload_id, "", user, 0, str(e), upload_datetime))
+
+        context = {
+            "status": 0,
+            "upload_id": upload_id,
+            "error_message": error
+        }
+
+        return HttpResponse(json.dumps(context))
 
 @csrf_exempt
+@login_required
 def upload_form(request):
 
-        # Files have been uploaded. Process user data and form fields. Run EEMS.
+    upload_id = str(request.POST.get('upload_id'))
+    owner = "CBI"
+    eems_model_name = request.POST.get('model_name')
+    author = str(request.POST.get('model_author'))
+    creation_date = str(request.POST.get('creation_date'))
+    short_description = str(request.POST.get('short_description'))
+    long_description = str(request.POST.get('long_description'))
+    project = str(request.POST.get('project'))
+    username = str(request.POST.get('username'))
+    print username
+    try:
+        resolution = float(request.POST.get('resolution'))
+    except:
+        resolution = 1000
 
-        image_overlay_size = "24,32"
+    upload_form_celery.delay(upload_id, owner, eems_model_name, author, creation_date, short_description, long_description, resolution, project, username)
 
-        upload_id = str(request.POST.get('upload_id'))
-        owner = str(request.POST.get('owner'))
-        eems_model_name = request.POST.get('model_name')
-        author = str(request.POST.get('model_author'))
-        creation_date = str(request.POST.get('creation_date'))
-        #input_epsg = int(request.POST.get('epsg'))
-        short_description = str(request.POST.get('short_description'))
-        long_description = str(request.POST.get('long_description'))
+    return HttpResponse(1)
 
-        upload_dir = settings.BASE_DIR + '/eems_online_app/static/eems/uploads/%s' % upload_id
+@csrf_exempt
+def check_eems_status(request):
 
-        print "Upload dir: " + upload_dir
+    # Check the status field in the database. Front end will keep trying until the status is 1 (success) or 0 (error).
+    upload_id = str(request.POST.get('upload_id'))
+    cursor = connection.cursor()
+    query = "select STATUS, LOG from EEMS_ONLINE_MODELS where ID = '%s'" % upload_id
+    cursor.execute(query)
 
-        mpt_file = glob.glob(upload_dir + "/*.mpt")[0]
-        mpt_file = mpt_file.replace("\\","/")
+    try:
+        # Can't call cursor.fetchone() twice. Second attempt will always be empty. Call once then parse.
+        results = cursor.fetchone()
+        status = results[0]
+        log = results[1].replace("\n", "<br />").split("Traceback")[0] # Remove the exception before sending to the user.
+        print log
 
-        # Try FGDB first
-        try:
-            #Unzip zipped GDB
-            FGDB_zip = glob.glob(upload_dir + "/*.zip")[0]
-            zip_ref = zipfile.ZipFile(FGDB_zip, 'r')
-            zip_ref.extractall(upload_dir)
-            zip_ref.close()
+    except:
+        status = None
+        log = None
+        print "No database record yet. Front end will check again."
 
-            FGDB_file = glob.glob(upload_dir + "/*.gdb")[0]
-            FGDB_file = FGDB_file.replace("\\","/")
+    context = {
+            "status": status,
+            "upload_id": upload_id,
+            "error_message": log
+       }
 
-            netCDF_file_name = os.path.basename(FGDB_file).split(".")[0] + ".nc"
-            netCDF_file = upload_dir + "/" + netCDF_file_name
+    return HttpResponse(json.dumps(context))
 
-            resolution = float(request.POST.get('resolution'))
+def logout(request):
+    logout(request)
 
-            print "Converting FGDB feature class to NetCDF"
-            rasterize(FGDB_file, netCDF_file, resolution)
 
-        # Else look for NC
-        except:
-            netCDF_file = glob.glob(upload_dir + "/*.nc")[0]
-            netCDF_file = netCDF_file.replace("\\","/")
-            netCDF_file_name = os.path.basename(netCDF_file)
+@csrf_exempt
+def get_raster_data(request):
 
-        input_epsg  = getEPSGFromNCfile(netCDF_file)
+    wkt = request.POST.get('wkt')
+    model_id = str(request.POST.get('model_id'))
+    original_model_id = str(request.POST.get('original_model_id'))
+    raster = glob.glob(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data/results.nc' % model_id)[0]
 
-        # Get the Extent from the NetCDF file (try y,x first)
-        try:
-            extent_input_crs = getExtentFromNCFile(netCDF_file, ['y', 'x'])
-        except:
-            extent_input_crs = getExtentFromNCFile(netCDF_file, ['lat', 'lon'])
+    nc_dataset = netCDF4.Dataset(raster)
+    nc_vars = nc_dataset.variables
+    nc_var_keys = nc_vars.keys()
+    vars_to_remove = ['lat', 'lon', 'x', 'y', 'crs']
+    for var_to_remove in vars_to_remove:
+        if var_to_remove in nc_var_keys:
+            nc_var_keys.remove(var_to_remove)
 
-        # Restructure for database insert
-        extent_input_crs_insert = str([[extent_input_crs[2],extent_input_crs[0]],[extent_input_crs[3],extent_input_crs[1]]])
+    cursor = connection.cursor()
+    query = "select EPSG from EEMS_ONLINE_MODELS where ID = '%s'" % original_model_id
+    cursor.execute(query)
+    dst_epsg = int(cursor.fetchone()[0])
 
-        # Restructure for GDAL
-        extent_for_gdal = str(extent_input_crs[0]) + " " + str(extent_input_crs[3]) + " " + str(extent_input_crs[1]) + " " + str(extent_input_crs[2])
+    # Project WKT if not in GCS WGS84
+    if dst_epsg != 4326:
+         # Project WKT using ogr
+        geom = ogr.CreateGeometryFromWkt(wkt)
+        source = osr.SpatialReference()
+        source.ImportFromEPSG(4326)
+        target = osr.SpatialReference()
+        target.ImportFromEPSG(dst_epsg)
+        transform = osr.CoordinateTransformation(source, target)
+        geom.Transform(transform)
+        wkt = geom.ExportToWkt()
 
-        # Get Web Mercator Extent from input CRS
-        extent_wm = getExtentInDifferentCRS(extent_input_crs,False,False,input_epsg,3857)
-        #print "Extent WebMercator: ", extent_wm
+    results = {}
 
-        # Get GCS Extent from Web Mercator Extent
-        extent_gcs = getExtentInDifferentCRS(extent_wm,False,False,3857,4326)
-        extent_gcs_insert = str([[extent_gcs[2],extent_gcs[0]],[extent_gcs[3],extent_gcs[1]]])
+    # Get values out of NetCDF file
+    # NetCDF4 version
+    try:
+        lats = nc_dataset.variables['lat'][:]
+        lons = nc_dataset.variables['lon'][:]
+    except:
+        lats = nc_dataset.variables['y'][:]
+        lons = nc_dataset.variables['x'][:]
 
-        # Create a new record in the datatabase for the new model
-        cursor = connection.cursor()
-        query = "SELECT MAX(CAST(ID as integer)) from EEMS_ONLINE_MODELS where OWNER = 'CBI'"
-        cursor.execute(query)
-        max_id = cursor.fetchone()[0]
-        eems_model_id =  str(int(max_id) + 1)
+    lon_target = float(wkt.split("(")[1].split(" ")[0])
+    lat_target = float(wkt.split("(")[1].split(" ")[1].replace(")", ""))
 
-        cursor.execute("insert into EEMS_ONLINE_MODELS (ID, NAME, EPSG, EXTENT, EXTENT_GCS, OWNER, SHORT_DESCRIPTION, LONG_DESCRIPTION, AUTHOR, CREATION_DATE) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (eems_model_id, eems_model_name, str(input_epsg), extent_input_crs_insert, extent_gcs_insert, owner, short_description, long_description, author, creation_date))
+    lon_index = numpy.abs(lons - lon_target).argmin()
+    lat_index = numpy.abs(lats - lat_target).argmin()
 
-        output_base_dir = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/' % eems_model_id
+    for var in nc_var_keys:
 
-        # Make new directories
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s' % eems_model_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data' % eems_model_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc' % eems_model_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/histogram' % eems_model_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/overlay' % eems_model_id)
-        os.mkdir(settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/tree' % eems_model_id)
+        # Determine NoData value
+        this_nc_var = nc_dataset.variables[var]
+        if "_FillValue" in this_nc_var.ncattrs():
+            no_data_val = getattr(this_nc_var, "_FillValue")
+        elif "no_data_value" in this_nc_var.ncattrs():
+            no_data_val = getattr(this_nc_var, "no_data_value")
 
-        # Copy input files to new directory
-        mpt_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/eemssrc/model.mpt' % (eems_model_id)
+        var_array = numpy.array(nc_dataset.variables[var])
+        value = var_array[lat_index, lon_index]
+        print var, value
+        if value not in [no_data_val, 9999, -9999]:
+            results[var] = round(value, 2)
+        else:
+            results[var] = "No Data"
 
-        shutil.copy(mpt_file, mpt_file_copy)
+     # rasterstats version. Does not work on Webfaction (probably because no GDAL netCDF support)
+#    for var in nc_var_keys:
+#        raster_with_var = r'file://NETCDF:%s:%s' % (raster, var)
+#        with rasterio.open(raster_with_var) as src:
+#            transform = src.transform
+#            array = src.read(1)
+#            value = point_query(wkt, array, affine=transform)[0]
+#            results[var] = round(value, 2)
 
-        netCDF_file_copy = settings.BASE_DIR + '/eems_online_app/static/eems/models/%s/data/%s' % (eems_model_id, netCDF_file_name)
-        shutil.copy(netCDF_file, netCDF_file_copy)
+    return HttpResponse(json.dumps(results))
 
-        # Open the mpt file and replace the path to the netCDF file.
-        with open(mpt_file) as infile, open(mpt_file_copy, 'w') as outfile:
-            for line in infile:
-                if re.match("(.*)InFileName(.*)", line):
-                    line = "    InFileName = " + netCDF_file_copy.replace("\\","/") + ",\n"
-                    print line
-                outfile.write(line)
-
-        # Run EEMS to create the image overlays and the histograms
-        my_mpilot_worker = MPilotWorker()
-        my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy, {"action": "RunProg"}, output_base_dir, extent_for_gdal, str(input_epsg), image_overlay_size, True, False, True)
-
-        # Create the MEEMSE tree
-        eems_meemse_tree_json = json.loads(my_mpilot_worker.HandleRqst(eems_model_id, mpt_file_copy,{"action" : "GetMEEMSETrees"} , "none", "none", "none", "none", True, False, True)[1:-1])
-        eems_meemse_tree_file = settings.BASE_DIR + '/eems_online_app/static/eems/models/{}/tree/meemse_tree.json'.format(eems_model_id)
-        with open(eems_meemse_tree_file, 'w') as outfile:
-            json.dump(eems_meemse_tree_json, outfile, indent=3)
-
-        shutil.rmtree(upload_dir)
-
-        return HttpResponse("Model uploaded successfully")

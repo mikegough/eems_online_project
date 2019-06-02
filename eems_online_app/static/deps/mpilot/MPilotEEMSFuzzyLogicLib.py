@@ -24,14 +24,14 @@ class CvtToFuzzy(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Converts input values into fuzzy values using linear interpolation'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'TrueThreshold':'Float',
             'FalseThreshold':'Float',
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             'Direction':'Any',
             }
@@ -40,8 +40,8 @@ class CvtToFuzzy(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
@@ -49,7 +49,7 @@ class CvtToFuzzy(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
         # executedObjects is a dictionary of executed MPilot function objects
         
-        inFldNm = self.ParamByNm('InFieldName')
+        inFldNm = self.ArgByNm('InFieldName')
         inObj = executedObjects[inFldNm]
         
         self._ValidateProgDataType(
@@ -68,8 +68,8 @@ class CvtToFuzzy(mpefp._MPilotEEMSFxnParent):
         
         inArr = inObj.ExecRslt()
 
-        if 'Direction' in self.Params():
-            if self.ParamByNm('Direction') not in ['LowToHigh','HighToLow']:
+        if 'Direction' in self.Args():
+            if self.ArgByNm('Direction') not in ['LowToHigh','HighToLow']:
                 raise Exception(
                     '{}{}{}{}{}{}{}'.format(
                         '\n********************ERROR********************\n',
@@ -85,22 +85,22 @@ class CvtToFuzzy(mpefp._MPilotEEMSFxnParent):
                     ),
                 )
 
-        # if 'Direction' in self.Params():
+        # if 'Direction' in self.Args():
 
-        if 'FalseThreshold' in self.Params():
-            falseThresh = self.ParamByNm('FalseThreshold')
-        elif 'Direction' in self.Params():
-            if self.ParamByNm('Direction') in ['LowToHigh']:
+        if 'FalseThreshold' in self.Args():
+            falseThresh = self.ArgByNm('FalseThreshold')
+        elif 'Direction' in self.Args():
+            if self.ArgByNm('Direction') in ['LowToHigh']:
                 falseThresh =  inArr.min()
-            elif self.ParamByNm('Direction') in ['HighToLow']:
+            elif self.ArgByNm('Direction') in ['HighToLow']:
                 falseThresh =  inArr.max()
                 
-        if 'TrueThreshold' in self.Params():
-            trueThresh = self.ParamByNm('TrueThreshold')
-        elif 'Direction' in self.Params():
-            if self.ParamByNm('Direction') in ['LowToHigh']:
+        if 'TrueThreshold' in self.Args():
+            trueThresh = self.ArgByNm('TrueThreshold')
+        elif 'Direction' in self.Args():
+            if self.ArgByNm('Direction') in ['LowToHigh']:
                 trueThresh =  inArr.max()
-            elif self.ParamByNm('Direction') in ['HighToLow']:
+            elif self.ArgByNm('Direction') in ['HighToLow']:
                 trueThresh =  inArr.min()
 
         if trueThresh == falseThresh:
@@ -152,15 +152,15 @@ class CvtToFuzzyCat(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Converts integer input values into fuzzy based on user specification.'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name',
             'RawValues':['Integer List'],
             'FuzzyValues':['Fuzzy Value List'],
             'DefaultFuzzyValue':'Fuzzy Value',
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             }
         
@@ -168,8 +168,8 @@ class CvtToFuzzyCat(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
@@ -177,7 +177,7 @@ class CvtToFuzzyCat(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
         # executedObjects is a dictionary of executed MPilot function objects
         
-        inFldNm = self.ParamByNm('InFieldName')
+        inFldNm = self.ArgByNm('InFieldName')
         inObj = executedObjects[inFldNm]
         
         # Result starts with a copy of the first input field, then add the rest
@@ -194,7 +194,7 @@ class CvtToFuzzyCat(mpefp._MPilotEEMSFxnParent):
             )
 
         self._ValidateEqualListLens(['FuzzyValues','RawValues'])
-        self._ValidateParamListItemsUnique('RawValues')
+        self._ValidateArgListItemsUnique('RawValues')
             
         inArr = inObj.ExecRslt()
         
@@ -203,10 +203,10 @@ class CvtToFuzzyCat(mpefp._MPilotEEMSFxnParent):
             dtype=float
             )
 
-        self.execRslt.data[:] = float(self.ParamByNm('DefaultFuzzyValue'))
+        self.execRslt.data[:] = float(self.ArgByNm('DefaultFuzzyValue'))
 
-        fuzzyVals = self.ValFromParamByNm('FuzzyValues')
-        rawVals = self.ValFromParamByNm('RawValues')
+        fuzzyVals = self.ValFromArgByNm('FuzzyValues')
+        rawVals = self.ValFromArgByNm('RawValues')
         
         for rawVal,fuzzyVal in zip(rawVals,fuzzyVals):
             np.place(self.execRslt.data,inArr.data == rawVal,fuzzyVal)
@@ -241,14 +241,14 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Converts input values into fuzzy based on user-defined curve.'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name',
             'RawValues':['Float List'],
             'FuzzyValues':['Fuzzy Value List'],
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List'],
             }
         
@@ -256,8 +256,8 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
@@ -265,7 +265,7 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
         # executedObjects is a dictionary of executed MPilot function objects
         
-        inFldNm = self.ParamByNm('InFieldName')
+        inFldNm = self.ArgByNm('InFieldName')
         inObj = executedObjects[inFldNm]
         
         # Result starts with a copy of the first input field, then add the rest
@@ -284,7 +284,7 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
             ]
             )
         self._ValidateEqualListLens(['FuzzyValues','RawValues'])
-        self._ValidateParamListItemsUnique('RawValues')
+        self._ValidateArgListItemsUnique('RawValues')
             
         inArr = inObj.ExecRslt()
 
@@ -293,8 +293,8 @@ class CvtToFuzzyCurve(mpefp._MPilotEEMSFxnParent):
             dtype=float
             )
 
-        fuzzyVals = self.ValFromParamByNm('FuzzyValues')
-        rawVals = self.ValFromParamByNm('RawValues')
+        fuzzyVals = self.ValFromArgByNm('FuzzyValues')
+        rawVals = self.ValFromArgByNm('RawValues')
 
         zippedPoints = sorted(zip(rawVals,fuzzyVals))
 
@@ -359,12 +359,12 @@ class FuzzyUnion(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the fuzzy Union (mean) of fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name','Field Name List']
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -374,7 +374,7 @@ class FuzzyUnion(mpefp._MPilotEEMSFxnParent):
         # executedObjects is a dictionary of executed MPilot function objects
         
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ParamToList('InFieldNames')
+        fldNms = self._ArgToList('InFieldNames')
         
         # Result starts with a copy of the first input field, then add the rest
         # and divide by the number of them
@@ -416,13 +416,13 @@ class FuzzyWeightedUnion(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the weighted fuzzy Union (mean) of fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name List'],
             'Weights':['Float List']            
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -434,8 +434,8 @@ class FuzzyWeightedUnion(mpefp._MPilotEEMSFxnParent):
         self._ValidateListLen('InFldNms',1)
         self._ValidateEqualListLens(['InFieldNames','Weights'])
         
-        fldNms = self._ParamToList('InFieldNames')
-        wts = self.ValFromParamByNm('Weights')
+        fldNms = self._ArgToList('InFieldNames')
+        wts = self.ValFromArgByNm('Weights')
         
         # Result starts with a copy of the first input field, then add the rest
         # and divide by the number of them
@@ -477,14 +477,14 @@ class FuzzySelectedUnion(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the fuzzy Union (mean) of N Truest or Falsest fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
 
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name','Field Name List'],
             'TruestOrFalsest':'Truest Or Falsest',
             'NumberToConsider':'Positive Integer'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -493,8 +493,8 @@ class FuzzySelectedUnion(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
         # executedObjects is a dictionary of executed MPilot function objects
         
-        fldNms = self._ParamToList('InFieldNames')
-        numToCnsdr = self.ValFromParamByNm('NumberToConsider')
+        fldNms = self._ArgToList('InFieldNames')
+        numToCnsdr = self.ValFromArgByNm('NumberToConsider')
         
         if len(fldNms) < numToCnsdr:
             raise Exception(
@@ -536,7 +536,7 @@ class FuzzySelectedUnion(mpefp._MPilotEEMSFxnParent):
             
         stackedArr.sort(axis=0,kind='heapsort')
 
-        if self.ValFromParamByNm('TruestOrFalsest') == 'Truest':
+        if self.ValFromArgByNm('TruestOrFalsest') == 'Truest':
             self.execRslt = np.ma.mean(stackedArr[-numToCnsdr:],axis=0)
         else:
             self.execRslt = np.ma.mean(stackedArr[0:numToCnsdr],axis=0)
@@ -565,12 +565,12 @@ class FuzzyOr(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the fuzzy Or (maximum) of fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name','Field Name List']
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -579,7 +579,7 @@ class FuzzyOr(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
 
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ParamToList('InFieldNames')
+        fldNms = self._ArgToList('InFieldNames')
         
         # Traverse inputs and take maximum
         self._ValidateProgDataType(fldNms[0],executedObjects[fldNms[0]],'Fuzzy')
@@ -616,12 +616,12 @@ class FuzzyAnd(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the fuzzy And (minimum) of fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name','Field Name List']
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -630,7 +630,7 @@ class FuzzyAnd(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
 
         self._ValidateListLen('InFldNms',1)
-        fldNms = self._ParamToList('InFieldNames')
+        fldNms = self._ArgToList('InFieldNames')
         
         # Traverse inputs and take maximum
         self._ValidateProgDataType(fldNms[0],executedObjects[fldNms[0]],'Fuzzy')
@@ -666,12 +666,12 @@ class FuzzyXOr(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Computes Fuzzy XOr: Truest - (Truest - 2nd Truest) * (2nd Truest - full False)/(Truest - full False)'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldNames':['Field Name List']
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -680,7 +680,7 @@ class FuzzyXOr(mpefp._MPilotEEMSFxnParent):
     def Exec(self,executedObjects):
 
         self._ValidateListLen('InFieldNames',2)
-        fldNms = self._ParamToList('InFieldNames')
+        fldNms = self._ArgToList('InFieldNames')
         
         # Validate inputs
         for fldNm in fldNms:
@@ -744,12 +744,12 @@ class FuzzyNot(mpefp._MPilotEEMSFxnParent):
         self.fxnDesc['ShortDesc'] = 'Takes the fuzzy And (minimum) of fuzzy input variables'
         self.fxnDesc['ReturnType'] = 'Fuzzy'
         
-        self.fxnDesc['ReqParams'] = {
+        self.fxnDesc['ReqArgs'] = {
             'InFieldName':'Field Name'
             }
-        self.fxnDesc['OptParams'] = {
+        self.fxnDesc['OptArgs'] = {
             'OutFileName':'File Name',
-            'MetaData':'Any',
+            'Metadata':'Any',
             'PrecursorFieldNames':['Field Name','Field Name List']
             }
         
@@ -757,15 +757,15 @@ class FuzzyNot(mpefp._MPilotEEMSFxnParent):
 
     def DependencyNms(self):
         
-        rtrn = self._ParamToList('InFieldName')
-        rtrn += self._ParamToList('PrecursorFieldNames')
+        rtrn = self._ArgToList('InFieldName')
+        rtrn += self._ArgToList('PrecursorFieldNames')
         return rtrn
     
     # def DependencyNms(self):
 
     def Exec(self,executedObjects):
 
-        inFldNm = self.ParamByNm('InFieldName')
+        inFldNm = self.ArgByNm('InFieldName')
 
         self._ValidateProgDataType(inFldNm,executedObjects[inFldNm],'Fuzzy')
         self.execRslt = -executedObjects[inFldNm].ExecRslt()

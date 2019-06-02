@@ -1,34 +1,77 @@
+body {
+	margin:0px;
+	font-size: 14px;
+	font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	color: #333;
+}
+
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 400; src: url("../fonts/Roboto-Regular-webfont.woff"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 300; src: url("../fonts/Roboto-Light-webfont.woff"); }
+
+#header_title a{
+	text-decoration:none;
+	font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	font-weight: 300;
+	font-size: 24px;
+	color: #f5dd5d;
+}
+
+#header_links{
+	float: right;
+	padding-right: 10px;
+	font-weight: 300;
+	font-size: 11px;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	text-align: right;
+}
+
+#header_links a {
+	color: white;
+	text-decoration:none;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#header_links a:hover {
+	text-decoration:underline;
+}
+
 #upload_table {
 	font-family: tahoma;
 	margin-left: auto;
 	margin-right: auto;
-	top: -8px;
 	position: relative;
 	background-color: #fff;
 }
 
-#table_header {
-	text-align: left !important;
-	background-color: #343F57 !important;
-	color: white !important;
-	font-family: arial;
-	height: 30px;
-	line-height: 30px;
-	letter-spacing: 1px;
-	padding-left: 20px !important;
+#upload_header {
+	width: auto;
+	height: 40px;
+	padding: 10px 40px;
+	background: #417690;
+	line-height: 40px;
+	color: #ffc;
+	overflow: hidden;
 }
 
-#owner_div {
-	float: right;
-	padding-right: 10px;
-	font-size: .7em;
+#table_header{
+	text-align:left !important;
+	margin-left:10px;
+	font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	font-weight:400;
+	font-size: 12px;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	color:white !important;
+	background-color:#79AEC8 !important;
+	height:25px;
+	line-height:25px;
 }
 
 #upload_table td:first-child {
 	text-align: right;
 	background-color: #dbe3e7;
 	color: #506C9C;
-	font-weight: bold;
 	padding-right: 10px;
 	width: 185px;
 }
@@ -55,14 +98,37 @@
 	top: 210px !important;
 }
 
-#model_run_complete_alert {
+#upload_notifications {
+	color: #666565;
+	height: 180px;
+	text-align: justify;
+	margin: 5px 30px 30px 30px;
+	height: 100%;
 }
 
-#model_run_complete_alert_text{
-    color: #666565;
-	position: absolute;
+#model_run_complete_alert_text {
 	font-size: 20px;
-	margin-left: 25px;
+	margin-left: 20px;
+}
+
+#log_text {
+	font-size: 20px;
+	margin-left: 20px;
+}
+
+.status_icon{
+	width: 40px;
+	margin-left: 30px;
+	position: relative;
+}
+
+.status_header{
+	position: relative;
+	left: 10px;
+	top: -10px;
+	font-size: 20px;
+	width:160px;
+	display:inline-block;
 }
 
 #check_icon {
@@ -98,6 +164,10 @@
 	margin-left: 49px;
 }
 
+.error_text {
+	font-size:13px;
+}
+
 #spinner_div {
 	display: none;
 	background-color: rgba(255,255,255,1);
@@ -127,13 +197,89 @@
 	left: 11px;
 }
 
-#upload_form {
-}
-
 .upload_field_info_icon{
 	cursor:help;
 }
 
 #spatial_resolution_row {
 	display:none;
+}
+
+#upload_another_file_div{
+	display:none;
+	width:100%;
+	text-align:center;
+}
+
+.big_button{
+	cursor:pointer;
+	position: relative;
+	top: 50px;
+	height:100px;
+	line-height:100px;
+	width:300px;
+	color:white;
+	border-radius:5px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:tahoma;
+}
+
+#logout_button {
+	background-color: #79AEC8;
+}
+
+#go_to_eems_online_button {
+	background-color:#888aad;
+}
+
+#go_to_admin_page_button {
+	background-color: #878786;
+}
+
+#upload_another_file_button{
+	background-color:#417690;
+}
+
+.big_button:hover{
+	opacity:.9
+}
+
+#branding{
+	font-size:18px !important;
+}
+
+.alertify-cover {
+	position: fixed;
+	z-index: 99999;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: black !important;
+	opacity: .5 !important;
+}
+
+input.error {
+   	border:2px solid red;
+	box-shadow: 0px 0px 4px red;
+}
+
+textarea.error {
+	border:2px solid red;
+	box-shadow: 0px 0px 4px red;
+}
+
+label.error {
+	color: red;
+}
+
+.asterisk{
+	color:red;
+}
+
+#required_message{
+	color: gray;
+	float: left;
+	margin-left: 35px;
 }

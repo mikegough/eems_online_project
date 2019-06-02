@@ -1,0 +1,307 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+    <title> EEMS Online: California Energy Commission </title>
+
+    <link rel="icon" href="static/img/eems.png">
+
+    <script>
+
+    //eems_available_commands_json = {{ eems_available_commands_json | safe }}
+    eems_online_models_json = {{ eems_online_models_json | safe}};
+    initial_eems_model_json = {{ initial_eems_model_json | safe }};
+    hostname_for_link = "{{ hostname_for_link }}";
+
+    </script>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.css" />
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
+
+    <!-- ESRI Leaflet -->
+    <script src="https://unpkg.com/esri-leaflet@2.0.3"></script>
+
+    <!-- leaflet.grouped-layer-control-->
+    <script src="https://rawgithub.com/ismyrnow/Leaflet.groupedlayercontrol/master/src/leaflet.groupedlayercontrol.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" /><![endif]-->
+
+    <!-- CSS -->
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/custom/cec.css' %}" rel="stylesheet" />
+
+    <!-- Jquery NEEDS to be unique for each app. Get new CND link here @ https://code.jquery.com/ -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+    <!-- JIT  -->
+    <link type="text/css" href="{% static 'js/jit/my_jit/Spacetree.css' %}" rel="stylesheet" />
+    <script src="{% static 'deps/jit/Jit-2.0.1/jit.js' %}"></script>
+    <script src="{% static 'js/jit/my_jit/Spacetree.js' %}"></script>
+
+    <!-- Alertify  -->
+    <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.core.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.bootstrap.css' %}" rel="stylesheet" />
+    <script src="{% static 'deps/alertify/alertify.js-0.3.11/lib/alertify.min.js' %}"></script>
+
+    <!-- JSON EEMS Commands -->
+    <script src="{% static 'json/FuncListForMike.json' %}"></script>
+    <!-- Canvas2image -->
+    <script src="{% static 'js/html2canvas/html2canvas.js' %}"></script>
+
+</head>
+<body>
+
+    <div id="header">
+        <div id="title"><span id="title_inner"><a href="http://eemsonline.org">EEMS Online</a></span></div>
+        <div id="cec_img"><a href="http://www.energy.ca.gov/" target="_blank"><img src="{%  static 'img/custom/cec_w.png' %}"></a></div>
+    </div>
+    <div id="nav_bar">
+        <ul>
+            <li><a id="home_link" class="active" show="home">Home</a></li>
+            <li><a id="about_link" show="about" >About</a></li>
+            <li><a id="contact_link" show="contact">&nbsp Contact &nbsp</a></li>
+            <li><a id="project_link" show="project">Project Information</a></li>
+        </ul>
+        <div id="login"><a href='/login'>login</a></div>
+    </div>
+
+    <div id="login_div">
+        <li id="login"><a href='/login'>login</a></li>
+    </div>
+
+    <div id="home" class="navdiv">
+        <div id="map_container">
+           <div id="button_div">
+               <ul id="button_list" class="buttons" data-persist="false">
+                   <!--
+                   <li id="map_original_button"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_id,1000); on_map_click(last_map_click)">Original</a></li>
+                   <li id="map_modified_button" class="selected"><a onclick="swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000); on_map_click(last_map_click)">Modified</a></li>
+                   -->
+                   <li id="map_original_button"><a>Original</a></li>
+                   <li id="map_modified_button" class="selected"><a>Modified</a></li>
+               </ul>
+           </div>
+           <div id="map"></div>
+           <div title="Adjust the opacity of this layer" id='control' class='ui-opacity'>
+               <div id='handle' class='handle'></div>
+           </div>
+        </div>
+        <div id="control_panel_and_meemse_container">
+            <img id="splitter" src="static/img/splitter.png">
+            <div class="control_panel">
+               <div id="current_file" class="eems_controls">
+                   <div class="introjs-helperNumberLayer" title="Select a model from the dropdown menu">1</div>Select a model:
+                        <select id="eems_model_dropdown" name="eems_model_dropdown"></select>
+                   </div>
+                    <div id="getting_started" class="eems_controls">
+                        <div id="getting_started_text">
+                            Explore and modify the model below
+                        </div>
+                        <div class="introjs-helperNumberLayer" title="Click on a box in the diagram below to map the data and show the inputs. Click on the gear icon to modify the operator.">2</div>
+                    </div>
+                    <input type="file" id="files" name="file" style="display:none"/>
+                    <div id="model_info_div"><div id="model_info_contents"></div>
+               </div>
+            </div>
+
+            <div id="meemse_container" >
+                <div id="canvas_controls">
+                    <div id="expand_div" title="Maximize the model diagram">
+                        <img id='expand_icon' src='static/img/expand.png'>
+                    </div>
+                    <div id="collapse_div" title="Shrink the model diagram">
+                        <img id='collapse_icon' src='static/img/collapse.png'>
+                    </div>
+                    <div id="save_div">
+                        <img id='save_icon' title="Save an image of the model diagram" src='static/img/save.svg'>
+                    </div>
+                </div>
+
+                <div id="spinner_div">
+                    <div>
+                        <img id="spinner_img" src="{% static 'img/spinner.svg' %}">
+                    </div>
+                    <p/>
+                    <div id="spinner_text">Running EEMS...</div>
+                </div>
+                <div id="log"></div>
+                <div id="infovis"></div>
+            </div>
+
+
+                <div id="run_and_save" class="control_panel" title="These options become availble after a model run has completed">
+                    <div id="run_eems_div" class="eems_controls" title="This option becomes available once one or more changes are made to the model above">
+                        <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
+                        <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
+                        <div id="quality_selector_div">
+                            Map Quality
+                            <select id="map_quality">
+                                <option value="6,8">Low (fastest)
+                                <option value="12,16" checked="checked">Medium (fast)
+                                <option value="24,32">High (slowest)
+                            </select>
+                        </div>
+                    </div>
+                    <div id="save_eems_div" class="eems_controls deactivate" >
+                        <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">4</div>
+                        <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
+                            Get Link <img id="link_img" src="{% static '/img/link.png' %}">
+                        </label>
+                        <label title="Click to download data the model results"  class="alertify-button alertify-button-ok save_label" id="download_label">
+                            Download <img id="download_file" src="{% static '/img/download.png' %}">
+                        </label>
+                    </div>
+                    <!--
+                    <button id="modify_eems_button" class="alertify-button alertify-button-ok">Modify</button>
+                    -->
+                    <!-- COMMENT OUT BROWSE BUTTON FOR NOW
+                    <label for="files" class="alertify-button alertify-button-ok" id="files_label">
+                    Browse <img id="open_file" src="{% static '/img/open.svg' %}">
+                    </label>
+                    -->
+                </div>
+        </div>
+    </div>
+
+    <div id="about" class="navdiv center_text_block">
+        <div id="about_contents">
+            <h2>What is EEMS Online?<div id="manual"><a title="Click to download the EEMS 2.0 desktop manual" href="static/docs/EEMS2.0_Manual.pdf" download><img id="manual_icon" src="/static/img/manual.png"><br>EEMS Manual</a></div></h2>
+            EEMS Online is a web-based mapping and modeling system developed by the <a target="_blank" href="http://consbio.org">Conservation Biology Institute (CBI)</a>. It is designed to allow the user to explore, modify, and run models constructed within the Environmental Evaluation Modeling System (EEMS),
+             a fuzzy-logic modeling system developed by <a target="_blank" href="https://consbio.org/people/staff/tim-sheehan">Tim Sheehan,</a> an ecological modeler at CBI.
+
+            For more information about EEMS and fuzzy logic, or to download the EEMS software package, click <a target="_blank" href="https://consbio.org/products/tools/environmental-evaluation-modeling-system-eems">here</a>. EEMS is available as a set of script tools in an ArcGIS toolbox, or as a standalone command-line based program. An EEMS manual is included with the software package, but it can also be downloaded separately by clicking <a href="/static/docs/EEMS2.0_Manual.pdf" download target="_blank">here</a>.
+            <h2>Getting Started</h2>
+            To get started with EEMS Online, select a model from the dropdown menu (labeled #1 in the control panel shown below). A short description provides some basic background information about the model. Click on the "Learn more"
+                link for additional information.
+                <figure>
+                    <img id="screen_capture_1" class="screen_capture" src="/static/img/screen_capture_1.png">
+                    <figcaption>Fig.1 - Use the dropdown menu to select a model.</figcaption>
+                </figure>
+            Once you have selected a model, you can use the interactive diagram on the left-hand side of the screen to explore the model, and optionally, make changes to the model. Clicking any node in the diagram will display the corresponding dataset in
+            the map and expand the node to show any input variables. Clicking the gear icon on any node brings up a dialog box that allows you to make changes to the operator, or change the operator to a different operator (Fig 2).
+            The histogram to the right of the operator selection menu shows the distribution of data for the current node. The Y-Axis indicates the number of reporting units that have the corresonding value on the X-Axis.
+            The available options will vary depending on the node's current operator.
+                <figure>
+                    <img id="screen_capture_2" class="screen_capture" src="/static/img/screen_capture_2.png">
+                    <figcaption>Fig.2 - Clicking the gear icon on any node allows you to make changes to the operator.</figcaption>
+                </figure>
+
+            <h2>Available Operators</h2>
+            The table below lists the set available operators, along with the type of data expected as input and a brief description:
+            <p>
+             <table class="tableizer-table">
+             <thead><tr class="tableizer-firstrow"><th>Operator</th><th>Input Data</th><th>Description</th></tr></thead><tbody>
+             <tr><td>AND</td><td>Fuzzy</td><td>Finds the AND value of the inputs (minimum value).</td></tr>
+             <tr><td>&nbsp;</td><td>&nbsp;</td><td> (previously OrNEG in EEMS version 1.0)</td></tr>
+             <tr><td>CONVERT TO FUZZY</td><td>Raw</td><td>Converts a field's values into fuzzy values.</td></tr>
+             <tr><td>Convert To Fuzzy Category</td><td>Raw</td><td>Converts a field's values into fuzzy values by using the user defined category values and matching fuzzy values. Input values that are not in the user defined categories are assigned the user-defined default fuzzy value.</td></tr>
+             <tr><td>EEMS Convert To Fuzzy Curve</td><td>Raw</td><td>Converts a field's values into fuzzy values for EEMS (Environmental Evaluation Modeling System), using linear interpolation between user defined points on an approximation of a curve.</td></tr>
+             <tr><td>Difference</td><td>Raw</td><td>Computes the difference sum for each row of the inputs.</td></tr>
+             <tr><td>EEMS EMDS And</td><td>Fuzzy</td><td>Fuzzy logic operator for EEMS (Environmental Evaluation Modeling System). Finds the EMDS AND value of the inputs. The formula is min + [(mean - min) * (min + 1) / 2]</td></tr>
+             <tr><td>Max</td><td>Raw</td><td>Finds the maximum for each row of the input fields.</td></tr>
+             <tr><td>Mean</td><td>Raw</td><td>Finds the mean for each row of the input fields.</td></tr>
+             <tr><td>Min</td><td>Raw</td><td>Finds the minimum for each row of the input fields.</td></tr>
+             <tr><td>Not</td><td>Fuzzy</td><td>Logical NOT for fuzzy modeling. Reverses the sign of values of the input field.</td></tr>
+             <tr><td>OR</td><td>Fuzzy</td><td>Finds the truest value of the inputs (maximum value).</td></tr>
+             <tr><td>SELECTED UNION</td><td>Fuzzy</td><td>Finds the union value (mean) of the specified number of TRUEest or FALSEest inputs.</td></tr>
+             <tr><td>SUM</td><td>Raw</td><td>Computes the sum of the inputs.</td></tr>
+             <tr><td>UNION</td><td>Fuzzy</td><td>Finds the union value of the inputs (mean value).</td></tr>
+             <tr><td>Weighted EMDS And</td><td>Fuzzy</td><td>Finds the weighted EMDS AND value of the inputs. The formula is min + [(mean - min) * (min + 1) / 2] where the mean is weighted.</td></tr>
+             <tr><td>WEIGHTED MEAN</td><td>Raw</td><td>Finds the weighted mean for each row of the input fields.</td></tr>
+             <tr><td>WEIGHTED SUM</td><td>Raw</td><td>Finds the weighted sum for each row of the input fields. Multiplies each field by its weight before adding. Like a weighted mean without the division.</td></tr>
+             <tr><td>WEIGHTED UNION</td><td>Fuzzy</td><td>Finds the weighted union (mean) for each row of the input fields.</td></tr>
+             <tr><td>XOR</td><td>Fuzzy</td><td>Finds the fuzzy EXCLUSIVE OR value of the inputs by comparing the two truest values. If both are fully true or fully false, false is returned. Otherwise it applies the formula: (truest value - second truest value) / (full true - full false)</td></tr>
+             </tbody></table>
+
+            <h2>Selecting an Operator</h2>
+            <p>EEMS presents the user with choices for many operators and finding the right one can be confusing at first. The guidelines presented here will help you choose the right operator, but remember, sometimes it is best to experiment with several choices to make sure the operator you choose is appropriate for your model.</p>
+            <p>EEMS has operators designed to work on data before they are converted into fuzzy numerical space (i.e. when they are still in <em>raw</em> space) and those designed to work on data after they are converted into fuzzy space (see the above table). A user should respect that distinction. Using a non-fuzzy operator on fuzzy data can produce a result that falls outside the -1 to +1 continuum of fuzzy space. Doing this produces an invalid model.</p>
+            <p><strong>Weighted Sum</strong></p>
+            <p>The operators used in raw space are for the most part pretty straightforward. However the Weighted Sum operator merits a discussion. A <strong>Weighted Sum </strong>takes two or more inputs, and multiplies each of them by a weight before adding them. It has proven especially valuable with combining data of very similar types into one result that is then converted into fuzzy space. For example, if you were evaluating a region for intactness, the negative impact of paved roads might be considered similar to but greater than that of dirt roads. Their effects are additive, but a sum operator is not available in fuzzy space. To apply the <strong>Weighted Sum</strong> operator you might provide a weight of 1 to the paved road density and a weight of 0.5 to the dirt road density. In models that have done this, the result has been labeled &ldquo;Effective Road Density.&rdquo;</p>
+            <p><strong>And, Or, </strong>and<strong> Union</strong></p>
+            <p><strong>And, Or</strong> and <strong>Union</strong> are the most common EEMS operators used. The choice between <strong>And, Or, </strong>and <strong>Union</strong> depends on the relationship of the input data to the question you are asking. <strong>Or</strong> returns the highest fuzzy value of any of the inputs, it is appropriate when any of the inputs is sufficient for your desired outcome. For example if you were evaluating a region in which three critically endangered species were present in some locations, you could use an <strong>Or </strong>to combine <em>presence of species A</em>, <em>presence of species B</em>, and <em>presence of species C</em> into <em>high preserve value</em>. The presence of any of the three species would cause a map reporting unit to have a high fuzzy value. <strong>And </strong>is used when all inputs are necessary for the result to be high. For instance, if both habitat for and presence of a species of interest were required to consider a location as a preserve, you could combine <em>species presence</em> and <em>habitat density</em> with an <strong>And </strong>to produce <em>high preservation value</em>. <strong>And </strong>chooses the lowest fuzzy value of the inputs so that high fuzzy values for both conditions are necessary to yield a high fuzzy value for the result. <strong>Union</strong> takes the mean of the input values. <strong>Union</strong> allows each input to exert an influence on the result. If all inputs have a high value, the result will have a high fuzzy value; if all have a low value, the result will be low. If some are high and some are low, the result will be somewhere in between. Going back to our preserve example, we know if the species is present, the location has value as a preserve. If the habitat is present there is some value, too. If they are both present then the value is the highest. Union will yield that result. A <strong>Weighted Union</strong> is similar to <strong>Union</strong>, except that it allows a weight to the inputs. In our preserve example, if <em>habitat density</em> is more important than <em>species presence </em>(for instance in an area where remnant populations are under stress and habitat has been restored in areas where the species has not been able to recolonize) then you could provide a greater weight to <em>habitat density</em>.</p>
+            <p><strong>Selected Union</strong></p>
+            <p>The Selected Union represents a combination of <strong>Or</strong> (or <strong>And</strong>) and <strong>Union</strong>. Consider a study area that includes many different types of habitat, for example, a basin and range terrain. Some species of concern are found in valleys, others inhabit the foothills, and others the high mountains. What if there are 30 species of concern? The more species of concern in a location, the more valuable the location, but nowhere are they all found together. The <strong>Selected Union</strong> allows for the evaluation of such a study area. With the <strong>Selected Union</strong>, you choose a number of the truest (or falsest) of inputs to evaluate. In the basin and range example, you might choose five. A location with a high density of five (or more) species of concern would have a high fuzzy value for <em>high species diversity</em>. As the density of species of concern falls, so does the fuzzy value for <em>high species diversity</em>. A <strong>Selected Union</strong> with a parameter of 5 Truest would do just that. It performs a <strong>Union</strong> operation on the five inputs with the highest fuzzy values.</p>
+
+            <h2>Running the model</h2>
+
+            You may specify any number of changes to the model. Operators that have been modified will be highlighted in yellow. Once you are satisfied with your changes, click the "Run the model" button labeled #3 on the EEMS Online Control Panel. The model run may take anywhere from several seconds to several minutes
+            to complete, depending on the complexity of the model and the spatial extent and resolution of the input data.
+            </p>
+            Once the model run is complete, the changes will be reflected in the map. The buttons above the map allow you to change the map display between the original version and the modified version (shown below).
+            <figure>
+                <img id="screen_capture_3" class="screen_capture" src="/static/img/screen_capture_3.png">
+                <figcaption>Fig.3 - Use the buttons highlighted above to switch between the original and modified versions of a model run.</figcaption>
+            </figure>
+            Once you have conducted a model run, you have the option of either making additional changes to the model and rerunning it, or, if you are satisfied with the results, you can click the Download button to download the output and associated model content, or push the Get Link button which will allow you to share the modified model or access the modified model through EEMS Online at a later time.
+            <br>
+            <br>
+            <br>
+        </div>
+
+    </div>
+    <div id ="project" class="navdiv center_text_block">
+        <div id="project_contents">
+            <h2>About the CEC Project </h2>
+            <img id="cec_project_img" src="/static/img/custom/renewable.jpg">
+            CBI is providing science and technical support to assist the California Energy Commission (CEC) in planning the state's future energy needs, which includes achieving aggressive renewable energy goals with minimal damage to natural systems. Building off of previous work completed for the Desert Renewable Energy Conservation Plan (DRECP), CBI is working to improve access and transparency of scientific data, maps and analysis. As a subset of the work, CBI is supporting the  Renewable Energy Transmission Initiative 2.0 (RETI). RETI, according to the CEC, "is an open, transparent, and science-based process that will explore the abundant renewable generation resources in California and throughout the West, consider critical land use and environmental constraints, and identify potential transmission opportunities that could access and integrate renewable energy with the most environmental, economic, and community benefits."
+            <p>
+            CBI is developing additional data, models, tools, and technical assistance that align with statewide energy and climate change adaptation planning. This work extends the information and tools previously built for the DRECP planning region to other areas of the state particularly in areas with high renewable energy potential.
+            <p>
+            Climate change and related impacts such as drought and wildfire are growing concerns throughout the state. In response, CBI is developing additional datasets and visualization applications to put this information into statewide context. CBI will deliver this data and information to the CEC and other California State agencies.
+
+        </div>
+    </div>
+
+    <div id="contact" class="navdiv">
+        <img id="cbi_logo" src="/static/img/logo.gif">
+        <h2>Conservation Biology Institute</h2>
+        </p>
+        </p>
+        <b>Address:</b> 136 SW Washington Ave # 202, Corvallis, OR 97333
+        </p>
+        <b>Phone: </b>(541) 757-0687
+        </p>
+        <b>Website:</b> <a href="http://consbio.org" target="_blank">http://consbio.org</a>
+        </p>
+        <b>email: </b>info@consbio.org
+	    </p>
+        <br>
+        <img id="cbi_logo" src="/static/img/tim2_200x200.JPG">
+        <h2>Tim Sheehan</h2>
+        </p>
+        </p>
+        <b>Phone: </b>(541) 368-5810
+        </p>
+        <b>email: </b>tim@consbio.org
+    </div>
+
+    <div id="footer" class="no-print">
+        <img src="{% static 'img/CBI_logo_sm.png' %}"><span style="position:relative; bottom:6px"> &copy; 2017 <a href="http://consbio.org" target="_new">Conservation Biology Institute</a> | <a href="mailto:info@consbio.org">info@consbio.org</a></span>
+    </div>
+
+    <!-- Leaflet Map -->
+    <script src="{% static 'leaflet/leaflet_map.js' %}"></script>
+
+    <!-- Upload Files -->
+    <script src="{% static 'js/file_upload.js' %}"></script>
+
+    <!-- General Javascript -->
+    <script src="{% static 'js/general_js.js' %}"></script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-76493740-10', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+</body>
+</html>

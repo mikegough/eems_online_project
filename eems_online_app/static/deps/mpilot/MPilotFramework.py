@@ -109,7 +109,7 @@ class MPilotFramework(object):
 
         return rtrn
     
-    # def GetAllFxnClassInfo(self,verbose=False):
+    # def GetAllFxnClassInfo(self):
 
     def GetAllFormattedFxnClassInfo(self):
         
@@ -123,5 +123,15 @@ class MPilotFramework(object):
     # def GetAllFxnClassInfo(self,verbose=False):
 
     def FxnNames(self): return sorted(self.pilotFxnClasses.keys())
+
+    def GetFxnFormattedClassInfo(self,pilotFxnNm):
+
+        rtrn = None
+        
+        if pilotFxnNm in self.pilotFxnClasses.keys():
+            with getattr(self.pilotFxnClasses[pilotFxnNm]['mod'],pilotFxnNm)() as fxn:
+                rtrn = fxn.FormattedFxnDesc()
+
+        return rtrn
     
 # class MPilotFramework(object):

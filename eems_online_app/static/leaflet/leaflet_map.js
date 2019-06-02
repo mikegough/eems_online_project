@@ -37,7 +37,7 @@ var dynamic_legend = L.control({position: 'bottomright'});
 //Initialize Legend
 dynamic_legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend');
-    div.innerHTML=""
+    div.innerHTML = "";
     return div;
 };
 
@@ -107,3 +107,68 @@ elements=document.getElementsByClassName('ui-opacity')
 for (var i = 0; i < elements.length; i++) {
     elements[i].style.display = elements[i].style.display = 'inline';
 }
+
+var marker = null;
+var json_eems_results = null;
+
+function on_map_click(e) {
+
+    last_map_click = e;
+
+    $(".eems_value").remove();
+    $(".node").append("<div class='eems_value'><img class='eems_value_spinner' src='static/img/eems_value_spinner.gif'></div>");
+
+    if (marker !== null) {
+        map.removeLayer(marker);
+    }
+    wkt = "POINT(" + e.latlng.lng + " " + e.latlng.lat + ")";
+    marker = new L.marker(e.latlng).addTo(map);
+
+    $.ajax({
+        url: "/get_raster_data", // the endpoint
+        type: "POST", // http method
+        data: {
+            'wkt': wkt,
+            'model_id': eems_model_id_for_map_display,
+            'original_model_id': eems_model_id,
+        },
+
+        // handle a successful response
+        success: function (results) {
+
+            json_eems_results = JSON.parse(results);
+            update_tree_values(json_eems_results)
+        },
+
+        // handle a non-successful response
+        error: function (xhr, errmsg, err) {
+        }
+    });
+}
+
+map.on('click', on_map_click);
+
+function update_tree_values(json_eems_results) {
+    $.each(json_eems_results, function (key, value) {
+        $(".eems_value").remove().promise().then(function () {
+            $("#" + key).append("<div class='eems_value'>" + value + "</div>");
+        });
+    });
+}
+
+$("#map_original_button").on("click", function(){
+    swapImageOverlay(last_layer_clicked,eems_model_id,1000);
+    eems_model_id_for_map_display = eems_model_id;
+    if (typeof last_map_click != "undefined") {
+        on_map_click(last_map_click);
+    }
+});
+
+$("#map_modified_button").on("click", function(){
+    swapImageOverlay(last_layer_clicked,eems_model_modified_id,1000);
+    eems_model_id_for_map_display = eems_model_modified_id;
+    if (typeof last_map_click != "undefined") {
+        on_map_click(last_map_click);
+    }
+});
+

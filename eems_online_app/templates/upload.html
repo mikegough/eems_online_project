@@ -10,31 +10,23 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+
     <!-- Alertify  -->
     <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.core.css' %}" rel="stylesheet" />
     <link type="text/css" href="{% static 'deps/alertify/alertify.js-0.3.11/themes/alertify.bootstrap.css' %}" rel="stylesheet" />
     <script src="{% static 'deps/alertify/alertify.js-0.3.11/lib/alertify.min.js' %}"></script>
 
-    <script>
-        username = "{{ username }}"
-    </script>
-
-
 </head>
 <body>
+<div id="upload_header"> <span id="header_title"> <a href="/">EEMS Online</a></span><div id="header_links">Welcome, <span id="username"><strong>{{ username }}</strong></span> / <a href="/">EEMS Online</a> / <a href='/admin'> Admin</a> / <a href="/admin/password_change/">Change Password </a> / <a href='/logout'> Log out</a> </div></div>
 <div id="upload_form">
-<div id="spinner_div">
-    <div><img id="spinner_img" src="{% static 'img/spinner.svg' %}"></div> <p/>
-    <div id="spinner_text">Uploading Model...</div>
-</div>
     <table id="upload_table">
         <tr>
-            <td colspan="2" id="table_header"> EEMS Online Upload Form <div id="owner_div"> Logged in as <span id="owner">{{ username }}</span></div></td>
-        </tr>
+            <td colspan="2" id="table_header"> Model Upload Form </td>
         </tr>
         <tr>
-        <tr>
-            <td>Dataset <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be a NetCDF file with a .nc extension or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip)"></td>
+            <td>Dataset<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{%  static '/img/info.png' %}" title="Can either be a NetCDF file with a .nc extension, a zipped NetCDF file, or a zipped FGDB containing a single feature class (e.g., eems_output.gdb.zip). Note that large files may not upload successfully (The size limit is currently estimated to be around 800MB). Note also that only coordinate systems/projections supported by GDAL out-of-the box are allowed. USA_Contiguous_Albers_Equal_Area_Conic_USGS_version is not currently a supported coordinate system."></td>
             <td>
                 <form id="file_form" method="POST" enctype="multipart/form-data">
                 <input id="data_file" name="file" type="file">
@@ -42,34 +34,64 @@
             </td>
         </tr>
         <tr id="spatial_resolution_row">
-            <td>Spatial Resolution <img class="upload_field_info_icon" src="static/img/info.png" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system."></td><td><input id="resolution" type="number"></td>
+            <td>Spatial Resolution <img class="upload_field_info_icon" src="{% static '/img/info.png' %}" title="Applicable only for FGDB feature class uploads. Used when converting the feature class to a NetCDF file. The units will match the units of the input dastaset's coordinate system. If a value is not provided, a default resolution of 1000 will be used."></td><td><input id="resolution" type="number"></td>
         </tr>
         <tr>
-            <td>Command File <img class="upload_field_info_icon" src="static/img/info.png" title="Can either be an EEMS 2.0 command file with a .eem extension or an EEMS 3.0 command file with a .mpt extension"> </td>
+            <td>Command File<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Can either be an EEMS 2.0 command file with a .eem extension or an EEMS 3.0 command file with a .mpt extension"> </td>
             <td>
                 <input id="command_file" name="file" type="file">
                 </form>
             </td>
         </tr>
+        <form id="upload_form_text">
         <tr>
-            <td>Model Name <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model"> </td><td><input id="model_name" type="text"></td>
+            <td>Model Name<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the name of the model"> </td><td><input id="model_name" name="model_name" type="text"></td>
         </tr>
         <tr>
-            <td>Model Author <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the name of the model's author"> </td><td><input id="model_author" type="text"></td>
+            <td>Model Author<span class="asterisk">*</span> <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the name of the model's author"> </td><td><input id="model_author" name="model_author" type="text"></td>
         </tr>
         <tr>
-            <td>Creation Date <img class="upload_field_info_icon" src="static/img/info.png" title="Enter in the date the model was created"> </td><td><input id="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
+            <td>Creation Date <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Enter in the date the model was created"> </td><td><input id="creation_date" name="creation_date" placeholder="dd/mm/yyyy" type="text"></td>
         </tr>
         <tr>
-            <td>Short Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description"></textarea></td>
+            <td>Project <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="The project that this model is associated with. Double click in the text box to see a list of the current models."> </td><td>
+            <input type="text" list="project_list" id="project"/>
+            <datalist id="project_list" style="cursor:pointer">
+                {%   for project in project_list %}
+                        <option value={{ project }}> {{ project }}</option>
+                {%  endfor  %}
+            </datalist>
+            </td>
         </tr>
         <tr>
-            <td>Long Description<img class="upload_field_info_icon" src="static/img/info.png" title="Provide a longer description of your model"> </td><td><textarea id="long_description"></textarea></td>
+            <td>Short Description<span class="asterisk">*</span><img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Provide a short description of your model (max length = 300 characters)"> </td><td><textarea  maxlength="300" id="short_description" name="short_description" ></textarea></td>
         </tr>
         <tr>
-            <td colspan="2"> <input type="button" class="button" name="submit" value="submit" id="submit" /></td>
+            <td>Long Description<img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="Provide a longer description of your model"> </td><td><textarea id="long_description" name="long_description"></textarea></td>
         </tr>
+        <!-- Uncomment to allow for SFTP uploads of large datasets.
+            Need to SFTP a directory containing a .eem file and an EEMS model to the uploads directory on the server.
+            Users then fills out the form as normal. Currently need to supply a fake dataset and command file in the upload form.
+        -->
+        <!--
+            <tr>
+                <td>SSH Upload Directory <img class="upload_field_info_icon" src="{% static 'img/info.png' %}" title="For manual SSH upload of files that are too large to upload through this web form. Leave this field empty for regular uploads. Contact tech support for help with using this feature."> </td><td><input type="text" id="ssh_dir_name" name="ssh_dir_name"></input> (Leave this field empty for regular uploads)</td>
+            </tr>
+        <tr>
+        -->
+            <td colspan="2"><span id="required_message"><span class="asterisk">*</span> Indicates a required field</span><input type="button" class="button" name="submit" value="submit" id="submit" /></td>
+        </tr>
+    </form>
     </table>
+</div>
+<div id="upload_another_file_div">
+    <div id="upload_another_file_button" class="big_button">Upload another EEMS Model</div>
+    <br>
+    <div id="go_to_eems_online_button" class="big_button">Go to EEMS Online</div>
+    <br>
+    <div id="go_to_admin_page_button" class="big_button">Go to the Admin page</div>
+    <br>
+    <div id="logout_button" class="big_button">Logout</div>
 </div>
 
     <!-- Upload function -->
