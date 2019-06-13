@@ -633,6 +633,7 @@ li a.active {
 
 #input_nodes {
 	max-width: 330px;
+	max-height: 15vh;
 	overflow-x: auto;
 	font-size: .9em;
 }
@@ -791,7 +792,9 @@ ul.buttons li.selected a:hover
 	width: 650px;
 	margin-top: 40px;
 	z-index: 9999;
-	word-break:break-all;
+	word-break: break-all;
+	max-height: 20vh;
+	overflow-x: auto;
 }
 
 .histogram_div {
