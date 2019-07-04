@@ -1,0 +1,291 @@
+body {
+	margin: 0px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+#header {
+	background: #555555;
+	background: white;
+	position: relative;
+    border-bottom: 0px solid #B6BFD3
+}
+
+.partners_table{
+	float:right
+}
+.partners_table img{
+	height:80px;
+}
+
+#title {
+	color: white;
+	font-family: helvetica;
+	font-size: 25px;
+	line-height: 65px;
+	font-weight: normal;
+	margin-left: 150px;
+	padding-left: 110px;
+	text-shadow: none;
+	color: #427730 !important;
+	font-family: Book Antiqua,Palatino,Palatino Linotype,Palatino LT STD,Georgia,serif;
+	font-variant: small-caps;
+	letter-spacing: 5px;
+}
+
+#home{
+	display:none;
+}
+
+#project {
+	display: block;
+	position: relative;
+	background-image: url('../../img/custom/cnps/bodie-hills-alpine-wick-1800x800.jpg');
+	background-repeat: no-repeat;
+	height: calc(100vh - 134px);
+	width: 100vw;
+	padding: 0px;
+	top: 0px;
+}
+
+#project_link {
+	width: 140px;
+}
+
+li a.active {
+	color: #5d5d5d;
+	font-weight: bold;
+	background-color: #FF9E16;
+	box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.1), -2px 2px 5px 1px rgba(0, 0, 0, 0.1);
+}
+
+#nav_bar {
+	top:0px;
+	left: 0px;
+	z-index: 99999;
+	position: relative;
+	width: 100%;
+}
+
+#nav_bar ul{
+	background-color:#E36831;
+	background-color:#E06525;
+	background-color:#D45F22;
+	background-color:#426D86;
+	background-color:#647680;
+	background-color:#7B614A;
+	background-color:#6D3811;
+	background-color:#5378AD;
+	background-color:#E06525;
+	background-color:#B18D69;
+	background-color:#B66355;
+	background-color:#A2675A;
+	background-color:#B2693C;
+	background-color:#B25D3C;
+	background-color:#555;
+}
+
+.center_text_block_contents li{
+	float:none;
+}
+
+li a {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 10px 30px;
+	text-decoration: none;
+	font-family: Verdana;
+	font-size: .9em;
+	letter-spacing: 0px;
+}
+
+/*
+li a.active {
+	color: white;
+	background-color: #4CAF50;
+}
+*/
+li a.active {
+	color: #545454;
+}
+
+#custom_logo {
+	height: 60px;
+	top: 4px;
+	position: absolute;
+	margin-left: 12px;
+}
+
+#eems_div {
+	line-height: 16px;
+	font-variant: all-petite-caps;
+	font-size: 1.2em;
+	font-family: Helvetica;
+	letter-spacing: 1px;
+	text-indent: 0px;
+	text-shadow: 0 0 0 black;
+	float: left;
+	position: relative;
+	margin-right: 6px;
+	float: right;
+	top: 17px;
+}
+
+
+#eems_link{
+	color:#427730 !important;
+	float:left;
+	font-weight: Bold;
+}
+
+#eems_link {
+    color:
+	float: left;
+	font-weight: Bold;
+}
+
+#eems_link:hover {
+	text-decoration: none;
+
+}
+
+#eems_logo {
+	height: 40px;
+	float: right;
+}
+
+#powered_by {
+	font-size: .7em;
+	font-weight: normal;
+	/* Letter spacing, browser specific, below */
+}
+
+/* Lettter spacing for Firefox */
+@-moz-document url-prefix() {
+	#powered_by{
+		letter-spacing:5px !important;
+	}
+}
+
+/* Lettter spacing for Chrome */
+@media screen and (-webkit-min-device-pixel-ratio:0)
+and (min-resolution:.001dpcm) {
+	#powered_by{
+		letter-spacing:4px
+	}
+}
+
+#project_img {
+	float: left;
+	margin: 0px 20px 10px 0px;
+}
+
+#report{
+	display:none;
+}
+
+.header_image {
+	width: 400px
+}
+
+.center_text_block h2 {
+	background-color: #e6e6e6;
+	padding: 18px;
+	border-radius: 0px;
+	color: #5d5d5d;
+	margin-bottom: 35px;
+    font-family: verdana;
+	font-size:1.3em;
+
+}
+
+#contact {
+	white-space: nowrap;
+	display: none;
+	position: absolute;
+	top: 106px;
+	padding: 20px 60px 100px 60px;
+	font-family: tahoma;
+	color: #5d5d5d;
+}
+
+#footer {
+	font-size: 12px;
+	font-family: verdana;
+	color: white;
+	bottom: 0px;
+	right: 0px;
+	position: fixed;
+	text-align: right;
+	z-index: 9999999;
+	width: 101%;
+	background-color: #1e1e1e;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-right: 20px;
+	padding-top: 2px;
+	line-height: 13px;
+	opacity: 0.9;
+}
+
+#project_overlay {
+	bottom: 18%;
+	position: fixed;
+	background-color: #0000005e;
+	width: 100%;
+	height: 200px;
+	text-align: right;
+	font-size: 40px;
+	color: white;
+}
+
+#project_overlay_text {
+    margin-right:50px;
+}
+
+#project_overlay_text h3{
+    font-size:50px;
+	padding: 0px;
+	line-height: 0px;
+}
+
+#project_bottom {
+	bottom: 28px;
+	position: fixed;
+	background-color: #9AD1DC;
+	width: 100%;
+	height: 103px;
+	text-align: right;
+	font-size: 40px;
+	color: white;
+}
+
+#project_bottom_text{
+	width: 120px;
+	position: absolute;
+	right: 50px;
+	background-color: orange;
+	padding: 10px 20px;
+	font-size: 16px;
+	color: white;
+	text-align: Center;
+	bottom: 22px;
+	font-weight: bold;
+	font-family: "Nunito Sans", Arial, Helvetica, sans-serif;
+	color:white;
+
+}
+
+#project_bottom_text a{
+	color: white;
+}
+
+#project_bottom_text:hover {
+    background-color: #FFB148;
+}
+
+#footer a {
+	color: white;
+}
+
