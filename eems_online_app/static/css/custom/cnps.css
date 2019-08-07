@@ -33,19 +33,59 @@ body {
 	letter-spacing: 5px;
 }
 
-#home{
+#model{
 	display:none;
 }
 
-#project {
+#home{
 	display: block;
 	position: relative;
-	background-image: url('../../img/custom/cnps/bodie-hills-alpine-wick-1800x800.jpg');
+	/*background-image: url('../../img/custom/cnps/bodie-hills-alpine-wick-1800x800.jpg');*/
+	background-image: url('../../img/custom/cnps/Picture1.jpg');
 	background-repeat: no-repeat;
 	height: calc(100vh - 134px);
 	width: 100vw;
 	padding: 0px;
 	top: 0px;
+}
+
+.tab_content{
+	position: relative;
+	display: none;
+	background-repeat: no-repeat;
+	height: calc(100vh - 134px);
+	width: 100vw;
+	padding: 0px;
+	top: 0px;
+}
+
+.tab_content h3{
+	font-variant: all-petite-caps;
+}
+
+#program{
+	background-image: url('../../img/custom/cnps/Picture2.jpg');
+}
+
+#about_eems{
+	background-image: url('../../img/custom/cnps/Picture4.jpg');
+}
+
+#review_instructions{
+	background-image: url('../../img/custom/cnps/Picture5.jpg');
+}
+
+#links{
+	background-image: url('../../img/custom/cnps/Picture4.jpg');
+}
+
+#contact_client{
+	background-image: url('../../img/custom/cnps/Picture7.jpg');
+}
+
+#client_contact_table td{
+	vertical-align:top;
+	padding:0px 20px 20px 0px;
 }
 
 #project_link {
@@ -229,7 +269,45 @@ and (min-resolution:.001dpcm) {
 	opacity: 0.9;
 }
 
-#project_overlay {
+.tab_scroll_wrapper {
+	position: absolute;
+    width: 80%;
+    height: 100%;
+    overflow: hidden;
+	margin:10%;
+}
+
+.tab_overlay {
+	background-color: #0000005e;
+	font-size: 1.3em;
+	color: white;
+	line-height: 1.4;
+	height: calc(100% - 300px);
+	overflow-y: scroll;
+	box-sizing: content-box;
+	width: calc(100% - 90px);
+	overflow-x: hidden;
+	padding-top: 20px;
+	padding-left: 50px;
+	padding-right: 60px;
+}
+
+.tab_overlay a{
+	color:#FFC000;
+}
+
+.img_center_wrapper{
+	width:100%;
+    text-align:center;
+}
+
+#ipa_model{
+	margin-top:20px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#home_overlay {
 	bottom: 18%;
 	position: fixed;
 	background-color: #0000005e;
@@ -240,17 +318,18 @@ and (min-resolution:.001dpcm) {
 	color: white;
 }
 
-#project_overlay_text {
+#home_overlay_text {
     margin-right:50px;
 }
 
-#project_overlay_text h3{
+#home_overlay_text h3{
     font-size:50px;
 	padding: 0px;
 	line-height: 0px;
 }
 
-#project_bottom {
+#home_bottom {
+	display:none;
 	bottom: 28px;
 	position: fixed;
 	background-color: #9AD1DC;
@@ -261,7 +340,7 @@ and (min-resolution:.001dpcm) {
 	color: white;
 }
 
-#project_bottom_text{
+#home_bottom_text{
 	width: 120px;
 	position: absolute;
 	right: 50px;
@@ -277,11 +356,11 @@ and (min-resolution:.001dpcm) {
 
 }
 
-#project_bottom_text a{
+#home_bottom_text a{
 	color: white;
 }
 
-#project_bottom_text:hover {
+#home_bottom_text:hover {
     background-color: #FFB148;
 }
 

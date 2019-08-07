@@ -56,7 +56,8 @@
 
     <div id="header">
         <img id="custom_logo" src="{%  static 'img/custom/cnps/cnps.gif' %}">
-        <div id="title">Botanical Modeling System</div>
+        <!--<div id="title">Botanical Modeling System</div>-->
+        <div id="title">Important Plant Areas</div>
         <div id="eems_div">
             <a id="eems_link" href="http://eemsonline.org">
                 <div id="powered_by">Powered By<br></div>EEMS Online
@@ -68,12 +69,16 @@
     </div>
     <div id="nav_bar">
         <ul>
-            <li><a id="project_link" class="active" show="project">Home</a></li>
-            <li><a id="home_link" show="home">Model Exploration</a></li>
-            <li><a id="report_link" show="report">Report</a></li>
-            <li><a id="links_link" show="links">Links</a></li>
+            <li><a id="home_link" class="active" show="home">Home</a></li>
+            <li><a id="program_link" show="program">About the IPA Program</a></li>
+            <li><a id="about_eems_link" show="about_eems">About EEMS</a></li>
+            <li><a id="review_instructions_link" show="review_instructions">Review Instructions</a></li>
+            <li><a id="model_link" show="model">IPA Model</a></li>
+            <li><a id="links_link" show="links">Links and References</a></li>
+            <!--
             <li><a id="about_link" show="about" >About EEMS Online</a></li>
-            <li><a id="contact_link" show="contact">&nbsp Contact &nbsp</a></li>
+            -->
+            <li><a id="contact_client_link" show="contact_client">Contact Information</a></li>
         </ul>
         <div id="login"><a href='/login'>login</a></div>
     </div>
@@ -82,7 +87,7 @@
         <li id="login"><a href='/login'>login</a></li>
     </div>
 
-    <div id="home" class="navdiv">
+    <div id="model" class="navdiv">
         <div id="map_container">
            <div id="button_div">
                <ul id="button_list" class="buttons" data-persist="false">
@@ -253,9 +258,91 @@
         </div>
 
     </div>
-    <div id ="project" class="navdiv center_text_block">
-        <div id="project_overlay"><div id="project_overlay_text"><h3>Fuzzy Logic Modeling</h3>in support of native plant conservation efforts.</div></div>
-        <div id="project_bottom"><div id="project_bottom_text"><a href="http://cnps.org"><div class="orange_button">Go to the CNPS Website</div></a></div></div>
+
+    <div id="home" class="navdiv center_text_block">
+        <div id="home_overlay"><div id="home_overlay_text"><h3>Important Plant Areas</h3>Peer-Review Interface</div></div>
+        <div id="home_bottom"><div id="home_bottom_text"><a href="http://cnps.org"><div class="orange_button">Go to the CNPS Website</div></a></div></div>
+    </div>
+
+    <div id="program" class="tab_content navdiv center_text_block">
+        <div class="tab_scroll_wrapper">
+            <div class="tab_overlay">
+                <div class="tab_overlay_text">
+                   <h3>THE CALIFORNIA NATIVE PLANT SOCIETY IMPORTANT PLANT AREAS PROGRAM</h3>
+                    California is a globally significant biodiversity hotspot, with roughly 6,500 native plant taxa over a quarter of which are endemic. It’s mild climates and rugged landscapes have also made California a highly desirable place to live, with a population close to 40 million people and growing. Demands for housing, resources, and a changing climate are placing increasing pressure on California’s unique flora. Regional scale planning efforts are being developed to meet the demands of an increasing population. It is essential that botanical data and conservation value be well represented in these efforts. The California Native Plant Society (CNPS) Important Plant Area (IPA) Program seeks to identify the most important areas for preserving California’s botanical biodiversity heritage. Identification and protection of IPAs have been called out as essential components for biodiversity conservation both at home through the California Biodiversity Initiative and on the world stage through the Global Plant Conservation Strategy. The CNPS IPA Program maps IPAs throughout the ecoregions of California by aggregating existing biodiversity data sets, reviewing and adding to those data sets through regional workshops, and having rigorous review and reiteration of model results through engaging regional experts and stake holders. If you are reading this we are in the later stage for your region. For more information about the CNPS IPA Program, please visit <br><a target="_blank" href="https://www.cnps.org/conservation/important-plant-areas">https://www.cnps.org/conservation/important-plant-areas</a>
+                </div>
+                <div class="tab_overlay_text">
+                    <h3>THE IPA MODEL</h3>
+                    The IPA Conceptual Model below groups data sets and processing operations into three categories modified from the Plant Life International IPA criteria.
+                    <p>
+                        <div class="img_center_wrapper">
+                            <img id="ipa_model" src="{% static 'img/custom/cnps/Picture8.jpg' %}">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about_eems" class="tab_content navdiv center_text_block">
+        <div class="tab_scroll_wrapper">
+            <div class="tab_overlay">
+                <div class="tab_overlay_text">
+                    <h3>The Environmental Evaluation Modeling System (EEMS)</h3>
+                    EEMS Online is a web-based mapping and modeling system developed by the Conservation Biology Institute (CBI). It is designed to allow the user to explore, modify, and run models constructed within the Environmental Evaluation Modeling System (EEMS), a fuzzy-logic modeling system developed by Tim Sheehan, an ecological modeler at CBI. For more information about EEMS and fuzzy logic, or to download the EEMS software package, click here. EEMS is available as a set of script tools in an ArcGIS toolbox, or as a standalone command-line based program. An EEMS manual is included with the software package, but it can also be downloaded separately by clicking here.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="review_instructions" class="tab_content navdiv center_text_block">
+        <div class="tab_scroll_wrapper">
+            <div class="tab_overlay">
+                <div class="tab_overlay_text">
+                    <h3>EEMS Instructions</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="links" class="tab_content navdiv center_text_block">
+        <div class="tab_scroll_wrapper">
+            <div class="tab_overlay">
+                <div class="tab_overlay_text">
+                    <h3>Links and References</h3>
+
+                    Delineated IPA Boundaries: <a target="_blank" href="https://databasin.org/maps/0a7c2f6063b84d9783cae29844a5c0c9/active">https://databasin.org/maps/0a7c2f6063b84d9783cae29844a5c0c9/active</a>
+                    <p>
+                    IPA Program Website and Project Documentation: <a target="_blank" href="https://www.cnps.org/conservation/important-plant-areas">https://www.cnps.org/conservation/important-plant-areas</a>
+                    <p>
+                    EEEMS Manual: <a target="_blank" href="https://eemsonline.org/static/docs/EEMS2.0_Manual.pdf">https://eemsonline.org/static/docs/EEMS2.0_Manual.pdf</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact_client" class="tab_content navdiv center_text_block">
+        <div class="tab_scroll_wrapper">
+            <div class="tab_overlay">
+                <div class="tab_overlay_text">
+                    <h3>Contact Information</h3>
+                    For and questions regarding the IPA Model, review instructions, IPA EEMS Online Interface, or the CNPS IPA Program In general please contact:
+                    <p>
+                    <table id="client_contact_table">
+                        <tr>
+                            <td>
+                                <img src="{%  static 'img/custom/cnps/sam_young.jpg' %}">
+                            </td>
+                            <td>
+                                Sam Young<br>
+                                Important Plant Areas Program Manager<br>
+                                syoung@cnps.org<br>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="contact" class="navdiv">
@@ -283,7 +370,7 @@
 
     <div id="report" class="navdiv center_text_block">
         <div class="center_text_block_contents">
-            <h2>The Sierra Nevada Resilience Report</h2>
+            <h2>Important Plant Areas Report</h2>
             <!-- source  https://www.fs.usda.gov/detail/r1/landmanagement/?cid=fseprd480785 -->
             <img id="project_img" class="header_image" src="/static/img/custom/ssn/bslr.jpg" title="Blackfoot-Swan Landscape Restoration Area">
             Lorem ipsum dolor sit pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
