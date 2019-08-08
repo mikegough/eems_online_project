@@ -53,10 +53,14 @@ import glob
 from celery.result import AsyncResult
 
 #@login_required(login_url='/admin/login/')
-@login_required(login_url='/cnps_login/')
-def w_login(request):
+
+# Custom wrapper authentication
+# Requires login at /cnps_login/ in urls.py
+@login_required(login_url='/w_cnps_login/')
+def w_cnps_auth(request):
     return redirect(index)
 
+# Generic logout page for wrappers
 def w_logged_out(request):
     return render(request, 'wrapper_logged_out.html')
 
@@ -67,15 +71,17 @@ def index(request):
         #For Development
         subdomain = "cnps"
 
+        # Login authentication for EEMS Wrappers:
         if subdomain in ["cnps"]:
             if not request.user.is_authenticated():
-                return redirect(w_login)
+                # Go to view above, which redirects back to this view, but requires a login on a custom page at /w_cnps_login/ first.
+                return redirect(w_cnps_auth)
 
         # subdomain: ["html template name", "Project Name"]
         subdomain_template_map = {
             "cec": ["cec", "CEC"],
             "ssn": ["ssn", ("Fisher")],
-            "cnps": ["cnps", ("Fisher")]
+            "cnps": ["cnps", ("IPA")]
         }
 
         if subdomain in subdomain_template_map:

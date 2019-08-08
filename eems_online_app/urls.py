@@ -9,11 +9,13 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^$', index, name='index'),
-    url(r'^home$', index, name='index'),
+    #url(r'^home$', index, name='index'),
 
     # Wrapper Authentication Functions
-    url(r'^cnps_login/$', auth_views.login, {'template_name': 'admin/cnps/login.html'}, name='login'),
-    url(r'^w_login$', w_login, name='w_login'),
+    # CNPS
+    url(r'^w_cnps_login/$', auth_views.login, {'template_name': 'admin/cnps/login.html'}, name='login'),
+    url(r'^w_cnps_auth$', w_cnps_auth, name='w_cnps_auth'),
+
     url(r'^w_logout$', auth_views.logout, {'next_page': '/w_logged_out'}),
     url(r'^w_logged_out/$', w_logged_out, name='w_logged_out'),
 
