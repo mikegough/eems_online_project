@@ -85,9 +85,13 @@ body {
 	background-image: url('../../img/custom/cnps/Picture7.jpg');
 }
 
+#client_contact_table th{
+	font-weight:normal
+}
+
 #client_contact_table td{
 	vertical-align:top;
-	padding:20px 20px 20px 0px;
+	padding:30px 20px 20px 0px;
 }
 
 #client_contact_table td:first-child{
@@ -459,7 +463,13 @@ and (min-resolution:.001dpcm) {
 	background-color:transparent;
 }
 
+.photo_credit{
+	position:absolute;
+	left: 20px;
+	bottom:30px;
+	color:white;
+}
+
 #footer a {
 	color: white;
 }
-
