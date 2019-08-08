@@ -10,6 +10,13 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^home$', index, name='index'),
+
+    # Wrapper Authentication Functions
+    url(r'^cnps_login/$', auth_views.login, {'template_name': 'admin/cnps/login.html'}, name='login'),
+    url(r'^w_login$', w_login, name='w_login'),
+    url(r'^w_logout$', auth_views.logout, {'next_page': '/w_logged_out'}),
+    url(r'^w_logged_out/$', w_logged_out, name='w_logged_out'),
+
     url(r'^run_eems$', run_eems, name='run_eems'),
     url(r'^download$', download, name='download'),
     url(r'^link$', link, name='link'),

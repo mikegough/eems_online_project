@@ -52,18 +52,30 @@ import glob
 
 from celery.result import AsyncResult
 
-@csrf_exempt
+#@login_required(login_url='/admin/login/')
+@login_required(login_url='/cnps_login/')
+def w_login(request):
+    return redirect(index)
+
+def w_logged_out(request):
+    return render(request, 'wrapper_logged_out.html')
+
 def index(request):
 
         # Custom Templates for subdomains (e.g., cec.eemsonline.org)
         subdomain = request.get_host().split(".")[0]
         #For Development
-        #subdomain = "ssn"
+        subdomain = "cnps"
+
+        if subdomain in ["cnps"]:
+            if not request.user.is_authenticated():
+                return redirect(w_login)
 
         # subdomain: ["html template name", "Project Name"]
         subdomain_template_map = {
             "cec": ["cec", "CEC"],
-            "ssn": ["ssn", ("Fisher")]
+            "ssn": ["ssn", ("Fisher")],
+            "cnps": ["cnps", ("Fisher")]
         }
 
         if subdomain in subdomain_template_map:
@@ -473,7 +485,6 @@ def check_eems_status(request):
 
 def logout(request):
     logout(request)
-
 
 @csrf_exempt
 def get_raster_data(request):

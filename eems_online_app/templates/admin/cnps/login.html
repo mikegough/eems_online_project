@@ -1,0 +1,66 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+
+<html lang="en-us" >
+<head>
+<title>Log in | CNPS EEMS Online</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
+<meta name="robots" content="NONE,NOARCHIVE" />
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+</head>
+
+<body class="login" data-admin-utc-offset="0">
+
+<div id="container">
+    
+    <div id="header">
+        <div id="branding">
+		<h1 id="site-name">CNPS IPA EEMS Wrapper</h1>
+        </div>
+    </div>
+
+    <div id="content" class="colM">
+	<div id="content-main">
+
+	  <form id="login_form" method="post">
+	    {% csrf_token %}
+
+	  <div class="form-row">
+        <label class="required" for="id_username">Username:</label> <input autofocus="" id="id_username" maxlength="254" name="username" type="text" required />
+	  </div>
+	  <div class="form-row">
+	    <label class="required" for="id_password">Password:</label> <input id="id_password" name="password" type="password" required />
+	  </div>
+      <p>
+          The results presented in the following interface (IPA EEMS Wrapper) are preliminary and not peer-reviewed. Model results are not intended for use in other analyses until CNPS publishes peer-reviewed model results and Important Plant Area (IPA) boundaries. By logging in, users agree not to share or utilize data available in the IPA EEMS Wrapper for any purpose other than to review and critique IPA model results.
+      <p>
+          <input id="agreement" type="checkbox"> I have read and understand the information above.
+      <div class="submit-row">
+	    <label>&nbsp;</label><input id="submit" disabled=disabled type="submit" value="Log in" />
+	  </div>
+
+	</form>
+
+	</div>
+        <br class="clear" />
+    </div>
+
+    <div id="footer"></div>
+</div>
+<script>
+
+$('#agreement').change(function() {
+    // this will contain a reference to the checkbox
+    if (this.checked) {
+         $("#submit").removeAttr('disabled');
+    } else {
+        $("#submit").attr('disabled', 'disabled');
+    }
+});
+
+</script>
+
+</body>
+</html>
