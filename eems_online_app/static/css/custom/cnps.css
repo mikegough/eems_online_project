@@ -14,6 +14,7 @@ body {
 .partners_table{
 	float:right
 }
+
 .partners_table img{
 	height:80px;
 }
@@ -61,6 +62,7 @@ body {
 
 .tab_content h3{
 	font-variant: all-petite-caps;
+    font-size:1.5em;
 }
 
 #program{
@@ -76,7 +78,7 @@ body {
 }
 
 #links{
-	background-image: url('../../img/custom/cnps/Picture4.jpg');
+	background-image: url('../../img/custom/cnps/Picture6.jpg');
 }
 
 #contact_client{
@@ -85,7 +87,11 @@ body {
 
 #client_contact_table td{
 	vertical-align:top;
-	padding:0px 20px 20px 0px;
+	padding:20px 20px 20px 0px;
+}
+
+#client_contact_table td:first-child{
+	width:160px
 }
 
 #project_link {
@@ -279,6 +285,7 @@ and (min-resolution:.001dpcm) {
 
 .tab_overlay {
 	background-color: #0000005e;
+	background-color: rgba(101, 101, 106, .75);
 	font-size: 1.3em;
 	color: white;
 	line-height: 1.4;
@@ -292,8 +299,28 @@ and (min-resolution:.001dpcm) {
 	padding-right: 60px;
 }
 
+.tab_overlay_text{
+	margin-bottom: 30px;
+}
+
 .tab_overlay a{
 	color:#FFC000;
+}
+
+#tab_overlay_eems{
+	background-color: rgba(103, 134, 122, 0.75);
+}
+
+#review_instructions_overlay{
+	background-color: rgba(47, 93, 124, 0.75);
+}
+
+#links_overlay{
+	background-color: rgba(47, 93, 124, 0.75);
+}
+
+#contact_client_overlay{
+	background-color: rgba(249, 157, 37, 0.75);
 }
 
 .img_center_wrapper{
@@ -307,6 +334,7 @@ and (min-resolution:.001dpcm) {
 	margin-right:auto;
 }
 
+/*
 #home_overlay {
 	bottom: 18%;
 	position: fixed;
@@ -317,15 +345,62 @@ and (min-resolution:.001dpcm) {
 	font-size: 40px;
 	color: white;
 }
+*/
+
+#home_overlay_left {
+	top: 50%;
+	position: fixed;
+	background-color: #0000005e;
+	background-color: rgba(155, 185, 173, .75);
+	width: calc(100% - 360px);
+	height: 200px;
+	text-align: left;
+	font-size: 40px;
+	color: white;
+	padding-left: 150px;
+}
+
+#home_overlay_left {
+	top: 50%;
+	position: fixed;
+	background-color: #0000005e;
+	background-color: rgba(155, 185, 173, .75);
+	width: calc(100% - 360px);
+	height: 200px;
+	text-align: left;
+	font-size: 40px;
+	color: white;
+	padding-left: 150px;
+}
 
 #home_overlay_text {
     margin-right:50px;
+}
+
+#home_overlay_logo{
+	margin-top: 15px;
 }
 
 #home_overlay_text h3{
     font-size:50px;
 	padding: 0px;
 	line-height: 0px;
+}
+
+#home_overlay_right {
+	top: 50%;
+	position: fixed;
+	background-color: rgba(68, 83, 106, .75);
+	width: 180px;
+	height: 200px;
+	text-align: center;
+	right: 0px;
+    line-height:160px;
+	vertical-align:center;
+}
+
+#home_overlay_logo {
+    height: 160px
 }
 
 #home_bottom {
@@ -362,6 +437,26 @@ and (min-resolution:.001dpcm) {
 
 #home_bottom_text:hover {
     background-color: #FFB148;
+}
+
+#wrapper_logout{
+	position: absolute;
+	right: 0px;
+	font-family: arial;
+	top: 0px;
+	margin-top: 8px;
+	margin-right: 8px;
+}
+
+#wrapper_logout a {
+	font-size: .9em;
+	font-variant: small-caps;
+	color: white;
+	letter-spacing: 1px;
+}
+
+#wrapper_logout a:hover {
+	background-color:transparent;
 }
 
 #footer a {
