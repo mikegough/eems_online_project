@@ -52,126 +52,181 @@ import glob
 
 from celery.result import AsyncResult
 
-#@login_required(login_url='/admin/login/')
-
-# Custom wrapper authentication
-# Requires login at /cnps_login/ in urls.py
-@login_required(login_url='/w_cnps_login/')
-def w_cnps_auth(request):
-    return redirect(index)
-
 # Generic logout page for wrappers
 def w_logged_out(request):
     return render(request, 'wrapper_logged_out.html')
 
+
 def index(request):
 
-        # Custom Templates for subdomains (e.g., cec.eemsonline.org)
-        subdomain = request.get_host().split(".")[0]
-        #For Development
-        # subdomain = "cnps"
+    # Custom Templates for subdomains (e.g., cec.eemsonline.org)
+    subdomain = request.get_host().split(".")[0]
+    # For Development
+    #subdomain = "cnps"
 
-        # Login authentication for EEMS Wrappers:
-        if subdomain in ["cnps"]:
-            if not request.user.is_authenticated():
-                # Check for model link (from model run).
-                request.session['filters'] = request.GET.copy()
-                # Go to view above, which redirects back to this view, but requires a login on a custom page at /w_cnps_login/ first.
-                #request.session['filters'] = request.GET.copy()
-                return redirect(w_cnps_auth)
+    # EEMS Wrappers requiring custom views/custom login
+    if subdomain == "cnps":
+        # if accessed using a model link, store the model id as a session variable.
+        request.session['filters'] = request.GET.copy()
+        return redirect(ipa)
 
-        print request.session.get('filters')
-        # subdomain: ["html template name", "Project Name"]
-        subdomain_template_map = {
-            "cec": ["cec", "CEC"],
-            "ssn": ["ssn", ("Fisher")],
-            "cnps": ["cnps", ("IPA")]
-        }
+    # EEMS Wrappers not requiring custom view/custom login
+    # subdomain: ["html template name", "Project Name"]
+    subdomain_template_map = {
+        "cec": ["cec", "CEC"],
+        "ssn": ["ssn", ("Fisher")],
+    }
 
-        w_model_link = False
-        if subdomain in subdomain_template_map:
-            hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
-            template = subdomain_template_map[subdomain][0] + ".html"
-            filters = request.GET.copy()
-            filters['project'] = subdomain_template_map[subdomain][1]
-            # if already logged in, check for model id link in query string.
-            try:
-                w_model_link = filters['model']
-            except:
-                # Next check for model id link in session variable
-                try:
-                    w_model_link = request.session.get('filters')['model']
-                except:
-                    w_model_link = False
-        else:
-            hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
-            template = "index.html"
-            # Get any filters passed in through the query string. #copy() makes the request object mutable.
-            filters = request.GET.copy()
+    if subdomain in subdomain_template_map:
+        hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
+        template = subdomain_template_map[subdomain][0] + ".html"
+        filters = {'project': subdomain_template_map[subdomain][1]}
+    else:
+        hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
+        template = "index.html"
+        # Get any filters passed in through the query string. #copy() makes the request object mutable.
+        filters = request.GET.copy()
 
-        # Get a json file of all the EEMS commands
-        eems_rqst_dict = {}
-        eems_rqst_dict["action"] = 'GetAllCmdInfo'
-        my_mpilot_worker = MPilotWorker()
-        eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
-        json.dumps(eems_available_commands_json)
+    # Get a json file of all the EEMS commands
+    eems_rqst_dict = {}
+    eems_rqst_dict["action"] = 'GetAllCmdInfo'
+    my_mpilot_worker = MPilotWorker()
+    eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
+    json.dumps(eems_available_commands_json)
 
-        # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
+    # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
+    initial_eems_model_id = filters.pop("model", ['first'])[0]
+
+    # GET all available EEMS Models for Dropdown.
+    eems_online_models = {}
+
+    if filters:
+        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
+        filter_count = 0
+        for k, v in filters.iteritems():
+            if filter_count > 0:
+                query += " AND "
+            if isinstance(v, tuple):
+                query += k + " in " + str(v) + " COLLATE NOCASE"
+            else:
+                query += k + " = '" + v + "' COLLATE NOCASE"
+            filter_count += 1
+    else:
+        # No filters or user got here from a link (show linked model as well as CBI models).
+        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
+
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    initial_eems_model = []
+
+    for row in cursor:
+        # Get info required to initialize the starting model (ID, NAME, EXTENT)
+        if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
+            initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+        elif row[0] == initial_eems_model_id:
+            initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+        # GET all EEMS Models (meeting filter criteria) for Dropdown list.
+        eems_online_models[str(row[0])] = []
+        eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
+
+    initial_eems_model_json = json.dumps(initial_eems_model)
+    eems_online_models_json = json.dumps(eems_online_models)
+
+    context = {
+        # 'eems_available_commands_dict': eems_available_commands,
+        'initial_eems_model_json': initial_eems_model_json,
+        'eems_online_models_json': eems_online_models_json,
+        'eems_available_commands_json': eems_available_commands_json,
+        'hostname_for_link': hostname_for_link
+    }
+
+    return render(request, template, context)
+
+
+# Custom wrapper for CNPS. Requires Login. See /cnps_login/ in urls.py for custom login template
+@login_required(login_url='/w_cnps_login/')
+def ipa(request):
+
+    subdomain = "cnps"
+    project_filters = ("IPA")
+
+    hostname_for_link = "https://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
+    template = "cnps.html"
+
+    # Get a json file of all the EEMS commands
+    eems_rqst_dict = {}
+    eems_rqst_dict["action"] = 'GetAllCmdInfo'
+    my_mpilot_worker = MPilotWorker()
+    eems_available_commands_json = my_mpilot_worker.HandleRqst(eems_rqst_dict)
+    json.dumps(eems_available_commands_json)
+
+    filters = {}
+    filters['project'] = project_filters
+
+    # Determine the initial model to show.
+    # Check for a model link e.g. (http://127.0.0.1:8000/?model=bK7AzCZSqBJaKz8ty1nH8AuJhVKXYn0m)
+    try:
+        link_id = request.session.get('filters')["model"]
+        initial_eems_model_id = link_id
+        initial_tab = "model"
+    except:
+        link_id = False
         initial_eems_model_id = filters.pop("model", ['first'])[0]
+        initial_tab = "home"
 
-        # GET all available EEMS Models for Dropdown.
-        eems_online_models = {}
+    eems_online_models = {}
 
-        if filters or w_model_link:
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
-            filter_count = 0
-            for k, v in filters.iteritems():
-                if filter_count > 0:
-                    query += " AND "
-                if isinstance(v, tuple):
-                    query += k + " in " + str(v) + " COLLATE NOCASE"
-                else:
-                    query += k + " = '" + v + "' COLLATE NOCASE"
-                filter_count += 1
-
-            if  w_model_link:
-                query += " OR ID = '%s'" % w_model_link
+    query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
+    filter_count = 0
+    for k, v in filters.iteritems():
+        if filter_count > 0:
+            query += " AND "
+        if isinstance(v, tuple):
+            query += k + " in " + str(v) + " COLLATE NOCASE"
         else:
-            # No filters or user got here from a link (show linked model as well as CBI models).
-            query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
+            query += k + " = '" + v + "' COLLATE NOCASE"
+        filter_count += 1
+    if link_id:
+        query += " OR ID = '%s'" % link_id
 
-        cursor = connection.cursor()
-        cursor.execute(query)
+    cursor = connection.cursor()
+    cursor.execute(query)
 
-        initial_eems_model = []
+    initial_eems_model = []
 
-        for row in cursor:
-            # Get info required to initialize the starting model (ID, NAME, EXTENT)
-            if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
-                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
-            elif row[0] == initial_eems_model_id:
-                initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
-            # GET all EEMS Models (meeting filter criteria) for Dropdown list.
-            eems_online_models[str(row[0])] = []
-            eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
+    for row in cursor:
+        # Get info required to initialize the starting model (ID, NAME, EXTENT)
+        if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
+            initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+        elif row[0] == initial_eems_model_id:
+            initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
+        # GET all EEMS Models (meeting filter criteria) for Dropdown list.
+        eems_online_models[str(row[0])] = []
+        eems_online_models[str(row[0])].append([row[1], row[2], row[3], row[4]])
 
-        initial_eems_model_json = json.dumps(initial_eems_model)
-        eems_online_models_json=json.dumps(eems_online_models)
+    initial_eems_model_json = json.dumps(initial_eems_model)
+    eems_online_models_json=json.dumps(eems_online_models)
 
-        context = {
-            #'eems_available_commands_dict': eems_available_commands,
-            'initial_eems_model_json': initial_eems_model_json,
-            'eems_online_models_json': eems_online_models_json,
-            'eems_available_commands_json': eems_available_commands_json,
-            'hostname_for_link': hostname_for_link
-        }
+    context = {
+        'initial_eems_model_json': initial_eems_model_json,
+        'initial_tab': initial_tab,
+        'eems_online_models_json': eems_online_models_json,
+        'eems_available_commands_json': eems_available_commands_json,
+        'hostname_for_link': hostname_for_link
+    }
 
-        return render(request, template, context)
+    return render(request, template, context)
+
 
 @csrf_exempt
 def get_additional_info(request):
 
-    hostname_for_link = settings.HOSTNAME_FOR_LINK
+    subdomain = request.get_host().split(".")[0]
+    if subdomain == "cnps":
+        hostname_for_link = "cnps.eemsonline.org"
+    else:
+        hostname_for_link = settings.HOSTNAME_FOR_LINK
 
     eems_model_id = request.POST.get('eems_model_id')
 

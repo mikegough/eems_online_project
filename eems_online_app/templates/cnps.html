@@ -8,10 +8,11 @@
 
     <script>
 
-    //eems_available_commands_json = {{ eems_available_commands_json | safe }}
     eems_online_models_json = {{ eems_online_models_json | safe}};
     initial_eems_model_json = {{ initial_eems_model_json | safe }};
     hostname_for_link = "{{ hostname_for_link }}";
+    initial_tab = "{{ initial_tab }}";
+    eems_user = "{{user.get_username}}";
 
     </script>
 
@@ -25,7 +26,7 @@
     <!-- leaflet.grouped-layer-control-->
     <script src="https://rawgithub.com/ismyrnow/Leaflet.groupedlayercontrol/master/src/leaflet.groupedlayercontrol.js"></script>
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+    <!--<link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />-->
     <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" /><![endif]-->
 
     <!-- CSS -->
@@ -147,7 +148,7 @@
             </div>
 
 
-                <div id="run_and_save" class="control_panel" title="These options become availble after a model run has completed">
+                <div id="run_and_save" class="control_panel" title="Downloads are not available for this model">
                     <div id="run_eems_div" class="eems_controls" title="This option becomes available once one or more changes are made to the model above">
                         <div class="introjs-helperNumberLayer" title="Once a change to the original model has been made, click this button to run the model">3</div>
                         <button id="run_eems_button" class="disabled alertify-button alertify-button-ok">Run the model</button>
@@ -161,7 +162,7 @@
                         </div>
                     </div>
                     <div id="save_eems_div" class="eems_controls deactivate" >
-                        <div class="introjs-helperNumberLayer" title="Download the model results to your computer or get the URL to share or access the model results at a later time">4</div>
+                        <div class="introjs-helperNumberLayer" title="Downloads are not available for this model">4</div>
                         <label title="Click to get a URL for this model run"  class="alertify-button alertify-button-ok save_label"  id="link_label">
                             Get Link <img id="link_img" src="{% static '/img/link.png' %}">
                         </label>
@@ -282,7 +283,7 @@
                     The IPA Conceptual Model below groups data sets and processing operations into three categories modified from the Plant Life International IPA criteria.
                     <p>
                     <div class="img_center_wrapper">
-                        <img id="ipa_model" src="{% static 'img/custom/cnps/Picture8.jpg' %}">
+                        <img id="ipa_model" src="{% static 'img/custom/cnps/Picture8.png' %}">
                     </div>
                 </div>
             </div>
@@ -311,9 +312,9 @@
             <div class="tab_overlay" id="review_instructions_overlay">
                 <div class="tab_overlay_text">
                     <h3>Review Instructions</h3>
-                    The following document describes the process for exploring and reviewing the CNPS Important Plant Areas (IPA) model. Click on the link below to open the instructions in a new tab, or right click and select "Save as..." to download the instructions to your computer.
+                    The following document describes the process for exploring and reviewing the CNPS Important Plant Areas (IPA) model. Click on the link below to open the instructions in a new tab, or right click and select "Save link as..." to download the instructions to your computer.
                     <p>
-                    <a href="https://www.cnps.org/wp-content/uploads/2019/08/EEMS-Online-Instructions-LR.pdf" download="test" target="_blank"> Instructions </a>
+                    <a href="https://www.cnps.org/wp-content/uploads/2019/08/EEMS-Online-Instructions-LR.pdf" download="test" target="_blank"> Instructions (PDF) </a>
                 </div>
             </div>
         </div>
@@ -351,7 +352,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <img style="height:200px" src="{%  static 'img/custom/cnps/sam_young.jpg' %}">
+                                <img style="height:200px" src="{%  static 'img/custom/cnps/sam_young.png' %}">
                             </td>
                             <td>
                                 <b>Sam Young</b><br>
@@ -439,8 +440,8 @@
 
     </script>
 
-    <script src="{% static 'js/cnps.js' %}"></script>
     <link href="{% static 'css/custom/cnps.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/cnps.js' %}"></script>
 
 </body>
 </html>

@@ -13,8 +13,8 @@ urlpatterns = [
 
     # Wrapper Authentication Functions
     # CNPS
+    url(r'^ipa$', ipa, name='ipa'),
     url(r'^w_cnps_login/$', auth_views.login, {'template_name': 'admin/cnps/login.html'}, name='login'),
-    url(r'^w_cnps_auth$', w_cnps_auth, name='w_cnps_auth'),
 
     url(r'^w_logout$', auth_views.logout, {'next_page': '/w_logged_out'}),
     url(r'^w_logged_out/$', w_logged_out, name='w_logged_out'),
