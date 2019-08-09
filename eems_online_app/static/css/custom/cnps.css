@@ -42,7 +42,7 @@ body {
 	display: block;
 	position: relative;
 	/*background-image: url('../../img/custom/cnps/bodie-hills-alpine-wick-1800x800.jpg');*/
-	background-image: url('../../img/custom/cnps/Picture1.jpg');
+	background-image: url('../../img/custom/cnps/Picture1.png');
 	background-repeat: no-repeat;
 	height: calc(100vh - 134px);
 	width: 100vw;
@@ -54,6 +54,7 @@ body {
 	position: relative;
 	display: none;
 	background-repeat: no-repeat;
+	background-size: cover;
 	height: calc(100vh - 134px);
 	width: 100vw;
 	padding: 0px;
@@ -66,23 +67,23 @@ body {
 }
 
 #program{
-	background-image: url('../../img/custom/cnps/Picture2.jpg');
+	background-image: url('../../img/custom/cnps/Picture2.png');
 }
 
 #about_eems{
-	background-image: url('../../img/custom/cnps/Picture4.jpg');
+	background-image: url('../../img/custom/cnps/Picture4.png');
 }
 
 #review_instructions{
-	background-image: url('../../img/custom/cnps/Picture5.jpg');
+	background-image: url('../../img/custom/cnps/Picture5.png');
 }
 
 #links{
-	background-image: url('../../img/custom/cnps/Picture6.jpg');
+	background-image: url('../../img/custom/cnps/Picture6.png');
 }
 
 #contact_client{
-	background-image: url('../../img/custom/cnps/Picture7.jpg');
+	background-image: url('../../img/custom/cnps/Picture7.png');
 }
 
 #client_contact_table th{
@@ -470,6 +471,14 @@ and (min-resolution:.001dpcm) {
 	color:white;
 }
 
+.permanently_disabled {
+	background-color: #ECE9E9 !important;
+	pointer-events: none;
+	color: #8A8A8A !important;
+	text-shadow: unset !important;
+}
+
 #footer a {
 	color: white;
 }
+
