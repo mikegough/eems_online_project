@@ -61,9 +61,10 @@ body {
 	top: 0px;
 }
 
-.tab_content h3{
+.tab_content h3 {
 	font-variant: all-petite-caps;
-    font-size:1.5em;
+	font-size: 1.5em;
+	letter-spacing: .5px;
 }
 
 #program{
@@ -390,6 +391,7 @@ and (min-resolution:.001dpcm) {
     font-size:50px;
 	padding: 0px;
 	line-height: 0px;
+	letter-spacing: 1px;
 }
 
 #home_overlay_right {
