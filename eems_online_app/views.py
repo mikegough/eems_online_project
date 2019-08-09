@@ -69,14 +69,18 @@ def index(request):
         # Custom Templates for subdomains (e.g., cec.eemsonline.org)
         subdomain = request.get_host().split(".")[0]
         #For Development
-        subdomain = "cnps"
+        # subdomain = "cnps"
 
         # Login authentication for EEMS Wrappers:
         if subdomain in ["cnps"]:
             if not request.user.is_authenticated():
+                # Check for model link (from model run).
+                request.session['filters'] = request.GET.copy()
                 # Go to view above, which redirects back to this view, but requires a login on a custom page at /w_cnps_login/ first.
+                #request.session['filters'] = request.GET.copy()
                 return redirect(w_cnps_auth)
 
+        print request.session.get('filters')
         # subdomain: ["html template name", "Project Name"]
         subdomain_template_map = {
             "cec": ["cec", "CEC"],
@@ -84,10 +88,21 @@ def index(request):
             "cnps": ["cnps", ("IPA")]
         }
 
+        w_model_link = False
         if subdomain in subdomain_template_map:
             hostname_for_link = "http://" + subdomain + "." + settings.HOSTNAME_FOR_LINK
             template = subdomain_template_map[subdomain][0] + ".html"
-            filters = {'project': subdomain_template_map[subdomain][1]}
+            filters = request.GET.copy()
+            filters['project'] = subdomain_template_map[subdomain][1]
+            # if already logged in, check for model id link in query string.
+            try:
+                w_model_link = filters['model']
+            except:
+                # Next check for model id link in session variable
+                try:
+                    w_model_link = request.session.get('filters')['model']
+                except:
+                    w_model_link = False
         else:
             hostname_for_link = "http://" + settings.HOSTNAME_FOR_LINK
             template = "index.html"
@@ -107,7 +122,7 @@ def index(request):
         # GET all available EEMS Models for Dropdown.
         eems_online_models = {}
 
-        if filters:
+        if filters or w_model_link:
             query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
             filter_count = 0
             for k, v in filters.iteritems():
@@ -118,6 +133,9 @@ def index(request):
                 else:
                     query += k + " = '" + v + "' COLLATE NOCASE"
                 filter_count += 1
+
+            if  w_model_link:
+                query += " OR ID = '%s'" % w_model_link
         else:
             # No filters or user got here from a link (show linked model as well as CBI models).
             query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
