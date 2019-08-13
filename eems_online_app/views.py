@@ -64,7 +64,7 @@ def index(request):
     # For Development
     #subdomain = "cnps"
 
-    # EEMS Wrappers requiring custom views/custom login
+    # EEMS Wrappers requiring custom views/custom login. Redirect to custom view.
     if subdomain == "cnps":
         # if accessed using a model link, store the model id as a session variable.
         request.session['filters'] = request.GET.copy()
