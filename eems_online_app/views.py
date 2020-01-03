@@ -101,7 +101,8 @@ def index(request):
     eems_online_models = {}
 
     if filters:
-        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND "
+        # Filter out IPA models
+        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 AND PROJECT <> 'IPA' AND "
         filter_count = 0
         for k, v in filters.iteritems():
             if filter_count > 0:
@@ -113,7 +114,8 @@ def index(request):
             filter_count += 1
     else:
         # No filters or user got here from a link (show linked model as well as CBI models).
-        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
+        # Filter out IPA models
+        query = "SELECT ID, NAME, EXTENT_GCS, SHORT_DESCRIPTION, PROJECT FROM EEMS_ONLINE_MODELS WHERE OWNER = 'CBI' AND PROJECT <> 'IPA' AND STATUS = 1 OR ID = '%s'" % initial_eems_model_id
 
     cursor = connection.cursor()
     cursor.execute(query)
