@@ -711,10 +711,10 @@ li a.active {
 #button_div {
 	position: absolute;
 	z-index: 2;
-	right:15%;
+	right: 15%;
 	top: 0px;
 	display: none;
-	width: 230px;
+	width: 280px;
 	height: 30px;
 	color: #464646;
 	padding: 6px 8px;
