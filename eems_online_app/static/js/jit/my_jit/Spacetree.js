@@ -177,7 +177,7 @@ function init(json, eems_file_name){
 
                 metadata_string  += "]";
 
-                if (node.data.Metadata.DisplayName != "undefined") {
+                if (typeof node.data.Metadata.DisplayName != "undefined") {
                     alias = (node.data.Metadata.DisplayName).replace(/&nbsp;/g, " ")
                 }
 
