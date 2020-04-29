@@ -42,7 +42,7 @@ $( document ).ready(function() {
 
     // Add the list of available eems_online_models to the dropdown menu
     $.each (project_list, function(index,project_label) {
-        $("#eems_model_dropdown").append("<optgroup label=" + project_label.replace(" ", "&nbsp;") +">")
+        $("#eems_model_dropdown").append("<optgroup label=" + project_label.replace(/ /g, "&nbsp;") +">")
         $.each(eems_online_models_json, function (index, object) {
                 $.each(object, function (id, array) {
                     if (array[3] == project_label ) {
