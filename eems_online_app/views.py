@@ -95,7 +95,8 @@ def index(request):
     json.dumps(eems_available_commands_json)
 
     # Pull model request (link) out of the filters (handled differently). If no model request, default to the first model in the query.
-    initial_eems_model_id = filters.pop("model", ['first'])[0]
+    default_eems_model_id = '13'
+    initial_eems_model_id = filters.pop("model", [default_eems_model_id])[0]
 
     # GET all available EEMS Models for Dropdown.
     eems_online_models = {}
@@ -124,7 +125,7 @@ def index(request):
 
     for row in cursor:
         # Get info required to initialize the starting model (ID, NAME, EXTENT)
-        if initial_eems_model_id == "first" and len(initial_eems_model) == 0:
+        if initial_eems_model_id == default_eems_model_id and len(initial_eems_model) == 0:
             initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
         elif row[0] == initial_eems_model_id:
             initial_eems_model = [[str(row[0]), [row[1], row[2]]]]
