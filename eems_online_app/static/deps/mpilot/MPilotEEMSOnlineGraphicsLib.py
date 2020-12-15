@@ -92,6 +92,15 @@ class HistoDist(mpefp._MPilotEEMSFxnParent):
         else:
             faceColor = 'grey'
 
+        # MG 12/15/20. Error generated on upload attempt with field containing a value of 7.118016e+39 
+	print self.ValFromArgByNm('InFieldName')  
+        print xMin
+        print xMax
+
+        if np.isinf(xMax):
+            print "xMax is infinite (or a large number that was converted to infinite). Using 3.402823466E+38 as the max (the max value allowed for 32Bit Python floats)"
+            xMax = 3.402823466E+38 
+
         hist = plt.hist(
             dataObj.ExecRslt().ravel().compressed(),
             bins=50,
