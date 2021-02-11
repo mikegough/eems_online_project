@@ -65,13 +65,9 @@ $( document ).ready(function() {
     });
 
     // Sort the models within each project optgroup alphabetically.
-    $(function() {
-      $('optgroup').each(function() {
-        var optgroup = this;
-        $( 'option', this ).sort(function(a,b) {
-            return $(a).text() > $(b).text();
-            }).appendTo(optgroup);
-      });
+    $('select optgroup').each(function(index,elmt){
+        result = $(elmt).find("option").toArray().sort((option1, option2) => option1.innerHTML.localeCompare(option2.innerHTML));
+        $(result).appendTo(elmt);
     });
 
     // Set the initial model parameters
