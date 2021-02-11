@@ -28,32 +28,49 @@ $( document ).ready(function() {
         }
     });
 
-
     $("#files").prop('value', '');
 
+    // Create a list of unique project names.
     project_list = [];
     $.each(eems_online_models_json, function(index, object){
         $.each(object, function(id,array){
-            if ($.inArray(array[3], project_list) == -1) {
+            if ($.inArray(array[3], project_list) == -1 && array[3] != "") {
                 project_list.push(array[3]);
             }
         })
     });
 
+    project_list.sort();
+
+    // The label to use for models that don't have a project association.
+    no_project_label = "No Project Association";
+    project_list.push(no_project_label);
+
     // Add the list of available eems_online_models to the dropdown menu
-    $.each (project_list, function(index,project_label) {
-        $("#eems_model_dropdown").append("<optgroup label=" + project_label.replace(/ /g, "&nbsp;") +">")
+    $.each(project_list, function(index,project_label) {
+        var $optgroup = $("<optgroup label=" + project_label.replace(/ /g, "&nbsp;") +">")
         $.each(eems_online_models_json, function (index, object) {
                 $.each(object, function (id, array) {
-                    if (array[3] == project_label ) {
+                    if (array[3] == "") {array[3] = no_project_label}
+                    if (array[3] == project_label) {
                         var available_eems_online_model_name = array[0];
                         var available_eems_online_model_extent = array[1];
                         var available_eems_online_model_project = array[3];
-                        $("#eems_model_dropdown").append("&nbsp;&nbsp;&nbsp;<option extent='" + available_eems_online_model_extent + "' value='" + index + "'>" + available_eems_online_model_name + "</option>");
+                        $optgroup.append("&nbsp;&nbsp;&nbsp;<option value='" + index + "' extent='" + available_eems_online_model_extent + "'>" + available_eems_online_model_name + "</option>");
                     }
                 })
         });
-        $("#eems_model_dropdown").append("</optgroup>")
+        $("#eems_model_dropdown").append($optgroup)
+    });
+
+    // Sort the models within each project optgroup alphabetically.
+    $(function() {
+      $('optgroup').each(function() {
+        var optgroup = this;
+        $( 'option', this ).sort(function(a,b) {
+            return $(a).text() > $(b).text();
+            }).appendTo(optgroup);
+      });
     });
 
     // Set the initial model parameters
