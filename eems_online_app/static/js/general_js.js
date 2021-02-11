@@ -47,6 +47,7 @@ $( document ).ready(function() {
     project_list.push(no_project_label);
 
     // Add the list of available eems_online_models to the dropdown menu
+    $("#eems_model_dropdown").append("<option style='display:none'></option>")
     $.each(project_list, function(index,project_label) {
         var $optgroup = $("<optgroup label=" + project_label.replace(/ /g, "&nbsp;") +">")
         $.each(eems_online_models_json, function (index, object) {
