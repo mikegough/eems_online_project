@@ -91,6 +91,8 @@ $( document ).ready(function() {
     eems_online_model_name = init_eems_model;
     eems_model_modified_id = '';
 
+    link_already_generated = false;
+
     // Initialize EEMS bundled command changes dictionary
     eems_bundled_commands = {};
     eems_bundled_commands["action"] = "ProcessCmds";
@@ -142,6 +144,8 @@ $('#eems_model_dropdown').change(function(){
                 duration: 0
             }
         });
+
+        link_already_generated = false;
 
         eems_model_modified_id = '';
         eems_model_current_model = $("#eems_model_dropdown option:selected").text();
@@ -439,11 +443,12 @@ $('#link_label').click(function(e) {
     else {
         link_id = eems_model_modified_id
     }
+
     alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + link_id + "'>" + hostname_for_link + "?model=" + link_id + "</textarea></div>")
+
     var textBox = document.getElementById("link");
     textBox.onfocus = function() {
         textBox.select();
-
         // Work around Chrome's little problem
         textBox.onmouseup = function() {
             // Prevent further mouseup intervention
@@ -452,7 +457,7 @@ $('#link_label').click(function(e) {
         };
     };
 
-    if (typeof link_already_generated == 'undefined' && eems_model_modified_id != "") {
+    if (link_already_generated == false && eems_model_modified_id != "") {
         $.ajax({
             url: "/link", // the endpoint
             type: "POST", // http method
