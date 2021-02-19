@@ -444,20 +444,9 @@ $('#link_label').click(function(e) {
         link_id = eems_model_modified_id
     }
 
-    alertify.alert("<div id='link_text'> Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + link_id + "'>" + hostname_for_link + "?model=" + link_id + "</textarea></div>")
-
-    var textBox = document.getElementById("link");
-    textBox.onfocus = function() {
-        textBox.select();
-        // Work around Chrome's little problem
-        textBox.onmouseup = function() {
-            // Prevent further mouseup intervention
-            textBox.onmouseup = null;
-            return false;
-        };
-    };
-
     if (link_already_generated == false && eems_model_modified_id != "") {
+
+        // Insert the Model ID & Additional info into the model database.
         $.ajax({
             url: "/link", // the endpoint
             type: "POST", // http method
@@ -466,6 +455,19 @@ $('#link_label').click(function(e) {
                 'eems_model_modified_id': eems_model_modified_id,
             },
             success: function (response) {
+                // Show URL popup.
+                alertify.alert("<div id='link_text'>A link to the modified model has been created. Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + link_id + "'>" + hostname_for_link + "?model=" + link_id + "</textarea><p>Any additional changes/model runs performed will update the model at this URL.</div>")
+                var textBox = document.getElementById("link");
+                textBox.onfocus = function() {
+                    textBox.select();
+                    // Work around to get Chrome to allow right click -> copy of URL
+                    textBox.onmouseup = function() {
+                        // Prevent further mouseup intervention
+                        textBox.onmouseup = null;
+                        return false;
+                    };
+                };
+
             },
             error: function (xhr, errmsg, err) {
                 alertify.alert("There was an error generating the model link. Please try again. If the problem persists, please reload the page.")
@@ -476,6 +478,22 @@ $('#link_label').click(function(e) {
         });
 
         link_already_generated = true
+    }
+    else {
+        // If a link has already been generated, show them the previously generated URL.
+        // Why? Each time the model is changed and run, it overwrites the results of the previous model run. This is by design in order to prevent a glut of model run folders eating up storage space.
+        // So, users get one model folder/link for any modifications made to this model during this session.
+        alertify.alert("<div id='link_text'>Right click and copy the link below to share these results or access them at a later time: <p><textarea readonly='readonly' id='link' href='" + hostname_for_link + "?model=" + link_id + "'>" + hostname_for_link + "?model=" + link_id + "</textarea></div>")
+        var textBox = document.getElementById("link");
+        textBox.onfocus = function() {
+            textBox.select();
+            // Work around to get Chrome to allow right click -> copy of URL
+            textBox.onmouseup = function() {
+                // Prevent further mouseup intervention
+                textBox.onmouseup = null;
+                return false;
+            };
+        };
     }
 
 
