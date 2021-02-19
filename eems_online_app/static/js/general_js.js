@@ -468,7 +468,7 @@ $('#link_label').click(function(e) {
             success: function (response) {
             },
             error: function (xhr, errmsg, err) {
-                alertify.alert("There was an error in processing your request. Please try again. If the problem persists, please reload the page.")
+                alertify.alert("There was an error generating the model link. Please try again. If the problem persists, please reload the page.")
             },
             complete: function () {
             }
